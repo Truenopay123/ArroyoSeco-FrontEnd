@@ -26,14 +26,14 @@ export class OferenteHomeSelectorComponent {
       description: 'Gestiona tus hospedajes y reservas',
       route: '/oferente/dashboard',
       icon: 'alojamiento',
-      color: '#0891b2'
+      color: '#E31B23'
     },
     {
       title: 'Gastronomía',
       description: 'Gestiona tus restaurantes y reservas',
       route: '/oferente/gastronomia/dashboard',
       icon: 'gastronomia',
-      color: '#c73619'
+      color: '#E31B23'
     }
   ];
 }

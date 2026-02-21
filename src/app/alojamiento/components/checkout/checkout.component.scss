@@ -1,0 +1,814 @@
+// ──────────────────────────────────────────────
+//  Checkout Component Styles
+// ──────────────────────────────────────────────
+
+$color-primary: #E31B23;
+$color-primary-dark: #c41019;
+$color-primary-light: #fce4e4;
+$color-text: #222;
+$color-text-secondary: #6b7280;
+$color-border: #e5e7eb;
+$color-bg: #f7f7f8;
+$radius: 16px;
+$radius-sm: 10px;
+$shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+$shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.10);
+$transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+// ── Container ────────────────────────────────
+.checkout-container {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 32px 16px 48px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: $color-text;
+}
+
+// ── Stepper ──────────────────────────────────
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 36px;
+  gap: 0;
+
+  &__step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: default;
+    user-select: none;
+
+    &--done {
+      cursor: pointer;
+    }
+
+    &--active &__circle,
+    &--active .stepper__circle {
+      background: $color-primary;
+      color: #fff;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 4px rgba($color-primary, 0.15);
+    }
+
+    &--done .stepper__circle {
+      background: $color-primary;
+      color: #fff;
+      border-color: $color-primary;
+    }
+  }
+
+  &__circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid $color-border;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+    color: $color-text-secondary;
+    transition: all $transition;
+  }
+
+  &__label {
+    font-size: 13px;
+    font-weight: 600;
+    color: $color-text-secondary;
+    transition: color $transition;
+  }
+
+  &__step--active &__label,
+  &__step--active .stepper__label {
+    color: $color-primary;
+  }
+
+  &__connector {
+    width: 64px;
+    height: 3px;
+    background: $color-border;
+    border-radius: 2px;
+    margin: 0 6px;
+    margin-bottom: 26px;
+    transition: background $transition;
+
+    &--active {
+      background: $color-primary;
+    }
+  }
+}
+
+// ── Card ─────────────────────────────────────
+.card {
+  background: #fff;
+  border-radius: $radius;
+  box-shadow: $shadow;
+  padding: 32px 28px;
+
+  &__title {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 24px;
+    color: $color-text;
+  }
+
+  &--confirmation {
+    text-align: center;
+  }
+}
+
+// ── Property Summary ─────────────────────────
+.property-summary {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid $color-border;
+
+  &__image {
+    width: 120px;
+    min-width: 120px;
+    height: 90px;
+    border-radius: $radius-sm;
+    overflow: hidden;
+    background: $color-primary-light;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__details {
+    flex: 1;
+  }
+
+  &__name {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    color: $color-text;
+  }
+
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__meta-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    svg {
+      flex-shrink: 0;
+    }
+
+    div {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  &__label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: $color-text-secondary;
+    font-weight: 600;
+  }
+
+  &__value {
+    font-size: 14px;
+    font-weight: 500;
+    color: $color-text;
+  }
+}
+
+// ── Price Breakdown ──────────────────────────
+.price-breakdown {
+  margin-bottom: 28px;
+
+  &__title {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0 0 14px;
+    color: $color-text;
+  }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 15px;
+    color: $color-text-secondary;
+
+    &--total {
+      font-size: 18px;
+      font-weight: 700;
+      color: $color-text;
+    }
+  }
+
+  &__divider {
+    height: 1px;
+    background: $color-border;
+    margin: 8px 0;
+  }
+}
+
+// ── Buttons ──────────────────────────────────
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all $transition;
+  text-decoration: none;
+  line-height: 1.2;
+
+  &--primary {
+    background: $color-primary;
+    color: #fff;
+    width: 100%;
+
+    &:hover {
+      background: $color-primary-dark;
+      box-shadow: 0 4px 14px rgba($color-primary, 0.35);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  &--outline {
+    background: transparent;
+    color: $color-text-secondary;
+    border: 1.5px solid $color-border;
+
+    &:hover {
+      border-color: $color-text-secondary;
+      color: $color-text;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &--mercadopago {
+    background: #009ee3;
+    color: #fff;
+    width: 100%;
+    padding: 16px 28px;
+    font-size: 16px;
+
+    &:hover:not(:disabled) {
+      background: #0089c7;
+      box-shadow: 0 4px 14px rgba(0, 158, 227, 0.35);
+    }
+
+    &:disabled {
+      opacity: 0.85;
+      cursor: wait;
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+  }
+
+  &__spinner-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__spinner {
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ── Step Actions ─────────────────────────────
+.step-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+// ── Payment Option ───────────────────────────
+.payment-option {
+  border: 2px solid $color-border;
+  border-radius: $radius;
+  overflow: hidden;
+  margin-bottom: 24px;
+  transition: border-color $transition;
+
+  &--selected {
+    border-color: $color-primary;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 20px;
+    background: $color-bg;
+  }
+
+  &__radio {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid $color-primary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__radio-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: $color-primary;
+  }
+
+  &__info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    svg {
+      flex-shrink: 0;
+    }
+
+    div {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  &__name {
+    font-size: 16px;
+    font-weight: 700;
+    color: $color-text;
+  }
+
+  &__desc {
+    font-size: 13px;
+    color: $color-text-secondary;
+  }
+
+  &__body {
+    padding: 20px;
+  }
+}
+
+// ── Mercado Pago Badge ───────────────────────
+.mercadopago-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #e8f6fd;
+  border-radius: $radius-sm;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+
+  span {
+    font-size: 13px;
+    font-weight: 600;
+    color: #006fa6;
+  }
+}
+
+// ── Credit Card Form ─────────────────────────
+.credit-card-form {
+  margin-bottom: 24px;
+}
+
+.card-preview {
+  width: 100%;
+  max-width: 340px;
+  height: 200px;
+  margin: 0 auto 28px;
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  color: #fff;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
+  overflow: hidden;
+  transition: background 0.4s ease;
+  font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -20%;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  &--visa {
+    background: linear-gradient(135deg, #1a1a6c 0%, #2d2d8e 50%, #4b2da8 100%);
+  }
+
+  &--mastercard {
+    background: linear-gradient(135deg, #eb001b 0%, #c40014 50%, #f79e1b 100%);
+  }
+
+  &--amex {
+    background: linear-gradient(135deg, #006fcf 0%, #005baa 50%, #00447c 100%);
+  }
+
+  &__chip {
+    margin-bottom: 20px;
+  }
+
+  &__number {
+    font-size: 20px;
+    letter-spacing: 3px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  &__holder {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    opacity: 0.85;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__expiry {
+    font-size: 14px;
+    letter-spacing: 1px;
+    opacity: 0.85;
+  }
+
+  &__brand {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.brand-visa {
+  color: #fff;
+  font-style: italic;
+}
+
+.brand-mc {
+  color: #f5f5f5;
+}
+
+.brand-amex {
+  color: #fff;
+}
+
+.cc-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.cc-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &--full {
+    grid-column: 1 / -1;
+  }
+}
+
+.cc-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: $color-text;
+}
+
+.cc-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1.5px solid $color-border;
+  border-radius: $radius-sm;
+  padding: 0 14px;
+  transition: border-color $transition, box-shadow $transition;
+
+  &:focus-within {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+  }
+
+  .cc-input {
+    border: none;
+    padding: 12px 0;
+    box-shadow: none;
+
+    &:focus {
+      box-shadow: none;
+      border-color: transparent;
+    }
+  }
+}
+
+.cc-input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 15px;
+  border: 1.5px solid $color-border;
+  border-radius: $radius-sm;
+  background: #fff;
+  color: $color-text;
+  transition: border-color $transition, box-shadow $transition;
+  outline: none;
+  font-family: inherit;
+
+  &::placeholder {
+    color: #c0c5ce;
+  }
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+  }
+}
+
+.cc-icon {
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+.cc-icon-right {
+  flex-shrink: 0;
+  opacity: 0.4;
+  cursor: help;
+}
+
+// ── Payment Summary ──────────────────────────
+.payment-summary {
+  margin-bottom: 20px;
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    color: $color-text-secondary;
+  }
+
+  &__amount {
+    font-size: 20px;
+    font-weight: 700;
+    color: $color-text;
+  }
+}
+
+// ── Confirmation ─────────────────────────────
+.confirmation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+
+  &__icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: $color-primary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  &__title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 4px;
+    color: $color-text;
+    animation: fadeUp 0.5s 0.15s ease both;
+  }
+
+  &__subtitle {
+    font-size: 15px;
+    color: $color-text-secondary;
+    margin: 0 0 24px;
+    animation: fadeUp 0.5s 0.25s ease both;
+  }
+
+  &__code-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: $color-bg;
+    border: 1.5px dashed $color-border;
+    border-radius: $radius-sm;
+    padding: 16px 32px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.5s 0.35s ease both;
+  }
+
+  &__code-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: $color-text-secondary;
+    font-weight: 600;
+  }
+
+  &__code {
+    font-size: 28px;
+    font-weight: 800;
+    color: $color-primary;
+    letter-spacing: 2px;
+    font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+  }
+
+  &__details {
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 28px;
+    text-align: left;
+    animation: fadeUp 0.5s 0.45s ease both;
+  }
+
+  &__detail-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: $color-text-secondary;
+
+    svg {
+      flex-shrink: 0;
+    }
+
+    &--total {
+      margin-top: 6px;
+      padding-top: 10px;
+      border-top: 1px solid $color-border;
+      font-weight: 700;
+      color: $color-text;
+    }
+  }
+
+  .btn--primary {
+    max-width: 320px;
+    animation: fadeUp 0.5s 0.55s ease both;
+  }
+}
+
+// ── Animations ───────────────────────────────
+@keyframes popIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeUp {
+  0% {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// ── Step Content Transition ──────────────────
+.step-content {
+  animation: fadeUp 0.35s ease both;
+}
+
+// ── Responsive ───────────────────────────────
+@media (max-width: 600px) {
+  .checkout-container {
+    padding: 20px 12px 36px;
+  }
+
+  .card {
+    padding: 24px 18px;
+    border-radius: 14px;
+  }
+
+  .card__title {
+    font-size: 19px;
+  }
+
+  .property-summary {
+    flex-direction: column;
+    gap: 14px;
+
+    &__image {
+      width: 100%;
+      height: 140px;
+      border-radius: 12px;
+    }
+  }
+
+  .stepper {
+    &__connector {
+      width: 36px;
+    }
+
+    &__circle {
+      width: 36px;
+      height: 36px;
+      font-size: 14px;
+    }
+
+    &__label {
+      font-size: 11px;
+    }
+  }
+
+  .confirmation {
+    &__code {
+      font-size: 22px;
+    }
+
+    &__title {
+      font-size: 20px;
+    }
+  }
+
+  .btn {
+    padding: 13px 20px;
+    font-size: 15px;
+  }
+}

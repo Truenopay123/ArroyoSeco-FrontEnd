@@ -1,6 +1,7 @@
 <div class="public-layout">
   <app-public-navbar></app-public-navbar>
-  <main class="content">
+  <app-hero-landing *ngIf="showHero"></app-hero-landing>
+  <main class="content" [class.no-hero]="!showHero">
     <router-outlet></router-outlet>
   </main>
 </div>

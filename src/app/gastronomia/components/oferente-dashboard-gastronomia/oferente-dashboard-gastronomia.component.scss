@@ -45,8 +45,8 @@
   }
 
   &.highlight {
-    border-color: #fbbf24;
-    background: #fef3c7;
+    border-color: var(--color-primary, #E31B23);
+    background: var(--color-primary-light, #fee2e2);
   }
 }
 
@@ -125,8 +125,8 @@
   }
 
   &:hover {
-    border-color: #c73619;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: var(--color-primary, #E31B23);
+    box-shadow: 0 4px 12px rgba(227, 27, 35, 0.12);
     transform: translateY(-4px);
   }
 
@@ -239,7 +239,7 @@
   .btn-ver {
     display: inline-block;
     padding: 0.5rem 1rem;
-    background: #c73619;
+    background: var(--color-primary, #E31B23);
     color: white;
     text-decoration: none;
     border-radius: 6px;
@@ -252,7 +252,7 @@
     }
 
     &:hover {
-      background: #a82e15;
+      background: var(--color-primary-dark, #c41019);
     }
   }
 }

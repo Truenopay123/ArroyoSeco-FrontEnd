@@ -1,7 +1,7 @@
 .home-selector {
   display: flex;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #E31B23 0%, #8b0f14 100%);
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -25,7 +25,7 @@
 .visual-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
+  background: linear-gradient(135deg, rgba(227, 27, 35, 0.9), rgba(139, 15, 20, 0.9));
 }
 
 .visual-text {

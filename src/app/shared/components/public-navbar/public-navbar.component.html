@@ -1,34 +1,60 @@
 <nav class="public-navbar">
   <div class="navbar-container">
     <!-- Logo/Brand -->
-    <div class="navbar-brand">
+    <a class="navbar-brand" routerLink="/publica/alojamientos">
       <img src="assets/images/logo-arroyo-seco.svg" alt="Arroyo Seco" class="logo" />
-      <h2>Arroyo Seco</h2>
-    </div>
+      <span class="brand-text">Arroyo Seco</span>
+    </a>
 
-    <button class="hamburger" (click)="toggleMenu()" aria-label="Abrir menú">☰</button>
-
-    <!-- Experiencia Selector -->
-    <div class="experience-switcher" [class.open]="menuOpen">
-      <button 
+    <!-- Experience Switcher (Desktop) -->
+    <div class="experience-switcher">
+      <button
         [class.active]="experienceType === 'alojamiento'"
         (click)="switchExperience('alojamiento')"
         class="exp-btn">
-        🏨 Alojamientos
+        Alojamientos
       </button>
-      <button 
+      <button
         [class.active]="experienceType === 'gastronomia'"
         (click)="switchExperience('gastronomia')"
         class="exp-btn">
-        🍽️ Gastronomía
+        Gastronomía
       </button>
     </div>
 
-    <!-- Login Button -->
-    <div class="navbar-actions" [class.open]="menuOpen">
+    <!-- Actions -->
+    <div class="navbar-actions">
       <button class="btn-login" (click)="goToLogin()">
-        Iniciar Sesión
+        <svg viewBox="0 0 32 32" class="user-icon">
+          <path d="M16 .5C7.44.5.5 7.44.5 16S7.44 31.5 16 31.5 31.5 24.56 31.5 16 24.56.5 16 .5zm0 5a5.5 5.5 0 110 11 5.5 5.5 0 010-11zM16 27c-4.25 0-8.01-2.17-10.22-5.46A15.9 15.9 0 0116 18.5c3.87 0 7.41 1.12 10.22 3.04A12.97 12.97 0 0116 27z"/>
+        </svg>
       </button>
     </div>
+
+    <!-- Mobile Hamburger -->
+    <button class="hamburger" [class.active]="menuOpen" (click)="toggleMenu()" aria-label="Abrir menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" [class.open]="menuOpen">
+    <div class="mobile-switcher">
+      <button
+        [class.active]="experienceType === 'alojamiento'"
+        (click)="switchExperience('alojamiento'); menuOpen = false"
+        class="exp-btn">
+        Alojamientos
+      </button>
+      <button
+        [class.active]="experienceType === 'gastronomia'"
+        (click)="switchExperience('gastronomia'); menuOpen = false"
+        class="exp-btn">
+        Gastronomía
+      </button>
+    </div>
+    <button class="mobile-login" (click)="goToLogin(); menuOpen = false">
+      Iniciar Sesión
+    </button>
   </div>
 </nav>

@@ -2,7 +2,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f7f7f7;
+  background-color: var(--color-bg, #fafafa);
 }
 
 .admin-hero {
@@ -21,7 +21,7 @@
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.35);
+  background: linear-gradient(135deg, rgba(227, 27, 35, 0.85), rgba(139, 15, 20, 0.9));
 }
 
 .hero-content {

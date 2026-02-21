@@ -1,3 +1,10 @@
 <router-outlet />
 <app-toast-container />
 <app-confirm-modal />
+
+<!-- Global loading spinner -->
+@if (loading$ | async) {
+  <div class="global-spinner-overlay">
+    <div class="global-spinner"></div>
+  </div>
+}

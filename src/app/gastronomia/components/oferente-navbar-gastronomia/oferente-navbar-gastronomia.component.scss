@@ -1,6 +1,6 @@
 .navbar {
   background: #fff;
-  border-bottom: 2px solid #fbbf24;
+  border-bottom: 2px solid var(--color-primary, #E31B23);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   position: sticky;
   top: 0;
@@ -46,7 +46,7 @@
 
   &__text {
     font-weight: 700;
-    color: #c73619;
+    color: var(--color-primary, #E31B23);
     font-size: 0.9rem;
 
     @media (min-width: 768px) {
@@ -75,7 +75,7 @@
   span {
     width: 100%;
     height: 3px;
-    background: #c73619;
+    background: var(--color-primary, #E31B23);
     border-radius: 10px;
     transition: all 0.3s;
     transform-origin: center;
@@ -152,12 +152,12 @@
   }
 
   &.active {
-    color: #c73619;
+    color: var(--color-primary, #E31B23);
     background: #fef3c7;
 
     @media (min-width: 768px) {
       background: transparent;
-      border-bottom-color: #c73619;
+      border-bottom-color: var(--color-primary, #E31B23);
     }
   }
 }
@@ -183,12 +183,12 @@
 
 .cambiar-experiencia {
   text-decoration: none;
-  color: #1c66d6;
+  color: var(--color-primary, #E31B23);
   font-weight: 600;
   font-size: 0.95rem;
   padding: 0.75rem 1rem;
   border-radius: 8px;
-  border: 2px solid #1c66d6;
+  border: 2px solid var(--color-primary, #E31B23);
   transition: all 0.2s;
   text-align: center;
   white-space: nowrap;
@@ -199,7 +199,7 @@
   }
 
   &:hover {
-    background: #1c66d6;
+    background: var(--color-primary, #E31B23);
     color: #fff;
   }
 }

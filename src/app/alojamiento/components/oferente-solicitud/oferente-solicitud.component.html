@@ -2,8 +2,23 @@
   <div class="visual">
     <div class="visual-overlay"></div>
     <div class="visual-text">
+      <span class="visual-badge">Convocatoria abierta</span>
       <h1>Únete al sector turístico de Arroyo Seco</h1>
-      <p>Registra tu hospedaje y forma parte del padrón oficial.</p>
+      <p>Registra tu negocio y forma parte del padrón oficial de oferentes turísticos.</p>
+      <div class="visual-features">
+        <div class="visual-feature">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          <span>Mayor visibilidad</span>
+        </div>
+        <div class="visual-feature">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          <span>Reservas en línea</span>
+        </div>
+        <div class="visual-feature">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          <span>Panel de gestión</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -17,41 +32,65 @@
         <h2>Solicitud al padrón de oferentes</h2>
         <p class="subtitle">Completa los datos para que podamos validar tu registro</p>
 
+        <div class="steps-indicator">
+          <div class="step active"><span class="step-num">1</span><span class="step-label">Tipo</span></div>
+          <div class="step-line"></div>
+          <div class="step" [class.active]="model.nombre"><span class="step-num">2</span><span class="step-label">Datos</span></div>
+          <div class="step-line"></div>
+          <div class="step" [class.active]="model.contexto"><span class="step-num">3</span><span class="step-label">Negocio</span></div>
+        </div>
+
         <form #f="ngForm" (ngSubmit)="submit(f)">
-          <label>
-            Tipo de negocio
-            <select name="tipoNegocio" [(ngModel)]="model.tipoNegocio" required>
-              <option [ngValue]="1">Alojamiento / Hospedaje</option>
-              <option [ngValue]="2">Gastronomía / Restaurante</option>
-            </select>
-          </label>
+          <div class="form-section">
+            <span class="form-section__label">¿Qué tipo de negocio tienes?</span>
+            <div class="tipo-cards">
+              <label class="tipo-card" [class.selected]="model.tipoNegocio === 1" (click)="model.tipoNegocio = 1">
+                <input type="radio" name="tipoNegocio" [value]="1" [(ngModel)]="model.tipoNegocio" required hidden />
+                <svg viewBox="0 0 24 24" width="28" height="28"><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                <span>Alojamiento</span>
+                <small>Hospedaje, cabañas, hotel</small>
+              </label>
+              <label class="tipo-card" [class.selected]="model.tipoNegocio === 2" (click)="model.tipoNegocio = 2">
+                <input type="radio" name="tipoNegocio" [value]="2" [(ngModel)]="model.tipoNegocio" required hidden />
+                <svg viewBox="0 0 24 24" width="28" height="28"><path fill="currentColor" d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/></svg>
+                <span>Gastronomía</span>
+                <small>Restaurante, café, bar</small>
+              </label>
+            </div>
+          </div>
 
-          <label>
-            Nombre
-            <input type="text" name="nombre" [(ngModel)]="model.nombre" placeholder="Juan Pérez" required />
-          </label>
-
-          <label>
-            Correo electrónico
-            <input type="email" name="correo" [(ngModel)]="model.correo" placeholder="juan@ejemplo.com" required />
-          </label>
-
-            <label>
-              Número de teléfono
-              <input type="tel" name="telefono" [(ngModel)]="model.telefono" placeholder="442334559" required />
+          <div class="form-section">
+            <span class="form-section__label">Información de contacto</span>
+            <div class="form-row">
+              <label class="form-field">
+                <span class="field-label">Nombre completo <span class="req">*</span></span>
+                <input type="text" name="nombre" [(ngModel)]="model.nombre" placeholder="Juan Pérez" required />
+              </label>
+              <label class="form-field">
+                <span class="field-label">Correo electrónico <span class="req">*</span></span>
+                <input type="email" name="correo" [(ngModel)]="model.correo" placeholder="juan@ejemplo.com" required />
+              </label>
+            </div>
+            <label class="form-field">
+              <span class="field-label">Teléfono <span class="req">*</span></span>
+              <input type="tel" name="telefono" [(ngModel)]="model.telefono" placeholder="442-334-5590" required />
             </label>
+          </div>
 
-            <label>
-              Contexto del negocio
-              <input type="text" name="contexto" [(ngModel)]="model.contexto" placeholder="Ej: Servicio tipo Airbnb o Restaurante familiar" required />
+          <div class="form-section">
+            <span class="form-section__label">Cuéntanos sobre tu negocio</span>
+            <label class="form-field">
+              <span class="field-label">Descripción del negocio <span class="req">*</span></span>
+              <textarea name="contexto" [(ngModel)]="model.contexto" placeholder="Ej: Cabaña familiar con capacidad para 8 personas, ubicada en zona boscosa con vista al río..." required rows="3"></textarea>
             </label>
+          </div>
 
-            <button type="submit" [disabled]="f.invalid || isSubmitting">
-              Mandar solicitud
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M2 21l21-9L2 3v7l15 2-15 2v7z" />
-              </svg>
-            </button>
+          <button type="submit" [disabled]="f.invalid || isSubmitting">
+            {{ isSubmitting ? 'Enviando...' : 'Enviar solicitud' }}
+            <svg *ngIf="!isSubmitting" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M2 21l21-9L2 3v7l15 2-15 2v7z" />
+            </svg>
+          </button>
         </form>
 
         <div class="links">

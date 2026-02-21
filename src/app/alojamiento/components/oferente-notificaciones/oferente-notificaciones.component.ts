@@ -40,16 +40,46 @@ interface Notificacion {
     </section>
   `,
   styles: [`
-    .notificaciones { display: grid; gap: 1rem; }
+    .notificaciones { display: grid; gap: 1.5rem; }
+    h2 { margin: 0; font-size: 1.6rem; color: var(--color-text, #1f2937); }
     .lista { display: grid; gap: .75rem; }
-    .item { background: #fff; border-radius: 12px; padding: 1rem; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 1rem; }
-    .item.leida { opacity: .6; }
-    .item h3 { margin: 0 0 .25rem; font-size: 1rem; }
-    .item p { margin: 0; color: #4b5563; }
+    .item {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 1rem;
+      border: 1px solid var(--color-border, #e5e7eb);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: box-shadow 0.2s;
+      border-left: 4px solid var(--color-primary, #E31B23);
+    }
+    .item:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+    .item.leida { opacity: .6; border-left-color: var(--color-border, #e5e7eb); }
+    .item h3 { margin: 0 0 .25rem; font-size: 1.05rem; font-weight: 600; color: var(--color-text, #1f2937); }
+    .item p { margin: 0; color: #4b5563; line-height: 1.6; }
     .item__side { display: grid; gap: .5rem; justify-items: end; }
-    .fecha { font-size: .85rem; color: #6b7280; }
-    .btn { padding: .4rem .75rem; border-radius: 8px; border: 1px solid #d1d5db; background: #fff; cursor: pointer; }
-    .placeholder { background: #fff; padding: 3rem; border-radius: 12px; text-align: center; color: #6b7280; }
+    .fecha { font-size: .85rem; color: var(--color-text-secondary, #6b7280); }
+    .btn {
+      padding: .5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--color-primary, #E31B23);
+      color: var(--color-primary, #E31B23);
+      background: #fff;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: .9rem;
+      transition: all 0.2s;
+    }
+    .btn:hover { background: var(--color-primary, #E31B23); color: #fff; }
+    .placeholder { background: #fff; padding: 3rem; border-radius: 12px; text-align: center; color: var(--color-text-secondary, #6b7280); border: 1px solid var(--color-border, #e5e7eb); }
+    @media (max-width: 768px) {
+      .item { grid-template-columns: 1fr; }
+      .item__side { justify-items: stretch; }
+      .btn { width: 100%; text-align: center; }
+    }
   `]
 })
 export class OferenteNotificacionesComponent implements OnInit {

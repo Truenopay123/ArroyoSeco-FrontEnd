@@ -65,11 +65,11 @@
         }
 
         &.btn-confirm {
-          background: #667eea;
+          background: var(--color-primary, #E31B23);
           color: white;
 
           &:hover {
-            background: #5568d3;
+            background: var(--color-primary-dark, #c41019);
           }
 
           &.danger {

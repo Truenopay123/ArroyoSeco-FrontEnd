@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { AdminLoginComponent } from './alojamiento/components/admin-login/admin-login.component';
+// AdminLoginComponent removed — unified login at /login
 import { AdminLayoutComponent } from './alojamiento/components/admin-layout/admin-layout.component';
 import { AdminDashboardComponent } from './alojamiento/components/admin-dashboard/admin-dashboard.component';
 import { AdminOferentesComponent } from './alojamiento/components/admin-oferentes/admin-oferentes.component';
 import { AdminNotificacionesComponent } from './alojamiento/components/admin-notificaciones/admin-notificaciones.component';
-import { OferenteLoginComponent } from './alojamiento/components/oferente-login/oferente-login.component';
+// OferenteLoginComponent removed — unified login at /login
 import { OferenteLayoutComponent } from './alojamiento/components/oferente-layout/oferente-layout.component';
 import { OferenteDashboardComponent } from './alojamiento/components/oferente-dashboard/oferente-dashboard.component';
 import { GestionHospedajesComponent } from './alojamiento/components/gestion-hospedajes/gestion-hospedajes.component';
@@ -14,7 +14,7 @@ import { OferenteConfiguracionComponent } from './alojamiento/components/oferent
 import { LoginSelectorComponent } from './alojamiento/components/login-selector/login-selector.component';
 import { FormRegistroAlojamientoComponent } from './alojamiento/components/form-registro-alojamiento/form-registro-alojamiento.component';
 import { OferenteSolicitudComponent } from './alojamiento/components/oferente-solicitud/oferente-solicitud.component';
-import { ClienteLoginComponent } from './alojamiento/components/cliente-login/cliente-login.component';
+// ClienteLoginComponent removed — unified login at /login
 import { ClienteRegisterComponent } from './alojamiento/components/cliente-register/cliente-register.component';
 import { ClienteLayoutComponent } from './alojamiento/components/cliente-layout/cliente-layout.component';
 import { ListaAlojamientosComponent } from './alojamiento/components/lista-alojamientos/lista-alojamientos.component';
@@ -41,8 +41,11 @@ import { OferenteReservasGastronomiaComponent } from './gastronomia/components/o
 import { AdminDashboardGastronomiaComponent } from './alojamiento/components/admin-dashboard-gastronomia/admin-dashboard-gastronomia.component';
 import { AdminOferentesGastronomiaComponent } from './alojamiento/components/admin-oferentes-gastronomia/admin-oferentes-gastronomia.component';
 import { AdminSolicitudesComponent } from './alojamiento/components/admin-solicitudes/admin-solicitudes.component';
+import { CheckoutComponent } from './alojamiento/components/checkout/checkout.component';
 import { CambiarPasswordForzadoComponent } from './shared/components/cambiar-password-forzado/cambiar-password-forzado.component';
 import { cambioPasswordGuard } from './core/guards/cambio-password.guard';
+import { authGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   { path: 'login', component: LoginSelectorComponent },
@@ -94,12 +97,12 @@ export const routes: Routes = [
   {
     path: 'admin',
     children: [
-      { path: 'login', component: AdminLoginComponent },
-      { path: 'home', component: AdminHomeSelectorComponent, canActivate: [cambioPasswordGuard] },
+      { path: 'login', redirectTo: '/login', pathMatch: 'full' },
+      { path: 'home', component: AdminHomeSelectorComponent, canActivate: [adminGuard, cambioPasswordGuard] },
       {
         path: '',
         component: AdminLayoutComponent,
-        canActivate: [cambioPasswordGuard],
+        canActivate: [adminGuard, cambioPasswordGuard],
         children: [
           {
             path: 'dashboard',
@@ -142,6 +145,7 @@ export const routes: Routes = [
       {
         path: 'gastronomia',
         component: AdminLayoutComponent,
+        canActivate: [adminGuard, cambioPasswordGuard],
         children: [
           {
             path: 'dashboard',
@@ -202,13 +206,13 @@ export const routes: Routes = [
   {
     path: 'oferente',
     children: [
-      { path: 'login', component: OferenteLoginComponent },
+      { path: 'login', redirectTo: '/login', pathMatch: 'full' },
       { path: 'solicitud', component: OferenteSolicitudComponent },
-      { path: 'home', component: OferenteHomeSelectorComponent, canActivate: [cambioPasswordGuard] },
+      { path: 'home', component: OferenteHomeSelectorComponent, canActivate: [authGuard, cambioPasswordGuard] },
       {
         path: '',
         component: OferenteLayoutComponent,
-        canActivate: [cambioPasswordGuard],
+        canActivate: [authGuard, cambioPasswordGuard],
         children: [
           {
             path: 'dashboard',
@@ -283,13 +287,13 @@ export const routes: Routes = [
   {
     path: 'cliente',
     children: [
-      { path: 'login', component: ClienteLoginComponent },
+      { path: 'login', redirectTo: '/login', pathMatch: 'full' },
       { path: 'registrar', component: ClienteRegisterComponent },
-      { path: 'home', component: HomeSelectorComponent, canActivate: [cambioPasswordGuard] },
+      { path: 'home', component: HomeSelectorComponent, canActivate: [authGuard, cambioPasswordGuard] },
       {
         path: '',
         component: ClienteLayoutComponent,
-        canActivate: [cambioPasswordGuard],
+        canActivate: [authGuard, cambioPasswordGuard],
         children: [
           {
             path: 'alojamientos',
@@ -309,9 +313,17 @@ export const routes: Routes = [
             }
           },
           {
+            path: 'checkout',
+            component: CheckoutComponent,
+            data: {
+              heroTitle: 'Completar Reserva',
+              heroSubtitle: 'Revisa y confirma tu reserva.',
+              heroImage: 'assets/images/hero-dashboard.svg'
+            }
+          },
+          {
             path: 'reservas',
             component: ClienteReservasComponent,
-            // canActivate: [authGuard],
             data: {
               heroTitle: 'Mis Reservas',
               heroSubtitle: 'Gestiona tus hospedajes reservados.',
@@ -321,7 +333,6 @@ export const routes: Routes = [
           {
             path: 'notificaciones',
             component: ClienteNotificacionesComponent,
-            // canActivate: [authGuard],
             data: {
               heroTitle: 'Notificaciones',
               heroSubtitle: 'Mantente al día con nuestras novedades.',
@@ -331,7 +342,6 @@ export const routes: Routes = [
           {
             path: 'perfil',
             component: ClientePerfilComponent,
-            // canActivate: [authGuard],
             data: {
               heroTitle: 'Mi Perfil',
               heroSubtitle: 'Administra tu información personal.',
@@ -341,7 +351,6 @@ export const routes: Routes = [
           {
             path: 'favoritos',
             component: ClienteFavoritosComponent,
-            // canActivate: [authGuard],
             data: {
               heroTitle: 'Mis Favoritos',
               heroSubtitle: 'Alojamientos guardados para más tarde.',
@@ -355,7 +364,7 @@ export const routes: Routes = [
       {
         path: 'gastronomia',
         component: ClienteLayoutGastronomiaComponent,
-        canActivate: [cambioPasswordGuard],
+        canActivate: [authGuard, cambioPasswordGuard],
         children: [
           {
             path: '',
@@ -409,7 +418,7 @@ export const routes: Routes = [
   {
     path: 'oferente/gastronomia',
     component: OferenteLayoutGastronomiaComponent,
-    canActivate: [cambioPasswordGuard],
+    canActivate: [authGuard, cambioPasswordGuard],
     children: [
       {
         path: 'dashboard',

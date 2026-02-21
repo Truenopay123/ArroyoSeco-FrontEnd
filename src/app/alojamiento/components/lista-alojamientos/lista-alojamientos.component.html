@@ -1,25 +1,94 @@
-<div class="toolbar">
-	<input type="text" placeholder="Buscar por nombre o ubicación" [(ngModel)]="search" />
-	<select [(ngModel)]="sortMode">
-		<option value="precio">Ordenar por precio</option>
-		<option value="rating">Ordenar por rating</option>
-		<option value="nombre">Ordenar por nombre</option>
-	</select>
+<!-- Loading State -->
+<div class="loading-state" *ngIf="loading">
+  <div class="skeleton-grid">
+    <div class="skeleton-card" *ngFor="let i of [1,2,3,4,5,6]">
+      <div class="skeleton-img"></div>
+      <div class="skeleton-line wide"></div>
+      <div class="skeleton-line"></div>
+      <div class="skeleton-line short"></div>
+    </div>
+  </div>
 </div>
 
-<section class="grid">
-		<a class="card" *ngFor="let a of filtered" (click)="navigateToDetail(a.id)" style="cursor: pointer;">
-		<div class="thumb" [style.background-image]="'url(' + a.imagen + ')'"> </div>
-		<div class="info">
-			<h3>{{ a.nombre }}</h3>
-			<p class="meta">{{ a.ubicacion }}</p>
-			<div class="bottom">
-				<span class="price">${{ a.precioNoche }} <small>/ noche</small></span>
-								<span class="rating">★ {{ a.rating }}</span>
-			</div>
-		</div>
-				<button class="fav" [class.active]="isFavorite(a.id)" (click)="toggleFavorite(a, $event)" aria-label="Favorito">
-					<span>★</span>
-				</button>
-	</a>
-</section>
+<!-- Error State -->
+<div class="error-state" *ngIf="error && !loading">
+  <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+  <p>{{ error }}</p>
+  <button class="btn-retry" (click)="retry()">Reintentar</button>
+</div>
+
+<!-- Main Content -->
+<div class="listing-container" *ngIf="!loading && !error">
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-wrapper">
+      <svg class="search-icon" viewBox="0 0 24 24">
+        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+      </svg>
+      <input
+        type="text"
+        placeholder="Buscar por nombre o ubicación..."
+        [(ngModel)]="search"
+        class="search-input"
+      />
+    </div>
+    <div class="toolbar-actions">
+      <div class="sort-wrapper">
+        <select [(ngModel)]="sortMode" class="sort-select">
+          <option value="precio">Precio: menor a mayor</option>
+          <option value="rating">Mejor calificación</option>
+          <option value="nombre">Nombre A-Z</option>
+        </select>
+      </div>
+      <span class="results-count">{{ filtered.length }} alojamientos</span>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="filtered.length === 0">
+    <svg class="empty-icon" viewBox="0 0 24 24" width="48" height="48"><path fill="#b0b0b0" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    <h3>No se encontraron alojamientos</h3>
+    <p>Intenta con otra búsqueda o explora todas las opciones.</p>
+  </div>
+
+  <!-- Cards Grid -->
+  <section class="grid">
+    <div class="card" *ngFor="let a of filtered" (click)="navigateToDetail(a.id)">
+      <!-- Card Image -->
+      <div class="card-image-wrapper">
+        <div class="card-image" [style.background-image]="'url(' + a.imagen + ')'"></div>
+        <button
+          class="fav-btn"
+          [class.active]="isFavorite(a.id)"
+          (click)="toggleFavorite(a, $event)"
+          aria-label="Favorito"
+        >
+          <svg viewBox="0 0 24 24">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Card Body -->
+      <div class="card-body">
+        <div class="card-header">
+          <h3 class="card-title">{{ a.nombre }}</h3>
+          <div class="card-rating" *ngIf="a.rating > 0">
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+            <span>{{ a.rating | number:'1.1-1' }}</span>
+          </div>
+        </div>
+        <p class="card-location">
+          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          {{ a.ubicacion }}
+        </p>
+        <div class="card-footer">
+          <span class="card-price">
+            ${{ a.precioNoche | number }}
+            <small>/ noche</small>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

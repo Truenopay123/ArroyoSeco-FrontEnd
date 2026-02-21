@@ -32,7 +32,7 @@
 
   &:focus {
     outline: none;
-    border-color: #fbbf24;
+    border-color: var(--color-primary, #E31B23);
   }
 }
 

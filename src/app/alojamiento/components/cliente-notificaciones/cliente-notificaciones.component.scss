@@ -7,7 +7,7 @@
 .tabs h2 {
   margin: 0;
   font-size: 1.6rem;
-  color: #1f2937;
+  color: var(--color-text, #1f2937);
 }
 
 .section {
@@ -21,7 +21,7 @@
   font-size: 1.2rem;
   color: #374151;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid #e5e7eb;
+  border-bottom: 2px solid var(--color-border, #e5e7eb);
 }
 
 .list {
@@ -31,7 +31,7 @@
 }
 
 .notification-card {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border, #e5e7eb);
   border-radius: 12px;
   padding: 1.25rem;
   background: #fff;
@@ -44,8 +44,8 @@
 }
 
 .notification-card.no-leida {
-  border-left: 4px solid #0891b2;
-  background: #ecfeff;
+  border-left: 4px solid var(--color-primary, #E31B23);
+  background: var(--color-primary-light, #fee2e2);
 }
 
 .notification-card.leida {
@@ -69,15 +69,15 @@
 }
 
 .badge.reserva {
-  background: #cffafe;
-  color: #0e7490;
-  border: 1px solid #a5f3fc;
+  background: var(--color-primary-light, #fee2e2);
+  color: var(--color-primary-dark, #c41019);
+  border: 1px solid rgba(227, 27, 35, 0.2);
 }
 
 .badge.sistema {
-  background: #dbeafe;
-  color: #1d4ed8;
-  border: 1px solid #bfdbfe;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
 }
 
 .badge.oferta {
@@ -88,14 +88,14 @@
 
 .fecha {
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--color-text-secondary, #6b7280);
 }
 
 .notification-card h4 {
   margin: 0 0 0.5rem;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--color-text, #1f2937);
 }
 
 .notification-card p {
@@ -113,20 +113,24 @@
 .btn-action {
   padding: 0.5rem 1rem;
   background: #fff;
-  border: 1px solid #0891b2;
-  color: #0891b2;
+  border: 1px solid var(--color-primary, #E31B23);
+  color: var(--color-primary, #E31B23);
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.35rem;
   font-size: 0.9rem;
+
+  svg {
+    flex-shrink: 0;
+  }
 }
 
 .btn-action:hover {
-  background: #0891b2;
+  background: var(--color-primary, #E31B23);
   color: #fff;
 }
 
@@ -140,6 +144,9 @@
   cursor: pointer;
   transition: all 0.2s;
   font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-delete:hover {

@@ -1,6 +1,6 @@
 .navbar {
   background: #fff;
-  border-bottom: 2px solid #fbbf24;
+  border-bottom: 2px solid var(--color-primary, #E31B23);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   position: sticky;
   top: 0;
@@ -57,7 +57,7 @@
     display: block;
     width: 25px;
     height: 3px;
-    background: #c73619;
+    background: var(--color-primary, #E31B23);
     border-radius: 3px;
     transition: all 0.3s ease;
   }
@@ -87,7 +87,7 @@
   background: #fff;
   flex-direction: column;
   padding: 1rem;
-  border-bottom: 2px solid #fbbf24;
+  border-bottom: 2px solid var(--color-primary, #E31B23);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   max-height: calc(100vh - 64px);
   overflow-y: auto;
@@ -138,14 +138,14 @@
   }
 
   &.active {
-    color: #c73619;
+    color: var(--color-primary, #E31B23);
     background: #fef3c7;
     padding-left: 1rem;
 
     @media (min-width: 768px) {
       background: transparent;
       padding-left: 0;
-      border-bottom-color: #c73619;
+      border-bottom-color: var(--color-primary, #E31B23);
     }
   }
 }
@@ -163,12 +163,12 @@
 
 .ir-alojamientos {
   text-decoration: none;
-  color: #0891b2;
+  color: var(--color-primary, #E31B23);
   font-weight: 600;
   font-size: 0.95rem;
   padding: 0.75rem 1rem;
   border-radius: 8px;
-  border: 2px solid #0891b2;
+  border: 2px solid var(--color-primary, #E31B23);
   transition: all 0.2s;
   white-space: nowrap;
   display: flex;
@@ -181,7 +181,7 @@
   }
 
   &:hover {
-    background: #0891b2;
+    background: var(--color-primary, #E31B23);
     color: #fff;
   }
 }

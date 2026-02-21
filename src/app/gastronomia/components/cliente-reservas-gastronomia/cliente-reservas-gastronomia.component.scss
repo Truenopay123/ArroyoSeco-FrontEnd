@@ -19,8 +19,8 @@
     }
 
     &.active {
-      color: #c73619;
-      border-bottom-color: #c73619;
+      color: var(--color-primary, #E31B23);
+      border-bottom-color: var(--color-primary, #E31B23);
     }
   }
 }

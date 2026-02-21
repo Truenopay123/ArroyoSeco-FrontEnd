@@ -26,14 +26,14 @@ export class AdminHomeSelectorComponent {
       description: 'Gestiona hospedajes, oferentes y reservas',
       route: '/admin/dashboard',
       icon: 'alojamiento',
-      color: '#0891b2'
+      color: '#E31B23'
     },
     {
       title: 'Gastronomía',
       description: 'Gestiona restaurantes, oferentes y reservas',
       route: '/admin/gastronomia/dashboard',
       icon: 'gastronomia',
-      color: '#c73619'
+      color: '#E31B23'
     }
   ];
 }

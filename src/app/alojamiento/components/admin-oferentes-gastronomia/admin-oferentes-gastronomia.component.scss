@@ -61,17 +61,17 @@
 }
 
 .btn.primary {
-  background: #1c66d6;
+  background: var(--color-primary, #E31B23);
   color: #fff;
 }
 
 .btn.primary:hover {
-  background: #1550a8;
+  background: var(--color-primary-dark, #c41019);
 }
 
 .btn.ghost {
   background: transparent;
-  color: #1c66d6;
+  color: var(--color-primary, #E31B23);
   padding: 0.5rem 1rem;
 }
 
@@ -213,8 +213,8 @@ td.actions {
 .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem 1rem; }
 label { display: grid; gap: .5rem; font-weight: 600; color: #374151; }
 input { border: 1px solid #d1d5db; border-radius: 10px; padding: .6rem .9rem; }
-.btn.primary { background: #1c66d6; color: #fff; }
-.btn.ghost { background: transparent; color: #1c66d6; }
+.btn.primary { background: var(--color-primary, #E31B23); color: #fff; }
+.btn.ghost { background: transparent; color: var(--color-primary, #E31B23); }
 .btn.danger { background: #ef4444; color: #fff; }
 .btn.danger:hover { background: #dc2626; }
 

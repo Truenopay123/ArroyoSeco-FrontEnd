@@ -1,17 +1,19 @@
+/* ===== Oferente Navbar — Red & White ===== */
 .oferente-navbar {
-  background: #fff;
-  /* Match Gastronomía navbar underline */
-  border-bottom: 2px solid #fbbf24;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border-bottom: 2px solid var(--color-primary, #E31B23);
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.06));
   position: sticky;
   top: 0;
   z-index: 100;
+  transition: background 0.3s, box-shadow 0.3s;
 }
 
 .navbar-inner {
   max-width: 1400px;
   margin: 0 auto;
-  /* Match Gastronomía spacing and height */
   padding: 0 1rem;
   display: flex;
   align-items: center;
@@ -19,7 +21,6 @@
   min-height: 64px;
 }
 
-/* Brand sizing equal to Gastronomía */
 .brand { display: flex; align-items: center; text-decoration: none; flex-shrink: 0; }
 .brand__logo { height: 40px; width: auto; }
 
@@ -28,33 +29,90 @@
   .brand__logo { height: 52px; }
 }
 
-// Drawer
+/* Hamburger animated */
+.hamburger {
+  display: none;
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  position: relative;
+  padding: 0;
+
+  span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--color-text, #1f2937);
+    border-radius: 2px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: all 0.3s ease;
+
+    &:nth-child(1) { top: 10px; }
+    &:nth-child(2) { top: 17px; }
+    &:nth-child(3) { top: 24px; }
+  }
+
+  &.open span {
+    &:nth-child(1) { top: 17px; transform: translateX(-50%) rotate(45deg); }
+    &:nth-child(2) { opacity: 0; }
+    &:nth-child(3) { top: 17px; transform: translateX(-50%) rotate(-45deg); }
+  }
+}
+
+/* Drawer */
 .nav-drawer {
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
-  width: 74%;
+  width: 78%;
   max-width: 320px;
   background: #fff;
-  box-shadow: 2px 0 12px rgba(0,0,0,0.15);
-  padding: 1rem 1.25rem 2.5rem;
+  box-shadow: 2px 0 16px rgba(0,0,0,0.12);
+  padding: 1.25rem 1.5rem 2.5rem;
   display: flex;
   flex-direction: column;
-  gap: .5rem;
+  gap: 0.5rem;
   transform: translateX(-100%);
-  transition: transform .3s ease;
+  transition: transform 0.3s ease;
   z-index: 300;
   overflow-y: auto;
 }
+
 .nav-drawer.open { transform: translateX(0); }
-.nav-drawer .close-btn { align-self: flex-end; background:none; border:none; font-size:2rem; cursor:pointer; margin-bottom:.5rem; }
-.nav-drawer .drawer-actions { margin-top:1rem; display:flex; flex-direction:column; gap:.75rem; border-top:1px solid #e5e7eb; padding-top:1rem; }
+
+.nav-drawer .close-btn {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+  color: #6b7280;
+  padding: 4px;
+  border-radius: 8px;
+  transition: background 0.2s;
+
+  &:hover { background: #f3f4f6; }
+}
+
+.nav-drawer .drawer-actions {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+  padding-top: 1rem;
+}
 
 .drawer-links {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.25rem;
 }
 
 .nav-link {
@@ -65,59 +123,65 @@
   padding: 0.5rem 0;
   border-bottom: 3px solid transparent;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 @media (min-width: 768px) {
   .nav-drawer {
-    position: static; transform:none !important; width:auto; max-width:none; flex-direction:row; padding:0; box-shadow:none; overflow:visible;
+    position: static;
+    transform: none !important;
+    width: auto;
+    max-width: none;
+    flex-direction: row;
+    padding: 0;
+    box-shadow: none;
+    overflow: visible;
+    gap: 1rem;
   }
-  .nav-drawer .close-btn { display:none; }
-  .nav-drawer .drawer-actions { margin-top:0; border-top:none; padding-top:0; flex-direction:row; align-items:center; gap:1rem; }
+  .nav-drawer .close-btn { display: none; }
+  .nav-drawer .drawer-actions {
+    margin-top: 0;
+    border-top: none;
+    padding-top: 0;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
   .drawer-links { flex: 1; flex-direction: row; gap: 1.5rem; align-items: center; }
 }
+
 .nav-link:hover {
-  color: #1f2937;
+  color: var(--color-text, #1f2937);
   border-bottom-color: #d1d5db;
 }
 
 .nav-link.active {
-  color: #c73619;
-  border-bottom-color: #c73619;
-}
-
-.navbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-shrink: 0;
-}
-
-.hamburger {
-  display: none;
-  margin-left: auto;
-  background: #fff;
-  border: 2px solid #d1d5db;
-  border-radius: 8px;
-  padding: 0.5rem 0.75rem;
-  font-size: 1.25rem;
-  cursor: pointer;
+  color: var(--color-primary, #E31B23);
+  border-bottom-color: var(--color-primary, #E31B23);
 }
 
 .cambiar-experiencia {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   text-decoration: none;
-  color: #1c66d6;
+  color: var(--color-primary, #E31B23);
   font-weight: 600;
   font-size: 0.9rem;
   padding: 0.5rem 1rem;
-  border-radius: 8px;
-  border: 2px solid #1c66d6;
+  border-radius: var(--radius-sm, 8px);
+  border: 1.5px solid var(--color-primary, #E31B23);
   transition: all 0.2s;
   white-space: nowrap;
+
+  svg { flex-shrink: 0; }
 }
 
 .cambiar-experiencia:hover {
-  background: #1c66d6;
+  background: var(--color-primary, #E31B23);
   color: #fff;
+
+  svg { fill: #fff; }
 }
 
 .logout {
@@ -126,42 +190,14 @@
   font-weight: 600;
   font-size: 0.95rem;
   padding: 0.5rem 1.25rem;
-  border-radius: 8px;
+  border-radius: var(--radius-sm, 8px);
   transition: all 0.2s;
   flex-shrink: 0;
+  cursor: pointer;
 }
 
-.logout:hover {
-  background: #fee2e2;
-}
+.logout:hover { background: #fee2e2; }
 
-@media (max-width: 968px) {
-  .navbar-inner {
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  .hamburger { display: inline-block; }
-
-  .nav-links {
-    order: 3;
-    width: 100%;
-    gap: 1rem;
-    display: none;
-  }
-  .nav-links.open { display: flex; flex-direction: column; }
-
-  .navbar-actions {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    order: 4;
-    width: 100%;
-    display: none;
-  }
-  .navbar-actions.open { display: flex; flex-direction: column; align-items: stretch; }
-
-  .cambiar-experiencia {
-    font-size: 0.85rem;
-    padding: 0.4rem 0.75rem;
-  }
+@media (max-width: 767px) {
+  .hamburger { display: flex; align-items: center; justify-content: center; }
 }

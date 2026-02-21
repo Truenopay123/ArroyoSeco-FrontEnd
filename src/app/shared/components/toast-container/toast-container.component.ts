@@ -32,6 +32,12 @@ import { ToastService } from '../../services/toast.service';
         </div>
         <div class="toast__message">{{ toast.message }}</div>
         <button class="toast__close" (click)="remove(toast.id)">×</button>
+        <div class="toast__progress" *ngIf="toast.duration"
+             [style.animation-duration.ms]="toast.duration"
+             [class.success]="toast.type === 'success'"
+             [class.error]="toast.type === 'error'"
+             [class.warning]="toast.type === 'warning'"
+             [class.info]="toast.type === 'info'"></div>
       </div>
     </div>
   `,
@@ -57,6 +63,9 @@ import { ToastService } from '../../services/toast.service';
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
       animation: slideIn 0.3s ease-out;
       min-width: 300px;
+      position: relative;
+      overflow: hidden;
+      flex-wrap: wrap;
     }
 
     @keyframes slideIn {
@@ -141,6 +150,27 @@ import { ToastService } from '../../services/toast.service';
     .toast__close:hover {
       background: #f3f4f6;
       color: #4b5563;
+    }
+
+    .toast__progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      width: 100%;
+      border-radius: 0 0 12px 12px;
+      animation: progressShrink linear forwards;
+      transform-origin: left;
+    }
+
+    .toast__progress.success { background: #10b981; }
+    .toast__progress.error   { background: #ef4444; }
+    .toast__progress.warning { background: #f59e0b; }
+    .toast__progress.info    { background: #3b82f6; }
+
+    @keyframes progressShrink {
+      from { transform: scaleX(1); }
+      to   { transform: scaleX(0); }
     }
 
     @media (max-width: 768px) {

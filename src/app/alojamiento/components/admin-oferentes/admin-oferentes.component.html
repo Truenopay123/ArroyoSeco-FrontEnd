@@ -83,37 +83,82 @@
 
   <!-- Modal registro -->
   <div class="modal-backdrop" *ngIf="modalRegistroAbierto" (click)="cerrarRegistro()"></div>
-  <div class="modal" *ngIf="modalRegistroAbierto">
+  <div class="modal modal--register" *ngIf="modalRegistroAbierto">
     <div class="modal__header">
-      <h3>Registrar nuevo oferente</h3>
+      <div class="modal__header-icon">
+        <svg viewBox="0 0 24 24" width="28" height="28"><path fill="var(--color-primary, #E31B23)" d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      </div>
+      <div>
+        <h3>Registrar nuevo oferente</h3>
+        <p class="modal__subtitle">Ingresa los datos del nuevo oferente para darlo de alta en el sistema</p>
+      </div>
       <button class="close" (click)="cerrarRegistro()">×</button>
     </div>
     <form #f="ngForm" (ngSubmit)="registrar(f)">
-      <div class="modal__body form-grid">
-        <label>
-          Nombre completo
-          <input type="text" name="nombre" [(ngModel)]="nuevo.nombre" required />
-        </label>
-        <label>
-          Correo
-          <input type="email" name="correo" [(ngModel)]="nuevo.correo" required />
-        </label>
-        <label>
-          Teléfono
-          <input type="tel" name="telefono" [(ngModel)]="nuevo.telefono" required />
-        </label>
-        <label>
-          Tipo de Oferente
-          <select name="tipo" [(ngModel)]="nuevo.tipo" required>
-            <option [ngValue]="1">Alojamiento</option>
-            <option [ngValue]="2">Gastronomía</option>
-            <option [ngValue]="3">Ambos</option>
-          </select>
-        </label>
+      <div class="modal__body">
+        <div class="form-section">
+          <h4 class="form-section__title">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            Información personal
+          </h4>
+          <div class="form-grid">
+            <label class="form-field">
+              <span class="form-field__label">Nombre completo <span class="required">*</span></span>
+              <input type="text" name="nombre" [(ngModel)]="nuevo.nombre" placeholder="Ej: María González Rivera" required />
+            </label>
+            <label class="form-field">
+              <span class="form-field__label">Correo electrónico <span class="required">*</span></span>
+              <input type="email" name="correo" [(ngModel)]="nuevo.correo" placeholder="correo@ejemplo.com" required />
+            </label>
+            <label class="form-field">
+              <span class="form-field__label">Teléfono <span class="required">*</span></span>
+              <input type="tel" name="telefono" [(ngModel)]="nuevo.telefono" placeholder="442-123-4567" required />
+            </label>
+          </div>
+        </div>
+        <div class="form-section">
+          <h4 class="form-section__title">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>
+            Tipo de negocio
+          </h4>
+          <div class="tipo-selector">
+            <label class="tipo-card" [class.selected]="nuevo.tipo === 1" (click)="nuevo.tipo = 1">
+              <input type="radio" name="tipo" [value]="1" [(ngModel)]="nuevo.tipo" required hidden />
+              <div class="tipo-card__icon">
+                <svg viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+              </div>
+              <span class="tipo-card__label">Alojamiento</span>
+              <span class="tipo-card__desc">Hospedaje, cabañas, hotel</span>
+            </label>
+            <label class="tipo-card" [class.selected]="nuevo.tipo === 2" (click)="nuevo.tipo = 2">
+              <input type="radio" name="tipo" [value]="2" [(ngModel)]="nuevo.tipo" required hidden />
+              <div class="tipo-card__icon">
+                <svg viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/></svg>
+              </div>
+              <span class="tipo-card__label">Gastronomía</span>
+              <span class="tipo-card__desc">Restaurante, café, bar</span>
+            </label>
+            <label class="tipo-card" [class.selected]="nuevo.tipo === 3" (click)="nuevo.tipo = 3">
+              <input type="radio" name="tipo" [value]="3" [(ngModel)]="nuevo.tipo" required hidden />
+              <div class="tipo-card__icon">
+                <svg viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M12 2l-5.5 9h11L12 2zm0 3.84L13.93 9h-3.87L12 5.84zM17.5 13c-2.49 0-4.5 2.01-4.5 4.5s2.01 4.5 4.5 4.5 4.5-2.01 4.5-4.5-2.01-4.5-4.5-4.5zm0 7c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5zM3 21.5h8v-8H3v8zm2-6h4v4H5v-4z"/></svg>
+              </div>
+              <span class="tipo-card__label">Ambos</span>
+              <span class="tipo-card__desc">Alojamiento y gastronomía</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-info">
+          <svg viewBox="0 0 24 24" width="16" height="16"><path fill="#6b7280" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          <span>Se asignará la contraseña temporal <strong>Temporal.123</strong> al nuevo oferente.</span>
+        </div>
       </div>
       <div class="modal__footer">
         <button class="btn ghost" type="button" (click)="cerrarRegistro()">Cancelar</button>
-        <button class="btn primary" [disabled]="f.invalid">Registrar</button>
+        <button class="btn primary" [disabled]="f.invalid">
+          <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          Registrar oferente
+        </button>
       </div>
     </form>
   </div>

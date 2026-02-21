@@ -101,7 +101,7 @@ td.actions {
 
 .btn.ghost {
   background: transparent;
-  color: #1c66d6;
+  color: var(--color-primary, #E31B23);
 }
 
 .btn.ghost:hover {

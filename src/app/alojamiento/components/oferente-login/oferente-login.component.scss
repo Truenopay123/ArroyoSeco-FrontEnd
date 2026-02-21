@@ -85,7 +85,7 @@
 
 .form-card .subtitle {
   margin: -0.75rem 0 0;
-  color: #c73619;
+  color: var(--color-primary, #E31B23);
   font-weight: 600;
   font-size: 0.95rem;
   text-align: center;
@@ -119,7 +119,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  background: #1c66d6;
+  background: var(--color-primary, #E31B23);
   color: #fff;
   border: none;
   border-radius: 999px;
@@ -130,7 +130,7 @@
 }
 
 .form-card button[type='submit']:hover {
-  background: #1550a8;
+  background: var(--color-primary-dark, #c41019);
 }
 
 .form-card button[type='submit']:disabled {
@@ -152,7 +152,7 @@
 }
 
 .form-card .links a {
-  color: #1c66d6;
+  color: var(--color-primary, #E31B23);
   text-decoration: none;
   font-weight: 500;
 }

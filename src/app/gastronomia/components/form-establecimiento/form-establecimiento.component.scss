@@ -32,7 +32,7 @@
 
     &:focus {
       outline: none;
-      border-color: #c73619;
+      border-color: var(--color-primary, #E31B23);
     }
   }
 
@@ -63,11 +63,11 @@
   }
 
   .btn-submit {
-    background: #c73619;
+    background: var(--color-primary, #E31B23);
     color: white;
 
     &:hover:not(:disabled) {
-      background: #a82e15;
+      background: var(--color-primary-dark, #c41019);
     }
 
     &:disabled {

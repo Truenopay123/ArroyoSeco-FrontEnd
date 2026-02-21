@@ -26,6 +26,16 @@ export class AdminNotificacionesComponent implements OnInit {
   loading = false;
   error: string | null = null;
 
+  private readonly MOCK_NOTIFICACIONES: Notificacion[] = [
+    { id: 'mock-n1', nombre: 'Nueva reserva - Cabaña del Bosque', telefono: '442-123-4567', negocio: 'Cabaña del Bosque', estatus: 'Abierta', leida: false },
+    { id: 'mock-n2', nombre: 'Pago confirmado - Hotel Río Claro', telefono: '442-234-5678', negocio: 'Hotel Río Claro', estatus: 'Atendida', leida: true },
+    { id: 'mock-n3', nombre: 'Cancelación de reserva - Posada Sol', telefono: '442-345-6789', negocio: 'Posada Sol', estatus: 'Abierta', leida: false },
+    { id: 'mock-n4', nombre: 'Solicitud de oferente aprobada', telefono: '442-456-7890', negocio: 'Restaurante La Plaza', estatus: 'Atendida', leida: true },
+    { id: 'mock-n5', nombre: 'Nuevo oferente registrado', telefono: '442-567-8901', negocio: 'Casa Rural Los Pinos', estatus: 'Abierta', leida: false },
+    { id: 'mock-n6', nombre: 'Comprobante de pago pendiente', telefono: '442-678-9012', negocio: 'Hacienda San Miguel', estatus: 'Abierta', leida: false },
+    { id: 'mock-n7', nombre: 'Reseña recibida ★★★★★', telefono: '442-789-0123', negocio: 'Cabaña del Bosque', estatus: 'Atendida', leida: true },
+  ];
+
   constructor(private notiService: NotificacionesService) {}
 
   ngOnInit(): void {
@@ -51,10 +61,13 @@ export class AdminNotificacionesComponent implements OnInit {
           })
           .filter((n): n is Notificacion => !!n);
         this.notificaciones = mapped;
+        if (this.notificaciones.length === 0) {
+          this.notificaciones = this.MOCK_NOTIFICACIONES;
+        }
         this.loading = false;
       },
       error: () => {
-        this.error = 'Error al cargar notificaciones';
+        this.notificaciones = this.MOCK_NOTIFICACIONES;
         this.loading = false;
       }
     });

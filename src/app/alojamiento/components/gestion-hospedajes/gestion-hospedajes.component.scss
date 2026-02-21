@@ -33,7 +33,7 @@
 }
 
 .info strong {
-  color: #c73619;
+  color: var(--color-primary, #E31B23);
 }
 
 .hospedajes__actions {
@@ -67,12 +67,12 @@
 }
 
 .btn.primary {
-  background: #c73619;
+  background: var(--color-primary, #E31B23);
   color: #fff;
 }
 
 .btn.primary:hover {
-  background: #a52e15;
+  background: var(--color-primary-dark, #c41019);
 }
 
 .cards {
@@ -119,7 +119,7 @@
   margin: 0;
   font-size: 1.15rem;
   font-weight: 700;
-  color: #c73619;
+  color: var(--color-primary, #E31B23);
 }
 
 .card-location {
@@ -190,7 +190,7 @@
 .btn-link {
   background: none;
   border: none;
-  color: #1c66d6;
+  color: var(--color-primary, #E31B23);
   font-weight: 600;
   font-size: 0.9rem;
   text-decoration: none;

@@ -5,9 +5,13 @@
 
   .content {
     flex: 1;
-    padding: 2rem;
+    padding: 0 2rem 2rem;
     max-width: 1400px;
     margin: 0 auto;
     width: 100%;
+  }
+
+  .content.no-hero {
+    padding-top: 2rem;
   }
 }

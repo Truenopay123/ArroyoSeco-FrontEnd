@@ -14,7 +14,7 @@
 
 .btn-agregar, .btn-primary {
   padding: 0.75rem 1.5rem;
-  background: #c73619;
+  background: var(--color-primary, #E31B23);
   color: white;
   text-decoration: none;
   border-radius: 8px;
@@ -23,7 +23,7 @@
   display: inline-block;
 
   &:hover {
-    background: #a82e15;
+    background: var(--color-primary-dark, #c41019);
   }
 }
 

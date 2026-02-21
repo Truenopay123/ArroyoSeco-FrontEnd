@@ -4,11 +4,15 @@
       <img src="assets/images/logo-arroyo-seco.svg" alt="Arroyo Seco" class="brand__logo" />
     </a>
 
-    <button class="hamburger" (click)="toggleMenu()" aria-label="Abrir menú">☰</button>
+    <button class="hamburger" [class.open]="menuOpen" (click)="toggleMenu()" aria-label="Abrir menú">
+      <span></span><span></span><span></span>
+    </button>
 
     <!-- Side Drawer -->
     <div class="nav-drawer" [class.open]="menuOpen">
-      <button class="close-btn" (click)="toggleMenu()" aria-label="Cerrar menú">×</button>
+      <button class="close-btn" (click)="toggleMenu()" aria-label="Cerrar menú">
+        <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
       <nav class="drawer-links">
         <a routerLink="/cliente/alojamientos" routerLinkActive="active" class="nav-link">Alojamientos</a>
         <a routerLink="/cliente/reservas" routerLinkActive="active" class="nav-link">Mis Reservas</a>
@@ -18,7 +22,8 @@
       </nav>
       <div class="drawer-actions">
         <a routerLink="/cliente/gastronomia" class="ir-restaurantes" title="Ver restaurantes">
-          🍽️ Ir a Restaurantes
+          <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/></svg>
+          Ir a Restaurantes
         </a>
         <a (click)="logout()" class="logout">Cerrar sesión</a>
       </div>

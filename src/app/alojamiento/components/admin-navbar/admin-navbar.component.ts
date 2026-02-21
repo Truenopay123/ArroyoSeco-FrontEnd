@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
+import { AuthService } from '../../../core/services/auth.service';
 
 interface NavLink {
   label: string;
@@ -35,7 +36,7 @@ export class AdminNavbarComponent implements OnInit {
     { label: 'Notificaciones', route: '/admin/gastronomia/notificaciones' }
   ];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private auth: AuthService) {}
 
   ngOnInit(): void {
     this.updateLinksBasedOnRoute(this.router.url);
@@ -60,4 +61,9 @@ export class AdminNavbarComponent implements OnInit {
 
   menuOpen = false;
   toggleMenu() { this.menuOpen = !this.menuOpen; }
+
+  logout() {
+    this.auth.logout();
+    this.router.navigate(['/login']);
+  }
 }

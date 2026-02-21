@@ -31,8 +31,8 @@
 		}
 
 		&.active {
-			color: #2563eb;
-			background: #eff6ff;
+			color: var(--color-primary, #E31B23);
+			background: var(--color-primary-light, #fee2e2);
 			font-weight: 600;
 		}
 

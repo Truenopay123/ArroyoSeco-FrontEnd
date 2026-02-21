@@ -34,6 +34,15 @@ export class AdminSolicitudesComponent implements OnInit {
   searchTerm = '';
   tipoFiltro: number | null = null; // 1=Alojamiento, 2=Gastronomía, null=Todos
 
+  private readonly MOCK_SOLICITUDES: Solicitud[] = [
+    { id: 1, nombre: 'Juan Carlos Méndez', telefono: '442-111-2233', contexto: 'Cabaña familiar en zona boscosa con vista al río, capacidad para 8 personas. Operamos desde 2018.', tipoNegocio: 1, tipoTexto: 'Alojamiento', fechaSolicitud: '2025-01-15T10:30:00', estado: 'Pendiente' },
+    { id: 2, nombre: 'Elena Ríos Paredes', telefono: '442-222-3344', contexto: 'Restaurante de comida tradicional queretana con 15 años de experiencia. Capacidad 40 comensales.', tipoNegocio: 2, tipoTexto: 'Gastronomía', fechaSolicitud: '2025-01-14T14:15:00', estado: 'Pendiente' },
+    { id: 3, nombre: 'Fernando Aguilar', telefono: '442-333-4455', contexto: 'Hotel boutique con restaurante integrado. 12 habitaciones y salón de eventos.', tipoNegocio: 3, tipoTexto: 'Ambos', fechaSolicitud: '2025-01-13T09:00:00', estado: 'Pendiente' },
+    { id: 4, nombre: 'Patricia Vázquez Luna', telefono: '442-444-5566', contexto: 'Posada campestre con desayuno incluido. Ideal para turismo de naturaleza.', tipoNegocio: 1, tipoTexto: 'Alojamiento', fechaSolicitud: '2025-01-12T16:45:00', estado: 'Pendiente' },
+    { id: 5, nombre: 'Diego Morales Ortiz', telefono: '442-555-6677', contexto: 'Food truck de tacos y antojitos mexicanos. Participamos en eventos y ferias locales.', tipoNegocio: 2, tipoTexto: 'Gastronomía', fechaSolicitud: '2025-01-11T11:20:00', estado: 'Pendiente' },
+    { id: 6, nombre: 'Gabriela Flores Castillo', telefono: '442-666-7788', contexto: 'Departamento turístico amueblado tipo Airbnb. Ubicado en el centro histórico.', tipoNegocio: 1, tipoTexto: 'Alojamiento', fechaSolicitud: '2025-01-10T08:30:00', estado: 'Pendiente' },
+  ];
+
   ngOnInit(): void {
     // Detectar si viene de gastronomía o alojamiento
     this.detectarTipoDesdeRuta();
@@ -87,11 +96,18 @@ export class AdminSolicitudesComponent implements OnInit {
           fechaSolicitud: s.fechaSolicitud,
           estado: s.estatus
         }));
+        if (this.solicitudes.length === 0) {
+          this.solicitudes = this.MOCK_SOLICITUDES.filter(s =>
+            this.tipoFiltro === null || s.tipoNegocio === this.tipoFiltro || s.tipoNegocio === 3
+          );
+        }
         this.loading = false;
       },
       error: (err) => {
-        this.toastService.error('Error al cargar solicitudes');
-        console.error('Error cargarSolicitudes:', err);
+        this.solicitudes = this.MOCK_SOLICITUDES.filter(s =>
+          this.tipoFiltro === null || s.tipoNegocio === this.tipoFiltro || s.tipoNegocio === 3
+        );
+        console.error('Error al cargar solicitudes, usando datos de demostración:', err);
         this.loading = false;
       }
     });

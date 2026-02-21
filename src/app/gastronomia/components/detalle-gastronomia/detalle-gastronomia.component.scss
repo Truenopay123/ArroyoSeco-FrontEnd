@@ -1,238 +1,510 @@
-.loading, .error {
-  text-align: center;
-  padding: 3rem 1rem;
-  font-size: 1.1rem;
-}
+// ── Design Tokens ────────────────────────────
+$color-primary: #E31B23;
+$color-primary-dark: #c41019;
+$color-primary-light: #fee2e2;
+$color-text: #1f2937;
+$color-text-secondary: #6b7280;
+$color-border: #e5e7eb;
+$color-bg: #fafafa;
+$radius: 16px;
+$radius-sm: 12px;
+$shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+$transition: 0.25s ease;
 
-.error {
-  color: #dc2626;
-}
-
-.detalle {
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.header {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-bottom: 2rem;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.foto-principal {
-  width: 100%;
-  height: 400px;
-  object-fit: cover;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.info {
+// ── Loading & Error ──────────────────────────
+.loading-state {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  
-  h1 {
-    margin: 0;
-    font-size: 2rem;
-    color: #1f2937;
-  }
-  
-  .ubicacion {
-    color: #6b7280;
-    font-size: 1.05rem;
-    margin: 0;
-  }
-  
-  .descripcion {
-    color: #4b5563;
-    line-height: 1.6;
+  align-items: center;
+  gap: 16px;
+  padding: 80px 20px;
+  color: $color-text-secondary;
+  font-size: 15px;
+}
+
+.loading-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid $color-border;
+  border-top-color: $color-primary;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 80px 20px;
+  text-align: center;
+  color: $color-text-secondary;
+
+  p {
+    font-size: 16px;
     margin: 0;
   }
 }
 
-.btn-como-llegar {
-  margin-top: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: #059669;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all 0.2s;
+// ── Page Container ───────────────────────────
+.detalle-page {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+// ── Hero ─────────────────────────────────────
+.hero {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  overflow: hidden;
+  border-radius: 0 0 $radius $radius;
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.05) 100%);
+  }
+
+  &__back {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    border-radius: 50%;
+    color: $color-text;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all $transition;
+    z-index: 2;
+
+    &:hover {
+      background: #fff;
+      transform: scale(1.05);
+    }
+  }
+
+  &__content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 28px 32px;
+    z-index: 2;
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 100px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    margin-bottom: 12px;
+  }
+
+  &__title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #fff;
+    margin: 0 0 8px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  &__location {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 15px;
+    margin: 0;
+  }
+}
+
+// ── Content Grid ─────────────────────────────
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 32px;
+  max-width: 1100px;
+  margin: -40px auto 0;
+  padding: 0 24px 60px;
+  position: relative;
+  z-index: 3;
+}
+
+// ── Section Cards ────────────────────────────
+.section-card {
+  background: #fff;
+  border-radius: $radius;
+  box-shadow: $shadow;
+  padding: 28px;
+  margin-bottom: 24px;
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 700;
+    color: $color-text;
+    margin: 0 0 16px;
+  }
+
+  &__text {
+    font-size: 15px;
+    line-height: 1.7;
+    color: $color-text-secondary;
+    margin: 0 0 16px;
+  }
+}
+
+.btn-directions {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  align-self: flex-start;
-  
+  gap: 8px;
+  padding: 10px 20px;
+  background: #059669;
+  color: #fff;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all $transition;
+
   &:hover {
     background: #047857;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
   }
-  
+
   &:active {
     transform: translateY(0);
   }
 }
 
-.btn-reservar {
-  padding: 0.875rem 1.5rem;
-  background: #c73619;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.2s;
-  
-  &:hover {
-    background: #a82e15;
+// ── Menu ─────────────────────────────────────
+.menu-group {
+  margin-bottom: 24px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &__name {
+    font-size: 18px;
+    font-weight: 700;
+    color: $color-primary;
+    margin: 0 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid $color-primary-light;
   }
 }
 
-.reserva-form {
-  background: #fef3c7;
-  padding: 1.5rem;
-  border-radius: 12px;
-  margin-bottom: 2rem;
-  
-  h3 {
-    margin-top: 0;
-    color: #92400e;
+.menu-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.menu-item {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 12px 0;
+  border-bottom: 1px solid lighten($color-border, 3%);
+
+  &:last-child {
+    border-bottom: none;
   }
-  
-  .form-group {
-    margin-bottom: 1rem;
-    
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-      color: #1f2937;
+
+  &__info {
+    flex-shrink: 0;
+  }
+
+  &__name {
+    font-size: 15px;
+    font-weight: 600;
+    color: $color-text;
+    margin: 0 0 2px;
+  }
+
+  &__desc {
+    font-size: 13px;
+    color: $color-text-secondary;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  &__dots {
+    flex: 1;
+    min-width: 20px;
+    border-bottom: 2px dotted #d1d5db;
+    margin-bottom: 4px;
+  }
+
+  &__price {
+    font-size: 16px;
+    font-weight: 700;
+    color: $color-primary;
+    white-space: nowrap;
+  }
+}
+
+// ── Sidebar ──────────────────────────────────
+.sidebar {
+  position: relative;
+}
+
+.reserva-card {
+  position: sticky;
+  top: 90px;
+  background: #fff;
+  border-radius: $radius;
+  box-shadow: $shadow-lg;
+  padding: 28px;
+  border: 1px solid $color-border;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid $color-border;
+
+    h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: $color-text;
+      margin: 0;
     }
-    
-    input, select {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 0.95rem;
+  }
+
+  &__notice {
+    font-size: 14px;
+    color: $color-text-secondary;
+    line-height: 1.6;
+    margin: 0 0 20px;
+  }
+
+  &__cta {
+    font-size: 14px;
+    color: $color-text-secondary;
+    margin: 0 0 16px;
+  }
+}
+
+// ── Reservation Form ─────────────────────────
+.reserva-form--open {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &__label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: $color-text;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid $color-border;
+    border-radius: $radius-sm;
+    font-size: 15px;
+    color: $color-text;
+    background: #fff;
+    outline: none;
+    transition: border-color $transition, box-shadow $transition;
+    font-family: inherit;
+    box-sizing: border-box;
+
+    &:focus {
+      border-color: $color-primary;
+      box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+    }
+
+    &::placeholder {
+      color: #c0c5ce;
     }
   }
 }
 
-.btn-confirmar {
-  width: 100%;
-  padding: 0.875rem;
-  background: #059669;
-  color: white;
+.reserva-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+// ── Buttons ──────────────────────────────────
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  background: $color-primary;
+  color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: $radius-sm;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  
+  transition: all $transition;
+  text-decoration: none;
+  line-height: 1.2;
+
+  &--full {
+    width: 100%;
+  }
+
   &:hover:not(:disabled) {
-    background: #047857;
+    background: $color-primary-dark;
+    box-shadow: 0 4px 14px rgba($color-primary, 0.35);
+    transform: translateY(-1px);
   }
-  
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
   &:disabled {
-    opacity: 0.6;
+    opacity: 0.7;
     cursor: not-allowed;
   }
 }
 
-.menus-section {
-  margin-top: 3rem;
-  
-  h2 {
-    font-size: 1.75rem;
-    color: #1f2937;
-    margin-bottom: 1.5rem;
-  }
-}
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  background: transparent;
+  color: $color-text-secondary;
+  border: 1.5px solid $color-border;
+  border-radius: $radius-sm;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all $transition;
+  width: 100%;
 
-.menus {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.menu {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 1.5rem;
-  
-  h3 {
-    margin-top: 0;
-    color: #c73619;
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-}
-
-.items {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.item {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #f3f4f6;
-  
-  &:last-child {
-    border-bottom: none;
-  }
-  
-  .item-info {
-    flex: 1;
-    
-    h4 {
-      margin: 0 0 0.25rem 0;
-      color: #1f2937;
-      font-size: 1.05rem;
-    }
-    
-    p {
-      margin: 0;
-      color: #6b7280;
-      font-size: 0.9rem;
-    }
-  }
-  
-  .precio {
-    color: #c73619;
-    font-weight: 700;
-    font-size: 1.1rem;
-    flex-shrink: 0;
+  &:hover {
+    border-color: $color-text-secondary;
+    color: $color-text;
   }
 }
 
 .btn-back {
-  display: inline-block;
-  margin-top: 2rem;
-  padding: 0.75rem 1.25rem;
-  background: #f3f4f6;
-  color: #1f2937;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: $color-bg;
+  color: $color-text;
+  border: 1.5px solid $color-border;
+  border-radius: $radius-sm;
   text-decoration: none;
-  border-radius: 8px;
+  font-size: 14px;
   font-weight: 600;
-  transition: background 0.2s;
-  
+  transition: all $transition;
+
   &:hover {
-    background: #e5e7eb;
+    background: #fff;
+    border-color: $color-text-secondary;
+  }
+}
+
+.btn-spinner-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+// ── Responsive ───────────────────────────────
+@media (max-width: 900px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+    margin-top: -24px;
+    padding: 0 16px 40px;
+  }
+
+  .sidebar {
+    order: -1;
+  }
+
+  .reserva-card {
+    position: static;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero {
+    height: 300px;
+    border-radius: 0;
+
+    &__title {
+      font-size: 24px;
+    }
+
+    &__content {
+      padding: 20px;
+    }
+  }
+
+  .section-card {
+    padding: 20px;
+    border-radius: 14px;
+
+    &__title {
+      font-size: 18px;
+    }
+  }
+
+  .reserva-card {
+    padding: 20px;
+    border-radius: 14px;
   }
 }

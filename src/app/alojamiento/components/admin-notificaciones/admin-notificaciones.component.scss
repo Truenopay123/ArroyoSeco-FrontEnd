@@ -1,3 +1,4 @@
+/* ===== Admin Notificaciones — Red & White ===== */
 .notificaciones {
   display: flex;
   flex-direction: column;
@@ -12,11 +13,17 @@
 .search {
   display: flex;
   align-items: center;
-  border: 1px solid #ccc;
+  border: 2px solid #e5e7eb;
   border-radius: 999px;
   padding: 0 0.5rem;
   background: #fff;
   min-width: 260px;
+  transition: border-color 0.2s;
+
+  &:focus-within {
+    border-color: var(--color-primary, #E31B23);
+    box-shadow: 0 0 0 3px rgba(227, 27, 35, 0.08);
+  }
 }
 
 .search input {
@@ -37,13 +44,13 @@
 .search svg {
   width: 20px;
   height: 20px;
-  fill: #0b5cad;
+  fill: var(--color-primary, #E31B23);
 }
 
 .table-wrapper {
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-md, 12px);
+  box-shadow: var(--shadow-md, 0 4px 16px rgba(0,0,0,0.10));
   overflow: hidden;
 }
 
@@ -56,17 +63,24 @@ th,
 td {
   padding: 1rem 1.25rem;
   text-align: left;
-  border-bottom: 1px solid #ececec;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 th {
-  background-color: #f8f8f8;
+  background-color: #fafafa;
   font-weight: 600;
-  color: #444;
+  color: #374151;
+  font-size: 0.88rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+tbody tr {
+  transition: background 0.15s;
 }
 
 tbody tr:hover {
-  background-color: #f4faff;
+  background-color: #fef2f2;
 }
 
 .actions {
@@ -75,25 +89,25 @@ tbody tr:hover {
 
 .btn.view {
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-sm, 8px);
   padding: 0.5rem 1.25rem;
   font-weight: 600;
-  background: #1ca7f2;
+  background: var(--color-primary, #E31B23);
   color: #fff;
   cursor: pointer;
-  box-shadow: 0 12px 24px rgba(28, 167, 242, 0.24);
+  transition: all 0.2s;
 }
 
 .btn.view:hover {
-  background: #1586c5;
+  background: var(--color-primary-dark, #c41019);
+  box-shadow: 0 4px 12px rgba(227, 27, 35, 0.25);
 }
 
-/* Botón "Marcar como leída" con look de oferente */
 .actions .btn { margin-left: 0.5rem; }
 .btn.mark {
   padding: 0.4rem 0.75rem;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
+  border-radius: var(--radius-sm, 8px);
+  border: 1.5px solid #d1d5db;
   background: #fff;
   color: #4b5563;
   font-weight: 500;
@@ -101,9 +115,9 @@ tbody tr:hover {
   transition: all 0.2s ease;
 }
 .btn.mark:hover {
-  background: #f9fafb;
-  color: #1f2937;
-  border-color: #9ca3af;
+  background: #fef2f2;
+  color: var(--color-primary, #E31B23);
+  border-color: var(--color-primary, #E31B23);
 }
 .btn.mark:disabled {
   opacity: .6;
@@ -117,8 +131,8 @@ tbody tr:hover {
   justify-content: center;
   padding: 0.25rem 0.9rem;
   border-radius: 999px;
-  background: rgba(28, 167, 242, 0.12);
-  color: #1586c5;
+  background: rgba(227, 27, 35, 0.08);
+  color: var(--color-primary, #E31B23);
   font-weight: 600;
   font-size: 0.85rem;
 }
@@ -126,9 +140,9 @@ tbody tr:hover {
 .empty {
   text-align: center;
   padding: 4rem 1rem;
-  color: #666;
+  color: #6b7280;
   background: #fff;
-  border-radius: 12px;
+  border-radius: var(--radius-md, 12px);
 }
 
 @media (max-width: 768px) {
@@ -139,4 +153,38 @@ tbody tr:hover {
   .search {
     width: 100%;
   }
+
+  /* Card layout on mobile */
+  .table-wrapper table,
+  .table-wrapper thead,
+  .table-wrapper tbody,
+  .table-wrapper th,
+  .table-wrapper td,
+  .table-wrapper tr {
+    display: block;
+  }
+
+  .table-wrapper thead { display: none; }
+
+  .table-wrapper tr {
+    margin-bottom: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--radius-md, 12px);
+    padding: 1rem;
+  }
+
+  .table-wrapper td {
+    border: none;
+    padding: 0.35rem 0;
+    text-align: left;
+
+    &::before {
+      content: attr(data-label);
+      font-weight: 600;
+      margin-right: 0.5rem;
+      color: #374151;
+    }
+  }
+
+  .actions { text-align: left; }
 }

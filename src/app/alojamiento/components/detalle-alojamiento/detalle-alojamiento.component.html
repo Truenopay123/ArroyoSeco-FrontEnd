@@ -1,95 +1,229 @@
 <section class="detalle">
-		<div class="gallery">
-			<img *ngFor="let img of gallery" [src]="img" alt="foto"/>
-		</div>
+  <!-- Airbnb-style Gallery Grid: 1 large + 4 small -->
+  <div class="gallery-grid" (click)="openLightbox(0)">
+    <div class="gallery-main">
+      <img [src]="galleryImages[0]" alt="foto principal" />
+    </div>
+    <div class="gallery-side">
+      <div class="gallery-thumb" *ngFor="let img of galleryImages.slice(1, 5); let i = index">
+        <img [src]="img" [alt]="'foto ' + (i + 2)" />
+      </div>
+    </div>
+    <button class="gallery-show-all">
+      <svg viewBox="0 0 24 24"><path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/></svg>
+      Mostrar todas las fotos
+    </button>
+  </div>
 
-	<div class="content">
-		<div class="main">
-			<h1>{{ alojamiento?.nombre || 'Cabaña Sierra Verde' }}</h1>
-			<p class="meta">{{ alojamiento?.ubicacion || 'Arroyo Seco, Qro' }} • ★ 4.7</p>
-			<p>
-				{{ alojamiento?.descripcion || 'Acogedora cabaña rodeada de naturaleza, perfecta para desconectarte y disfrutar de la sierra. A pocos minutos del río y de senderos para explorar.' }}
-			</p>
-			<button 
-				*ngIf="alojamiento?.latitud && alojamiento?.longitud" 
-				class="btn-como-llegar" 
-				(click)="abrirComoLlegar()">
-				📍 Cómo llegar
-			</button>
-		</div>
+  <!-- Lightbox -->
+  <div class="lightbox" *ngIf="lightboxOpen" (click)="closeLightbox()">
+    <button class="lightbox-close" (click)="closeLightbox()">
+      <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+    </button>
+    <button class="lightbox-nav lightbox-prev" (click)="prevImage($event)">
+      <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+    </button>
+    <img [src]="galleryImages[lightboxIndex]" (click)="$event.stopPropagation()" alt="foto" />
+    <button class="lightbox-nav lightbox-next" (click)="nextImage($event)">
+      <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+    </button>
+    <div class="lightbox-counter">{{ lightboxIndex + 1 }} / {{ galleryImages.length }}</div>
+  </div>
 
-				<aside class="booking" *ngIf="alojamiento">
-					<div class="login-aviso" *ngIf="!autenticado">
-						<p>Inicia sesión para poder reservar.</p>
-						<a routerLink="/login" class="btn-login-aviso">Iniciar sesión</a>
-					</div>
-					<div *ngIf="autenticado && !isPublic; else irCliente">
-						<h3>${{ alojamiento.precioPorNoche }} <small>/ noche</small></h3>
-						<form #b="ngForm" (ngSubmit)="abrirModalPago(b)">
-							<mat-form-field appearance="outline">
-								<mat-label>Rango de fechas</mat-label>
-								<mat-date-range-input [rangePicker]="picker">
-									<input matStartDate matInput name="entrada" placeholder="Entrada" [(ngModel)]="booking.entrada" (dateChange)="onEntradaChange($event)" required />
-									<input matEndDate matInput name="salida" placeholder="Salida" [(ngModel)]="booking.salida" (dateChange)="onSalidaChange($event)" required />
-								</mat-date-range-input>
-								<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-								<mat-date-range-picker #picker [dateClass]="dateClass"></mat-date-range-picker>
-							</mat-form-field>
+  <!-- Content + Booking Sidebar -->
+  <div class="content">
+    <div class="main">
+      <div class="title-row">
+        <div>
+          <h1>{{ alojamiento?.nombre || 'Cabaña Sierra Verde' }}</h1>
+          <p class="meta">
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+            4.7 &middot; {{ alojamiento?.ubicacion || 'Arroyo Seco, Qro' }}
+          </p>
+        </div>
+        <button class="btn-share" (click)="shareProperty()">
+          <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+          Compartir
+        </button>
+      </div>
 
-							<div class="calendar-legend">
-								<span class="dot"></span> Fechas en rojo: ocupadas (Confirmada)
-							</div>
+      <div class="divider"></div>
 
-							<div *ngIf="booking.entrada && booking.salida && !rangoDisponible()" style="color:#b91c1c;font-weight:600">
-								El rango seleccionado incluye fechas ocupadas.
-							</div>
+      <!-- Host Info -->
+      <div class="host-section">
+        <div class="host-avatar">
+          <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </div>
+        <div>
+          <h3 class="host-name">Anfitrión: Juan Carlos</h3>
+          <p class="host-meta">Superanfitrión &middot; 3 años como anfitrión</p>
+        </div>
+      </div>
 
-							<label>
-								Huéspedes
-								<input type="number" name="huespedes" min="1" [(ngModel)]="booking.huespedes" required>
-							</label>
+      <div class="divider"></div>
 
-							<div class="total" *ngIf="total > 0">
-								Total a pagar: ${{ total.toLocaleString() }} MXN
-							</div>
+      <!-- Features -->
+      <div class="features-list">
+        <div class="feature-item">
+          <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          <div>
+            <strong>Espacio completo</strong>
+            <p>Tendrás el alojamiento completo para ti</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          <div>
+            <strong>Ubicación privilegiada</strong>
+            <p>El 95% de los huéspedes calificaron la ubicación con 5 estrellas</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V9h14v10zm0-12H5V5h14v2z"/></svg>
+          <div>
+            <strong>Cancelación gratuita</strong>
+            <p>48 horas antes para un reembolso completo</p>
+          </div>
+        </div>
+      </div>
 
-							<button type="submit" [disabled]="b.invalid || !total || !rangoDisponible()">Reservar ahora</button>
-						</form>
-					</div>
-					<ng-template #irCliente>
-						<div *ngIf="isPublic" class="login-aviso">
-							<p>Estás en vista pública. Para reservar debes iniciar sesión.</p>
-							<a routerLink="/login" [queryParams]="{ returnUrl: '/cliente/alojamientos/' + alojamientoId }" class="btn-login-aviso">Iniciar sesión</a>
-						</div>
-					</ng-template>
-				</aside>
-	</div>
+      <div class="divider"></div>
+
+      <!-- Description -->
+      <div class="description-section">
+        <h2>Acerca de este espacio</h2>
+        <p>{{ alojamiento?.descripcion || 'Acogedora cabaña rodeada de naturaleza, perfecta para desconectarte y disfrutar de la sierra. A pocos minutos del río y de senderos para explorar. Cuenta con cocina equipada, WiFi de alta velocidad, estacionamiento gratuito y acceso directo a las rutas de senderismo más populares de Arroyo Seco.' }}</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Amenities -->
+      <div class="amenities-section">
+        <h2>Lo que este lugar ofrece</h2>
+        <div class="amenities-grid">
+          <div class="amenity" *ngFor="let a of amenities">
+            <svg viewBox="0 0 24 24"><path [attr.d]="a.icon"/></svg>
+            <span>{{ a.label }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map -->
+      <div class="divider" *ngIf="alojamiento?.latitud && alojamiento?.longitud"></div>
+      <div class="map-section" *ngIf="alojamiento?.latitud && alojamiento?.longitud">
+        <h2>Ubicación</h2>
+        <p class="map-address">{{ alojamiento?.ubicacion }}</p>
+        <button class="btn-como-llegar" (click)="abrirComoLlegar()">
+          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          Cómo llegar
+        </button>
+      </div>
+    </div>
+
+    <!-- Booking Sidebar -->
+    <aside class="booking" *ngIf="alojamiento">
+      <div class="booking-card">
+        <div class="login-aviso" *ngIf="!autenticado">
+          <p>Inicia sesión para poder reservar.</p>
+          <a routerLink="/login" class="btn-login-aviso">Iniciar sesión</a>
+        </div>
+        <div *ngIf="autenticado && !isPublic; else irCliente">
+          <div class="booking-price-row">
+            <h3 class="booking-price">${{ alojamiento.precioPorNoche | number }} <small>MXN / noche</small></h3>
+            <div class="booking-rating">
+              <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+              4.7
+            </div>
+          </div>
+          <form #b="ngForm" (ngSubmit)="abrirModalPago(b)" class="booking-form">
+            <div class="booking-dates">
+              <mat-form-field appearance="outline" class="booking-date-field">
+                <mat-label>Fechas</mat-label>
+                <mat-date-range-input [rangePicker]="picker">
+                  <input matStartDate matInput name="entrada" placeholder="Entrada" [(ngModel)]="booking.entrada" (dateChange)="onEntradaChange($event)" required />
+                  <input matEndDate matInput name="salida" placeholder="Salida" [(ngModel)]="booking.salida" (dateChange)="onSalidaChange($event)" required />
+                </mat-date-range-input>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker [dateClass]="dateClass"></mat-date-range-picker>
+              </mat-form-field>
+            </div>
+
+            <div class="calendar-legend">
+              <span class="dot"></span> Fechas en rojo: ocupadas
+            </div>
+
+            <div *ngIf="booking.entrada && booking.salida && !rangoDisponible()" class="booking-warning">
+              El rango seleccionado incluye fechas ocupadas.
+            </div>
+
+            <div class="booking-guests">
+              <label>Huéspedes</label>
+              <div class="guests-control">
+                <button type="button" class="guests-btn" (click)="booking.huespedes = booking.huespedes > 1 ? booking.huespedes - 1 : 1">-</button>
+                <span class="guests-count">{{ booking.huespedes }}</span>
+                <button type="button" class="guests-btn" (click)="booking.huespedes = booking.huespedes + 1">+</button>
+              </div>
+            </div>
+
+            <button type="submit" class="booking-submit" [disabled]="b.invalid || !total || !rangoDisponible()">
+              Reservar ahora
+            </button>
+
+            <p class="booking-note">No se hará ningún cargo todavía</p>
+
+            <!-- Price Breakdown -->
+            <div class="price-breakdown" *ngIf="total > 0">
+              <div class="price-row">
+                <span>${{ alojamiento.precioPorNoche | number }} x {{ nights }} noches</span>
+                <span>${{ total | number }} MXN</span>
+              </div>
+              <div class="price-row">
+                <span>Tarifa de servicio</span>
+                <span>${{ serviceFee | number }} MXN</span>
+              </div>
+              <div class="price-row total-row">
+                <strong>Total</strong>
+                <strong>${{ grandTotal | number }} MXN</strong>
+              </div>
+            </div>
+          </form>
+        </div>
+        <ng-template #irCliente>
+          <div *ngIf="isPublic" class="login-aviso">
+            <p>Estás en vista pública. Para reservar debes iniciar sesión.</p>
+            <a routerLink="/login" [queryParams]="{ returnUrl: '/cliente/alojamientos/' + alojamientoId }" class="btn-login-aviso">Iniciar sesión</a>
+          </div>
+        </ng-template>
+      </div>
+    </aside>
+  </div>
 </section>
 
+<!-- Modal Pago -->
 <div class="modal-backdrop" *ngIf="showPagoModal" (click)="cerrarModalPago()"></div>
 <div class="modal" *ngIf="showPagoModal" (click)="$event.stopPropagation()">
-	<div class="modal__header">
-		<h3>Pago por transferencia</h3>
-		<button class="close" (click)="cerrarModalPago()">×</button>
-	</div>
-	<div class="modal__body">
-		<p>Realiza la transferencia con los siguientes datos:</p>
-		<ul class="bank-data">
-			<li><strong>Nombre:</strong> Arroyo Seco Turístico S.A. de C.V.</li>
-			<li><strong>Banco:</strong> Banco Ejemplo</li>
-			<li><strong>Cuenta/CLABE:</strong> 012345678901234567</li>
-			<li><strong>Referencia:</strong> {{ alojamientoId }}-{{ total }}</li>
-		</ul>
+  <div class="modal__header">
+    <h3>Pago por transferencia</h3>
+    <button class="close" (click)="cerrarModalPago()">×</button>
+  </div>
+  <div class="modal__body">
+    <p>Realiza la transferencia con los siguientes datos:</p>
+    <ul class="bank-data">
+      <li><strong>Nombre:</strong> Arroyo Seco Turístico S.A. de C.V.</li>
+      <li><strong>Banco:</strong> Banco Ejemplo</li>
+      <li><strong>Cuenta/CLABE:</strong> 012345678901234567</li>
+      <li><strong>Referencia:</strong> {{ alojamientoId }}-{{ total }}</li>
+    </ul>
 
-		<label class="upload">
-			Comprobante (PDF/JPG/PNG)
-			<input type="file" accept=".pdf,.png,.jpg,.jpeg,image/*,application/pdf" (change)="onComprobanteChange($event)" required />
-		</label>
-	</div>
-	<div class="modal__footer">
-		<button class="btn" (click)="cerrarModalPago()" [disabled]="creando">Cancelar</button>
-		<button class="btn primary" (click)="confirmarReservaYComprobante()" [disabled]="!comprobanteFile || creando">
-			{{ creando ? 'Procesando...' : 'Confirmar y enviar comprobante' }}
-		</button>
-	</div>
-	</div>
+    <label class="upload">
+      Comprobante (PDF/JPG/PNG)
+      <input type="file" accept=".pdf,.png,.jpg,.jpeg,image/*,application/pdf" (change)="onComprobanteChange($event)" required />
+    </label>
+  </div>
+  <div class="modal__footer">
+    <button class="btn" (click)="cerrarModalPago()" [disabled]="creando">Cancelar</button>
+    <button class="btn primary" (click)="confirmarReservaYComprobante()" [disabled]="!comprobanteFile || creando">
+      {{ creando ? 'Procesando...' : 'Confirmar y enviar comprobante' }}
+    </button>
+  </div>
+</div>

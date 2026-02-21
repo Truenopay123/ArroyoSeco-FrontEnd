@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-public-navbar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './public-navbar.component.html',
   styleUrl: './public-navbar.component.scss'
 })
@@ -17,7 +17,6 @@ export class PublicNavbarComponent implements OnInit {
   constructor(private router: Router, private auth: AuthService) {}
 
   ngOnInit(): void {
-    // Obtener experiencia actual del localStorage o sessionStorage
     const savedExperience = sessionStorage.getItem('experienceType') || 'alojamiento';
     this.experienceType = savedExperience as 'alojamiento' | 'gastronomia';
   }
@@ -37,7 +36,6 @@ export class PublicNavbarComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  // Mobile hamburger
   menuOpen = false;
   toggleMenu() { this.menuOpen = !this.menuOpen; }
 }

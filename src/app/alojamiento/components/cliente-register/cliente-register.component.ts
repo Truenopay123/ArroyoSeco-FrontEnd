@@ -16,6 +16,8 @@ import { first } from 'rxjs/operators';
 export class ClienteRegisterComponent {
   model = { email: '', password: '', confirm: '' };
   loading = false;
+  showPassword = false;
+  showConfirm = false;
 
   constructor(private toast: ToastService, private router: Router, private auth: AuthService) {}
 

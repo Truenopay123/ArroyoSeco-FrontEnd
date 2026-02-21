@@ -1,4 +1,4 @@
-/* Align styles with existing login pages for visual consistency */
+/* ===== Oferente Solicitud — Aspirational Redesign ===== */
 .login {
   min-height: 100vh;
   display: grid;
@@ -34,7 +34,38 @@
   font-size: clamp(2rem, 5vw, 2.6rem);
   margin-bottom: 0.5rem;
 }
-.visual-text p { font-size: 1rem; opacity: 0.95; }
+.visual-text p { font-size: 1rem; opacity: 0.95; margin-bottom: 1.5rem; }
+
+.visual-badge {
+  display: inline-block;
+  padding: 0.35rem 1rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.visual-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.visual-feature {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  opacity: 0.9;
+
+  svg { flex-shrink: 0; }
+}
 
 .form-panel {
   background: linear-gradient(135deg, #8c1f17 0%, #b23427 50%, #d1462f 100%);
@@ -44,7 +75,7 @@
 }
 
 .form-panel__content {
-  width: min(100%, 460px);
+  width: min(100%, 520px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -57,7 +88,7 @@
   width: 100%;
   background: #fff;
   border-radius: 18px;
-  padding: clamp(2rem, 5vw, 2.75rem);
+  padding: clamp(1.75rem, 5vw, 2.5rem);
   box-shadow: 0 24px 48px rgba(27, 32, 50, 0.18);
   display: flex;
   flex-direction: column;
@@ -69,29 +100,169 @@
   margin: 0;
   color: #1f1f1f;
   text-align: center;
+  font-size: 1.35rem;
 }
 
 .form-card .subtitle {
-  margin: -0.5rem 0 0.25rem;
-  color: #c73619;
+  margin: -0.5rem 0 0;
+  color: var(--color-primary, #E31B23);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   text-align: center;
 }
 
-form { display: flex; flex-direction: column; gap: 1.1rem; width: 100%; }
+/* Steps indicator */
+.steps-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
 
-label { display: flex; flex-direction: column; gap: 0.5rem; font-weight: 600; color: #323232; }
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: all 0.3s;
+}
+
+.step.active .step-num {
+  background: var(--color-primary, #E31B23);
+  color: #fff;
+}
+
+.step-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #9ca3af;
+  transition: color 0.3s;
+}
+
+.step.active .step-label { color: var(--color-primary, #E31B23); }
+
+.step-line {
+  flex: 1;
+  height: 2px;
+  background: #e5e7eb;
+  margin: 0 0.5rem;
+  max-width: 60px;
+  align-self: flex-start;
+  margin-top: 14px;
+}
+
+/* Form sections */
+form { display: flex; flex-direction: column; gap: 1.5rem; width: 100%; }
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form-section__label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.field-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+
+  .req { color: var(--color-primary, #E31B23); }
+}
+
+/* Tipo cards */
+.tipo-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.tipo-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1.25rem 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.25s;
+  text-align: center;
+  background: #fff;
+
+  svg { fill: #9ca3af; transition: fill 0.25s; }
+
+  span { font-weight: 700; font-size: 0.9rem; color: #1f2937; }
+  small { font-size: 0.75rem; color: #9ca3af; }
+
+  &:hover {
+    border-color: rgba(227, 27, 35, 0.3);
+    background: #fef2f2;
+  }
+
+  &.selected {
+    border-color: var(--color-primary, #E31B23);
+    background: #fef2f2;
+    box-shadow: 0 0 0 3px rgba(227, 27, 35, 0.12);
+
+    svg { fill: var(--color-primary, #E31B23); }
+  }
+}
 
 input,
-select {
-  border: 1px solid #cfcfcf;
+select,
+textarea {
+  border: 1.5px solid #d1d5db;
   border-radius: 10px;
-  padding: 0.9rem 1rem;
+  padding: 0.8rem 1rem;
   font-size: 0.95rem;
   background: #fff;
   font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary, #E31B23);
+    box-shadow: 0 0 0 3px rgba(227, 27, 35, 0.08);
+  }
 }
+
+textarea { resize: vertical; min-height: 80px; }
 
 select {
   cursor: pointer;
@@ -108,25 +279,29 @@ button[type='submit'] {
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  background: #1c66d6;
+  background: var(--color-primary, #E31B23);
   color: #fff;
   border: none;
-  border-radius: 999px;
+  border-radius: 12px;
   padding: 0.9rem 1.5rem;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 1rem;
   cursor: pointer;
-  box-shadow: 0 14px 28px rgba(28, 102, 214, 0.25);
+  box-shadow: 0 8px 24px rgba(227, 27, 35, 0.25);
+  transition: all 0.2s;
 }
-button[type='submit']:hover { background: #1550a8; }
-button[type='submit']:disabled { background: #8aaee8; cursor: not-allowed; }
+button[type='submit']:hover { background: var(--color-primary-dark, #c41019); transform: translateY(-1px); }
+button[type='submit']:disabled { background: #d1d5db; cursor: not-allowed; box-shadow: none; }
 button svg { width: 20px; height: 20px; fill: currentColor; }
 
 .links { display: flex; flex-direction: column; gap: 0.5rem; text-align: center; }
-.links a { color: #1c66d6; text-decoration: none; font-weight: 500; }
+.links a { color: var(--color-primary, #E31B23); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
 .links a:hover { text-decoration: underline; }
 
 @media (max-width: 768px) {
   .login { grid-template-columns: 1fr; }
   .visual { min-height: 45vh; }
   .form-panel { padding: 2rem 1.5rem 3rem; }
+  .form-row { grid-template-columns: 1fr; }
+  .tipo-cards { grid-template-columns: 1fr; }
 }

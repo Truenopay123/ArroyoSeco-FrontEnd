@@ -26,14 +26,14 @@ export class HomeSelectorComponent {
       description: 'Busca y reserva hospedajes en Arroyo Seco',
       route: '/cliente/alojamientos',
       icon: 'alojamiento',
-      color: '#0891b2'
+      color: '#E31B23'
     },
     {
       title: 'Gastronomía',
       description: 'Descubre restaurantes y reserva tu mesa',
       route: '/cliente/gastronomia',
       icon: 'gastronomia',
-      color: '#c73619'
+      color: '#E31B23'
     }
   ];
 }
