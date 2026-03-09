@@ -1,0 +1,60 @@
+<section class="pago-resultado">
+  <div class="resultado-card" [class.aprobado]="estado === 'aprobado'" [class.rechazado]="estado === 'rechazado'" [class.pendiente]="estado === 'pendiente'">
+
+    <!-- Aprobado -->
+    <ng-container *ngIf="estado === 'aprobado'">
+      <div class="resultado-icon aprobado">
+        <svg viewBox="0 0 24 24" width="64" height="64" fill="currentColor">
+          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+        </svg>
+      </div>
+      <h2>¡Pago aprobado!</h2>
+      <p>Tu reserva ha sido confirmada exitosamente.</p>
+      <div class="detalle" *ngIf="folio">
+        <span class="label">Folio de reserva:</span>
+        <strong>{{ folio }}</strong>
+      </div>
+      <div class="detalle" *ngIf="total">
+        <span class="label">Total pagado:</span>
+        <strong>$ {{ total | number:'1.2-2' }}</strong>
+      </div>
+    </ng-container>
+
+    <!-- Pendiente -->
+    <ng-container *ngIf="estado === 'pendiente'">
+      <div class="resultado-icon pendiente">
+        <svg viewBox="0 0 24 24" width="64" height="64" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+        </svg>
+      </div>
+      <h2>Pago pendiente</h2>
+      <p>Tu pago está siendo revisado por Mercado Pago. Una vez procesado recibirás una notificación.</p>
+      <div class="detalle" *ngIf="folio">
+        <span class="label">Folio:</span> <strong>{{ folio }}</strong>
+      </div>
+    </ng-container>
+
+    <!-- Rechazado -->
+    <ng-container *ngIf="estado === 'rechazado'">
+      <div class="resultado-icon rechazado">
+        <svg viewBox="0 0 24 24" width="64" height="64" fill="currentColor">
+          <path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/>
+        </svg>
+      </div>
+      <h2>Pago rechazado</h2>
+      <p>Tu pago no pudo procesarse. Puedes intentarlo nuevamente o elegir otro método de pago.</p>
+      <div class="detalle" *ngIf="folio">
+        <span class="label">Folio:</span> <strong>{{ folio }}</strong>
+      </div>
+    </ng-container>
+
+    <!-- Acciones -->
+    <div class="resultado-actions">
+      <a routerLink="/cliente/reservas" class="btn-primary">Ver mis reservas</a>
+      <a *ngIf="estado === 'rechazado' && reservaId > 0"
+         [routerLink]="['/cliente/checkout']" [queryParams]="{reservaId: reservaId}"
+         class="btn-secondary">Reintentar pago</a>
+    </div>
+
+  </div>
+</section>

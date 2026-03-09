@@ -5,10 +5,9 @@ import { ToastService } from '../../../shared/services/toast.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AlojamientoService, AlojamientoDto } from '../../services/alojamiento.service';
 import { ReservasService } from '../../services/reservas.service';
-import { NotificacionesService } from '../../services/notificaciones.service';
+import { PagoService } from '../../services/pago.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { first, switchMap, catchError, map } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { first, switchMap } from 'rxjs/operators';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -22,13 +21,13 @@ import { MatInputModule } from '@angular/material/input';
   styleUrl: './detalle-alojamiento.component.scss'
 })
 export class DetalleAlojamientoComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private toast = inject(ToastService);
-  private auth = inject(AuthService);
-  private alojamientosService = inject(AlojamientoService);
-  private reservasService = inject(ReservasService);
-  private notiService = inject(NotificacionesService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly toast = inject(ToastService);
+  private readonly auth = inject(AuthService);
+  private readonly alojamientosService = inject(AlojamientoService);
+  private readonly reservasService = inject(ReservasService);
+  private readonly pagoService = inject(PagoService);
 
   alojamientoId!: number;
   alojamiento?: AlojamientoDto;
@@ -41,7 +40,6 @@ export class DetalleAlojamientoComponent implements OnInit {
     return !!d && !this.reservedDateSet.has(this.key(d));
   }
   showPagoModal = false;
-  comprobanteFile: File | null = null;
   creando = false;
   isPublic = false;
 
@@ -49,15 +47,19 @@ export class DetalleAlojamientoComponent implements OnInit {
   lightboxOpen = false;
   lightboxIndex = 0;
 
-  // Amenities list
-  readonly amenities = [
-    { icon: 'M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z', label: 'WiFi' },
-    { icon: 'M7 11v2h10v-2H7zm5-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z', label: 'Estacionamiento' },
-    { icon: 'M21 18H3v2h18v-2zM17.12 5.56A3.07 3.07 0 0 0 12 2.68 3.07 3.07 0 0 0 6.88 5.56L3 16h18l-3.88-10.44z', label: 'Alberca' },
-    { icon: 'M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69zM12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm0-10c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z', label: 'Aire acondicionado' },
-    { icon: 'M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z', label: 'Cocina equipada' },
-    { icon: 'M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z', label: 'TV' },
-  ];
+  get amenities(): Array<{ icon: string; label: string }> {
+    const fromDb = this.alojamiento?.amenidades || [];
+    if (!fromDb.length) return [];
+
+    return fromDb.map(label => ({
+      label,
+      icon: this.getAmenityIcon()
+    }));
+  }
+
+  private getAmenityIcon(): string {
+    return 'M12 2a10 10 0 100 20 10 10 0 000-20z';
+  }
 
   // Gallery fallback images
   readonly defaultGalleryImages = [
@@ -240,7 +242,6 @@ export class DetalleAlojamientoComponent implements OnInit {
   cerrarModalPago() {
     if (this.creando) return;
     this.showPagoModal = false;
-    this.comprobanteFile = null;
   }
 
   // Exponer estado de autenticación al template
@@ -248,64 +249,45 @@ export class DetalleAlojamientoComponent implements OnInit {
     return this.auth.isAuthenticated();
   }
 
-  onComprobanteChange(ev: Event) {
-    const input = ev.target as HTMLInputElement;
-    this.comprobanteFile = input.files?.[0] || null;
-    if (this.comprobanteFile) {
-      const allowed = ['application/pdf', 'image/jpeg', 'image/png'];
-      if (!allowed.includes(this.comprobanteFile.type)) {
-        this.toast.error('Formato no permitido. Use PDF/JPG/PNG.');
-        this.comprobanteFile = null;
-      } else if (this.comprobanteFile.size > 18 * 1024 * 1024) { // < 20MB backend limit
-        this.toast.error('El archivo supera el límite (18MB).');
-        this.comprobanteFile = null;
-      }
-    }
-  }
-
-  confirmarReservaYComprobante() {
-    if (!this.booking.entrada || !this.booking.salida || !this.comprobanteFile) {
-      this.toast.error('Fechas y comprobante requeridos');
+  confirmarReservaYPagar() {
+    if (!this.booking.entrada || !this.booking.salida) {
+      this.toast.error('Fechas requeridas');
       return;
     }
+
     this.creando = true;
     const payload = {
       alojamientoId: this.alojamientoId,
       fechaEntrada: this.formatDateLocal(this.booking.entrada),
       fechaSalida: this.formatDateLocal(this.booking.salida),
-      huespedes: this.booking.huespedes
+      huespedes: this.booking.huespedes,
+      aceptaPoliticaDatos: true
     };
-    // Crear primero y subir comprobante; la notificación al oferente es opcional (si falla no afecta el éxito de la reserva)
+
     this.reservasService.crear(payload).pipe(
-      switchMap((r: any) => this.reservasService.subirComprobante(Number(r.id || r.Id), this.comprobanteFile!).pipe(map(() => r))),
+      switchMap((r: any) => {
+        const reservaId = Number(r.id || r.Id || 0);
+        if (!reservaId) {
+          throw new Error('No se pudo crear la reserva.');
+        }
+        return this.pagoService.crearPreferencia(reservaId);
+      }),
       first()
     ).subscribe({
-      next: (r: any) => {
-        // Disparar notificación de manera independiente y tolerante
-        this.notiService.crear({
-          titulo: 'Reserva enviada',
-          mensaje: `Nueva reserva en alojamiento #${this.alojamientoId}. Pago en revisión.`,
-          destinoRol: 'oferente',
-          modulo: 'alojamiento',
-          referenciaId: Number(r.id || r.Id)
-        }).pipe(
-          catchError(err => {
-            console.warn('Notificación opcional falló (se ignora):', err);
-            return of(null);
-          })
-        ).subscribe();
-
-        console.log('Reserva creada exitosamente');
-        this.toast.success('Reserva enviada. Pago en revisión.');
+      next: (pref: any) => {
+        const initPoint = pref?.initPoint || pref?.sandboxInitPoint;
+        if (!initPoint) {
+          this.toast.error('No se pudo obtener el enlace de pago.');
+          this.creando = false;
+          return;
+        }
+        window.location.href = initPoint;
         this.creando = false;
-        this.cerrarModalPago();
-        this.booking = { entrada: null, salida: null, huespedes: 1 };
-        this.cargarCalendario();
       },
       error: (err) => {
         console.error('Error al crear reserva:', err);
         const msg = typeof err?.error === 'string' ? err.error : (err?.error?.message || err?.message || 'Error desconocido');
-        this.toast.error(`No se pudo procesar la reserva: ${msg}`);
+        this.toast.error(`No se pudo iniciar el pago: ${msg}`);
         this.creando = false;
       }
     });

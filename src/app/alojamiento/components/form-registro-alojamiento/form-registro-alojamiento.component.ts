@@ -18,6 +18,7 @@ interface AlojamientoForm {
   banos: number;
   precio: number;
   fotos: string[];
+  amenidades: string[];
 }
 
 @Component({
@@ -28,10 +29,10 @@ interface AlojamientoForm {
   styleUrl: './form-registro-alojamiento.component.scss'
 })
 export class FormRegistroAlojamientoComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private toastService = inject(ToastService);
-  private alojamientosService = inject(AlojamientoService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly toastService = inject(ToastService);
+  private readonly alojamientosService = inject(AlojamientoService);
 
   idEdicion: string | null = null;
   formModel: AlojamientoForm = {
@@ -44,8 +45,21 @@ export class FormRegistroAlojamientoComponent implements OnInit {
     habitaciones: 1,
     banos: 1,
     precio: 0,
-    fotos: []
+    fotos: [],
+    amenidades: []
   };
+
+  readonly amenidadesDisponibles = [
+    'WiFi',
+    'Estacionamiento',
+    'Alberca',
+    'Aire acondicionado',
+    'Cocina equipada',
+    'TV',
+    'Asador',
+    'Pet friendly'
+  ];
+  subiendoFoto = false;
   
   autocomplete: any;
   busquedaDireccion = '';
@@ -57,7 +71,7 @@ export class FormRegistroAlojamientoComponent implements OnInit {
   ngOnInit(): void {
     // Ya no cargamos Google Maps - usamos campos simples
     if (this.idEdicion) {
-      const id = parseInt(this.idEdicion, 10);
+      const id = Number.parseInt(this.idEdicion, 10);
       if (id) {
         this.alojamientosService.getById(id).pipe(first()).subscribe({
           next: (a: AlojamientoDto) => {
@@ -71,7 +85,8 @@ export class FormRegistroAlojamientoComponent implements OnInit {
               habitaciones: a.habitaciones,
               banos: a.banos,
               precio: a.precioPorNoche,
-              fotos: [a.fotoPrincipal, ...(a.fotosUrls || [])].filter(Boolean) as string[]
+              fotos: [a.fotoPrincipal, ...(a.fotosUrls || [])].filter(Boolean) as string[],
+              amenidades: a.amenidades || []
             };
             this.busquedaDireccion = a.direccion || a.ubicacion;
           },
@@ -97,13 +112,43 @@ export class FormRegistroAlojamientoComponent implements OnInit {
     }
   }
 
-  agregarFoto(url: string) {
-    if (!url) return;
-    this.formModel.fotos.push(url);
+  onFotoSeleccionada(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file || this.subiendoFoto) return;
+
+    this.subiendoFoto = true;
+    this.alojamientosService.uploadImage(file).pipe(first()).subscribe({
+      next: (res) => {
+        if (res?.url) {
+          this.formModel.fotos.push(res.url);
+          this.toastService.success('Imagen subida correctamente');
+        } else {
+          this.toastService.error('No se recibió URL de la imagen');
+        }
+        this.subiendoFoto = false;
+        input.value = '';
+      },
+      error: () => {
+        this.toastService.error('No se pudo subir la imagen');
+        this.subiendoFoto = false;
+        input.value = '';
+      }
+    });
   }
 
   eliminarFoto(idx: number) {
     this.formModel.fotos.splice(idx, 1);
+  }
+
+  toggleAmenidad(amenidad: string, checked: boolean) {
+    if (checked) {
+      if (!this.formModel.amenidades.includes(amenidad)) {
+        this.formModel.amenidades.push(amenidad);
+      }
+      return;
+    }
+    this.formModel.amenidades = this.formModel.amenidades.filter(a => a !== amenidad);
   }
 
   onSubmit(form: NgForm) {
@@ -125,10 +170,11 @@ export class FormRegistroAlojamientoComponent implements OnInit {
       banos: this.formModel.banos,
       precioPorNoche: this.formModel.precio,
       fotoPrincipal: this.formModel.fotos[0] || '',
-      fotosUrls: this.formModel.fotos.slice(1)
+      fotosUrls: this.formModel.fotos.slice(1),
+      amenidades: this.formModel.amenidades
     };
     const obs = this.idEdicion
-      ? this.alojamientosService.update(parseInt(this.idEdicion!, 10), payload)
+      ? this.alojamientosService.update(Number.parseInt(this.idEdicion ?? '0', 10), payload)
       : this.alojamientosService.create(payload);
 
     obs.pipe(first()).subscribe({

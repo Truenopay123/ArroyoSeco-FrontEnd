@@ -136,17 +136,14 @@ export class AdminOferentesGastronomiaComponent implements OnInit {
     if (form.invalid) return;
     const payload = {
       email: this.nuevo.correo!,
-      password: 'Temporal.123',
       nombre: this.nuevo.nombre!,
       telefono: this.nuevo.telefono!,
-      role: 'Oferente',
-      tipoOferente: this.nuevo.tipo ?? TipoOferente.Gastronomia
+      tipo: this.nuevo.tipo ?? TipoOferente.Gastronomia
     };
     console.log('📝 Creando oferente con payload:', payload);
     this.adminService.createUsuarioOferente(payload).pipe(first()).subscribe({
       next: (response) => {
         console.log('✅ Oferente creado exitosamente:', response);
-        console.log('🔑 Credenciales: email=' + payload.email + ', password=Temporal.123');
         this.toastService.success(`Oferente ${this.nuevo.nombre} registrado exitosamente`);
         this.cerrarRegistro();
         this.loadOferentes();

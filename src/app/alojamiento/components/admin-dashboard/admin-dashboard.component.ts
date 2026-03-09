@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NgFor, NgSwitch, NgSwitchCase, NgSwitchDefault, DatePipe } from '@angular/common';
+import { NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, DatePipe, SlicePipe } from '@angular/common';
+import { first } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+import { AdminDashboardService } from '../../services/admin-dashboard.service';
 
 interface DashboardCard {
   title: string;
@@ -26,16 +29,22 @@ interface RecentActivity {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [RouterLink, NgFor, NgSwitch, NgSwitchCase, NgSwitchDefault, DatePipe],
+  imports: [RouterLink, NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, DatePipe, SlicePipe],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.scss'
 })
-export class AdminDashboardComponent {
-  readonly stats: StatCard[] = [
-    { label: 'Oferentes activos', value: '24', change: '+3 este mes', positive: true, icon: 'person' },
-    { label: 'Reservas del mes', value: '156', change: '+12% vs. anterior', positive: true, icon: 'calendar' },
-    { label: 'Ingresos estimados', value: '$2.4M', change: '+8.5%', positive: true, icon: 'money' },
-    { label: 'Solicitudes pendientes', value: '7', change: '3 nuevas hoy', positive: false, icon: 'pending' }
+export class AdminDashboardComponent implements OnInit {
+  private readonly dashboardService = inject(AdminDashboardService);
+  turismoResumen: any = null;
+  turismoPorSexo: Array<{ categoria: string; cantidad: number }> = [];
+  turismoPorEdad: Array<{ categoria: string; cantidad: number }> = [];
+  turismoPorOrigen: Array<{ ciudad: string; cantidad: number }> = [];
+
+  stats: StatCard[] = [
+    { label: 'Oferentes activos', value: '0', change: 'Registros reales', positive: true, icon: 'person' },
+    { label: 'Reservas del mes', value: '0', change: 'Registros reales', positive: true, icon: 'calendar' },
+    { label: 'Ingresos del mes', value: '$0 MXN', change: 'Reservas confirmadas', positive: true, icon: 'money' },
+    { label: 'Solicitudes pendientes', value: '0', change: 'Pendientes de revisión', positive: false, icon: 'pending' }
   ];
 
   readonly cards: DashboardCard[] = [
@@ -62,16 +71,77 @@ export class AdminDashboardComponent {
       description: 'Gestiona establecimientos gastronómicos de la zona.',
       icon: 'food',
       route: '/admin/gastronomia'
+    },
+    {
+      title: 'Moderar reseñas',
+      description: 'Aprueba, rechaza o elimina reseñas de clientes.',
+      icon: 'notifications',
+      route: '/admin/resenas'
     }
   ];
 
-  readonly recentActivity: RecentActivity[] = [
-    { text: 'Nuevo oferente registrado: Cabaña Los Álamos', date: new Date(Date.now() - 1000 * 60 * 30), type: 'oferente' },
-    { text: 'Reserva confirmada #1042 - Hostería del Río', date: new Date(Date.now() - 1000 * 60 * 60 * 2), type: 'reserva' },
-    { text: 'Notificación enviada a 12 oferentes', date: new Date(Date.now() - 1000 * 60 * 60 * 4), type: 'notificacion' },
-    { text: 'Solicitud recibida: Posada Mendoza', date: new Date(Date.now() - 1000 * 60 * 60 * 6), type: 'solicitud' },
-    { text: 'Reserva cancelada #1038 - Hotel Central', date: new Date(Date.now() - 1000 * 60 * 60 * 8), type: 'reserva' },
-    { text: 'Oferente actualizado: Lodge Arroyo', date: new Date(Date.now() - 1000 * 60 * 60 * 12), type: 'oferente' },
-    { text: 'Solicitud aprobada: Restaurante El Patio', date: new Date(Date.now() - 1000 * 60 * 60 * 24), type: 'solicitud' }
-  ];
+  recentActivity: RecentActivity[] = [];
+
+  ngOnInit(): void {
+    this.dashboardService.getResumen().pipe(first()).subscribe({
+      next: (res) => {
+        this.stats = [
+          {
+            label: 'Oferentes activos',
+            value: String(res.oferentesActivos ?? 0),
+            change: 'Registros reales',
+            positive: true,
+            icon: 'person'
+          },
+          {
+            label: 'Reservas del mes',
+            value: String(res.reservasMes ?? 0),
+            change: 'Registros reales',
+            positive: true,
+            icon: 'calendar'
+          },
+          {
+            label: 'Ingresos del mes',
+            value: `$${Math.round(Number(res.ingresosMes || 0)).toLocaleString('es-MX')} MXN`,
+            change: 'Reservas confirmadas',
+            positive: Number(res.ingresosMes || 0) > 0,
+            icon: 'money'
+          },
+          {
+            label: 'Solicitudes pendientes',
+            value: String(res.solicitudesPendientes ?? 0),
+            change: 'Pendientes de revisión',
+            positive: false,
+            icon: 'pending'
+          }
+        ];
+
+        this.recentActivity = (res.recentActivity || []).map(item => ({
+          text: item.text,
+          date: new Date(item.date),
+          type: item.type || 'notificacion'
+        }));
+      },
+      error: () => {
+        this.recentActivity = [];
+      }
+    });
+
+    forkJoin({
+      resumen: this.dashboardService.getTurismoResumen(),
+      sexo: this.dashboardService.getTurismoPorSexo(),
+      edad: this.dashboardService.getTurismoPorEdad(),
+      origen: this.dashboardService.getTurismoPorOrigen()
+    }).pipe(first()).subscribe({
+      next: ({ resumen, sexo, edad, origen }) => {
+        this.turismoResumen = resumen;
+        this.turismoPorSexo = (sexo || []) as any;
+        this.turismoPorEdad = (edad || []) as any;
+        this.turismoPorOrigen = (origen || []) as any;
+      },
+      error: () => {
+        this.turismoResumen = null;
+      }
+    });
+  }
 }

@@ -1,0 +1,11 @@
+.pago-resultado { display: grid; place-items: center; padding: 1rem; min-height: 60vh; }
+.resultado-card { width: min(700px, 100%); border: 1px solid #e5e7eb; border-radius: 12px; background: #fff; padding: 1rem; text-align: center; }
+.resultado-card.aprobado { border-color: #86efac; }
+.resultado-card.rechazado { border-color: #fca5a5; }
+.resultado-card.pendiente { border-color: #fdba74; }
+.resultado-actions { display: flex; justify-content: center; gap: 0.6rem; margin-top: 1rem; flex-wrap: wrap; }
+.btn-primary, .btn-secondary { text-decoration: none; border-radius: 8px; padding: 0.5rem 0.8rem; border: 1px solid transparent; }
+.btn-primary { background: #1d4ed8; color: #fff; }
+.btn-secondary { background: #fff; color: #1d4ed8; border-color: #1d4ed8; }
+.detalle { margin-top: 0.5rem; }
+.label { color: #64748b; margin-right: 0.35rem; }

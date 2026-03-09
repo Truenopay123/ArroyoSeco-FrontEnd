@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class LoadingService {
   private _count = 0;
-  private _loading$ = new BehaviorSubject<boolean>(false);
+  private readonly _loading$ = new BehaviorSubject<boolean>(false);
 
   /** Observable that emits true while any HTTP request is in flight */
   readonly loading$ = this._loading$.asObservable();
@@ -12,14 +12,14 @@ export class LoadingService {
   show(): void {
     this._count++;
     if (this._count === 1) {
-      this._loading$.next(true);
+      queueMicrotask(() => this._loading$.next(true));
     }
   }
 
   hide(): void {
     this._count = Math.max(0, this._count - 1);
     if (this._count === 0) {
-      this._loading$.next(false);
+      queueMicrotask(() => this._loading$.next(false));
     }
   }
 }

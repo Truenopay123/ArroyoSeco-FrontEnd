@@ -22,9 +22,11 @@ export class AdminNavbarComponent implements OnInit {
   homeRoute = '/admin/home';
 
   private readonly alojamientoLinks: NavLink[] = [
-    { label: 'Dashboard', route: '/admin/dashboard' },
-    { label: 'Oferentes', route: '/admin/oferentes' },
-    { label: 'Solicitudes', route: '/admin/solicitudes' },
+    { label: 'Dashboard',     route: '/admin/dashboard' },
+    { label: 'Oferentes',     route: '/admin/oferentes' },
+    { label: 'Solicitudes',   route: '/admin/solicitudes' },
+    { label: 'Reseñas',       route: '/admin/resenas' },
+    { label: 'Estadísticas',  route: '/admin/estadisticas' },
     { label: 'Notificaciones', route: '/admin/notificaciones' }
   ];
 

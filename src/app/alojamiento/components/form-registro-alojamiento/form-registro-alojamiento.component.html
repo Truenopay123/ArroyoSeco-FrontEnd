@@ -51,17 +51,31 @@
     </label>
 
     <div class="col-span-2">
-      <label>Fotos (URLs)
-        <div class="fotos">
-          <input #fotoUrl type="url" placeholder="https://..." />
-          <button type="button" class="btn" (click)="agregarFoto(fotoUrl.value); fotoUrl.value=''">Agregar</button>
-        </div>
-      </label>
+      <label>Fotos del alojamiento</label>
+      <div class="fotos">
+        <input type="file" accept="image/*" (change)="onFotoSeleccionada($event)" [disabled]="subiendoFoto" />
+        <span *ngIf="subiendoFoto">Subiendo imagen...</span>
+      </div>
       <div class="galeria" *ngIf="formModel.fotos.length">
         <div class="thumb" *ngFor="let f of formModel.fotos; index as i">
           <img [src]="f" alt="foto" />
           <button type="button" class="remove" (click)="eliminarFoto(i)">×</button>
         </div>
+      </div>
+    </div>
+
+    <div class="col-span-2">
+      <label>Amenidades disponibles</label>
+      <div class="amenidades-grid">
+        <label *ngFor="let amenidad of amenidadesDisponibles" class="amenidad-item">
+          <input
+            type="checkbox"
+            [value]="amenidad"
+            [checked]="formModel.amenidades.includes(amenidad)"
+            (change)="toggleAmenidad(amenidad, $any($event.target).checked)"
+          />
+          <span>{{ amenidad }}</span>
+        </label>
       </div>
     </div>
 

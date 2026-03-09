@@ -92,7 +92,7 @@
       <!-- Description -->
       <div class="description-section">
         <h2>Acerca de este espacio</h2>
-        <p>{{ alojamiento?.descripcion || 'Acogedora cabaña rodeada de naturaleza, perfecta para desconectarte y disfrutar de la sierra. A pocos minutos del río y de senderos para explorar. Cuenta con cocina equipada, WiFi de alta velocidad, estacionamiento gratuito y acceso directo a las rutas de senderismo más populares de Arroyo Seco.' }}</p>
+        <p>{{ alojamiento?.descripcion || 'Alojamiento disponible en Arroyo Seco. Consulta con el anfitrión para más detalles del espacio.' }}</p>
       </div>
 
       <div class="divider"></div>
@@ -100,12 +100,15 @@
       <!-- Amenities -->
       <div class="amenities-section">
         <h2>Lo que este lugar ofrece</h2>
-        <div class="amenities-grid">
+        <div class="amenities-grid" *ngIf="amenities.length; else noAmenidades">
           <div class="amenity" *ngFor="let a of amenities">
             <svg viewBox="0 0 24 24"><path [attr.d]="a.icon"/></svg>
             <span>{{ a.label }}</span>
           </div>
         </div>
+        <ng-template #noAmenidades>
+          <p>Este alojamiento aún no registra amenidades.</p>
+        </ng-template>
       </div>
 
       <!-- Map -->
@@ -203,27 +206,21 @@
 <div class="modal-backdrop" *ngIf="showPagoModal" (click)="cerrarModalPago()"></div>
 <div class="modal" *ngIf="showPagoModal" (click)="$event.stopPropagation()">
   <div class="modal__header">
-    <h3>Pago por transferencia</h3>
+    <h3>Pagar con Mercado Pago</h3>
     <button class="close" (click)="cerrarModalPago()">×</button>
   </div>
   <div class="modal__body">
-    <p>Realiza la transferencia con los siguientes datos:</p>
+    <p>Te redirigiremos al checkout seguro de Mercado Pago para completar tu reserva.</p>
     <ul class="bank-data">
-      <li><strong>Nombre:</strong> Arroyo Seco Turístico S.A. de C.V.</li>
-      <li><strong>Banco:</strong> Banco Ejemplo</li>
-      <li><strong>Cuenta/CLABE:</strong> 012345678901234567</li>
-      <li><strong>Referencia:</strong> {{ alojamientoId }}-{{ total }}</li>
+      <li><strong>Alojamiento:</strong> {{ alojamiento?.nombre }}</li>
+      <li><strong>Total:</strong> {{ grandTotal | currency:'ARS':'symbol':'1.0-0' }}</li>
+      <li><strong>Métodos:</strong> Tarjeta de crédito, débito o saldo en cuenta</li>
     </ul>
-
-    <label class="upload">
-      Comprobante (PDF/JPG/PNG)
-      <input type="file" accept=".pdf,.png,.jpg,.jpeg,image/*,application/pdf" (change)="onComprobanteChange($event)" required />
-    </label>
   </div>
   <div class="modal__footer">
     <button class="btn" (click)="cerrarModalPago()" [disabled]="creando">Cancelar</button>
-    <button class="btn primary" (click)="confirmarReservaYComprobante()" [disabled]="!comprobanteFile || creando">
-      {{ creando ? 'Procesando...' : 'Confirmar y enviar comprobante' }}
+    <button class="btn primary" (click)="confirmarReservaYPagar()" [disabled]="creando">
+      {{ creando ? 'Redirigiendo...' : 'Continuar a Mercado Pago' }}
     </button>
   </div>
 </div>

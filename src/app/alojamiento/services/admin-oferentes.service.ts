@@ -40,7 +40,7 @@ export class AdminOferentesService {
     return this.api.get<OferenteDto>(`/admin/oferentes/${id}`);
   }
 
-  createUsuarioOferente(payload: { email: string; password: string; nombre?: string; telefono?: string; role?: string; tipoOferente?: number }): Observable<any> {
+  createUsuarioOferente(payload: { email: string; password?: string; nombre?: string; telefono?: string; tipo?: number }): Observable<any> {
     return this.api.post('/admin/oferentes/usuarios', payload);
   }
 

@@ -1,0 +1,52 @@
+<section class="admin-resenas">
+  <div class="panel-header">
+    <h2>Moderación de Reseñas</h2>
+    <div class="filter-row">
+      <select [(ngModel)]="filtroEstado" (change)="cargar()">
+        <option value="">Todas</option>
+        <option value="Pendiente">Pendientes</option>
+        <option value="Aprobada">Aprobadas</option>
+        <option value="Rechazada">Rechazadas</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner-lg"></div>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && resenas.length === 0">
+    <p>No hay reseñas en esta categoría.</p>
+  </div>
+
+  <div class="resenas-list" *ngIf="!loading && resenas.length > 0">
+    <div class="resena-card" *ngFor="let r of resenas; trackBy: trackById" [class]="r.estado.toLowerCase()">
+      <div class="resena-header">
+        <div class="meta">
+          <span class="alojamiento">{{ r.alojamientoNombre }}</span>
+          <span class="badge-estado" [class]="r.estado.toLowerCase()">{{ r.estado }}</span>
+        </div>
+        <div class="calificacion">
+          <span class="estrella filled" *ngFor="let s of estrellasArr(r.calificacion)">★</span>
+          <span class="estrella empty" *ngFor="let s of estrellasArr(5 - r.calificacion)">☆</span>
+        </div>
+      </div>
+
+      <p class="comentario">{{ r.comentario }}</p>
+
+      <div class="resena-footer">
+        <span class="fecha">{{ r.fechaCreacion | date:'dd/MM/yyyy' }}</span>
+        <span class="cliente-id">Cliente: {{ r.clienteId | slice:0:8 }}...</span>
+      </div>
+
+      <div class="acciones" *ngIf="r.estado === 'Pendiente'">
+        <button class="btn-approve" (click)="moderar(r.id, 'Aprobada')">Aprobar</button>
+        <button class="btn-reject"  (click)="moderar(r.id, 'Rechazada')">Rechazar</button>
+        <button class="btn-delete"  (click)="eliminar(r.id)">Eliminar</button>
+      </div>
+      <div class="acciones" *ngIf="r.estado !== 'Pendiente'">
+        <button class="btn-delete" (click)="eliminar(r.id)">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</section>

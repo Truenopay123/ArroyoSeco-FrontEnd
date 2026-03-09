@@ -1,0 +1,19 @@
+.totp-setup { display: grid; place-items: center; padding: 1rem; }
+.totp-card { width: min(760px, 100%); border: 1px solid #e5e7eb; border-radius: 12px; background: #fff; padding: 1rem; }
+.loading-state { display: grid; place-items: center; gap: 0.5rem; padding: 1rem; }
+.spinner-lg { width: 28px; height: 28px; border: 3px solid #e2e8f0; border-top-color: #1d4ed8; border-radius: 50%; animation: spin 0.8s linear infinite; }
+.status-badge { display: inline-flex; align-items: center; gap: 0.4rem; border-radius: 999px; padding: 0.3rem 0.7rem; border: 1px solid #d1d5db; margin-bottom: 0.75rem; }
+.status-badge.enabled { background: #f0fdf4; border-color: #86efac; color: #166534; }
+.status-badge.disabled { background: #fff7ed; border-color: #fdba74; color: #9a3412; }
+.steps { display: grid; gap: 0.75rem; }
+.step { border: 1px solid #e5e7eb; border-radius: 10px; padding: 0.75rem; }
+.step-number { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #1d4ed8; color: #fff; font-weight: 700; margin-right: 0.5rem; }
+.qr-container { margin-top: 0.5rem; }
+.secret-key { display: block; margin-top: 0.4rem; background: #0f172a; color: #f8fafc; padding: 0.4rem; border-radius: 6px; overflow-wrap: anywhere; }
+.verify-form { display: grid; gap: 0.5rem; max-width: 320px; }
+.code-input { border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.55rem; }
+.btn-primary, .btn-danger { border: 1px solid transparent; border-radius: 8px; padding: 0.55rem 0.8rem; color: #fff; cursor: pointer; }
+.btn-primary { background: #1d4ed8; }
+.btn-danger { background: #dc2626; }
+.spinner { width: 14px; height: 14px; display: inline-block; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }

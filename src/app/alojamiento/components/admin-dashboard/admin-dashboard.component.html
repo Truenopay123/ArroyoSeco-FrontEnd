@@ -63,4 +63,30 @@
       </div>
     </div>
   </div>
+
+  <div class="main-grid" *ngIf="turismoResumen">
+    <div class="section-panel">
+      <h3 class="section-title">Estadísticas Turísticas</h3>
+      <div class="activity-list">
+        <div class="activity-item"><div class="activity-content"><span class="activity-text">Visitantes registrados</span><span class="activity-time">{{ turismoResumen?.totalVisitantes || 0 }}</span></div></div>
+        <div class="activity-item"><div class="activity-content"><span class="activity-text">Reservas totales</span><span class="activity-time">{{ turismoResumen?.totalReservas || 0 }}</span></div></div>
+        <div class="activity-item"><div class="activity-content"><span class="activity-text">Reseñas aprobadas</span><span class="activity-time">{{ turismoResumen?.totalResenas || 0 }}</span></div></div>
+      </div>
+    </div>
+
+    <div class="section-panel">
+      <h3 class="section-title">Demografía (Sexo/Edad/Origen)</h3>
+      <div class="activity-list">
+        <div class="activity-item" *ngFor="let s of turismoPorSexo">
+          <div class="activity-content"><span class="activity-text">{{ s.categoria }}</span><span class="activity-time">{{ s.cantidad }}</span></div>
+        </div>
+        <div class="activity-item" *ngFor="let e of turismoPorEdad">
+          <div class="activity-content"><span class="activity-text">Edad {{ e.categoria }}</span><span class="activity-time">{{ e.cantidad }}</span></div>
+        </div>
+        <div class="activity-item" *ngFor="let o of turismoPorOrigen | slice:0:5">
+          <div class="activity-content"><span class="activity-text">Origen {{ o.ciudad }}</span><span class="activity-time">{{ o.cantidad }}</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>

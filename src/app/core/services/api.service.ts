@@ -1,20 +1,28 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
   private readonly http = inject(HttpClient);
-  // Base API URL (adjust if different)
-  readonly baseUrl = 'https://localhost:7190/api';
+  readonly baseUrl = environment.apiUrl;
+  readonly publicBaseUrl = this.baseUrl.replace(/\/api\/?$/i, '');
 
   constructor() { }
 
   private url(path: string) {
     // Ensure no double slashes
     return `${this.baseUrl}${path.startsWith('/') ? '' : '/'}${path}`;
+  }
+
+  toPublicUrl(path?: string | null): string | undefined {
+    if (!path) return undefined;
+    if (/^https?:\/\//i.test(path)) return path;
+    const normalized = path.startsWith('/') ? path : `/${path}`;
+    return `${this.publicBaseUrl}${normalized}`;
   }
 
   get<T>(path: string, params?: HttpParams | { [key: string]: string | number | boolean }): Observable<T> {
@@ -28,6 +36,10 @@ export class ApiService {
 
   post<T>(path: string, body: any, headers?: HttpHeaders): Observable<T> {
     return this.http.post<T>(this.url(path), body, { headers });
+  }
+
+  postFormData<T>(path: string, formData: FormData): Observable<T> {
+    return this.http.post<T>(this.url(path), formData);
   }
 
   put<T>(path: string, body: any): Observable<T> {

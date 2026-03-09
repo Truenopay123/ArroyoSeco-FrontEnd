@@ -1,1 +1,34 @@
+.admin-resenas {
+	padding: 1rem;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 1rem;
+}
+
+.actions {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.resena {
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	padding: 0.75rem;
+	margin-bottom: 0.75rem;
+}
+
+.top {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 0.5rem;
+}
+
+.buttons {
+	display: flex;
+	gap: 0.5rem;
+}
 /* AdminQuejas styles removed per latest requirements */

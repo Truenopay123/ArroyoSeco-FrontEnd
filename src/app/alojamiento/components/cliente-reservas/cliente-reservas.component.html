@@ -9,16 +9,16 @@
       <div class="card" *ngFor="let r of reservasActivas">
         <div class="card-header">
           <h4>{{ r.alojamiento }}</h4>
-          <span class="badge activa">Activa</span>
+          <span class="badge activa">Confirmada</span>
         </div>
         <div class="card-body">
           <div class="info-row">
             <span class="label">Entrada:</span>
-            <span>{{ r.fechaEntrada }}</span>
+            <span>{{ r.fechaEntrada | date:'dd/MM/yyyy' }}</span>
           </div>
           <div class="info-row">
             <span class="label">Salida:</span>
-            <span>{{ r.fechaSalida }}</span>
+            <span>{{ r.fechaSalida | date:'dd/MM/yyyy' }}</span>
           </div>
           <div class="info-row">
             <span class="label">Huéspedes:</span>
@@ -45,18 +45,20 @@
       <div class="card" *ngFor="let r of reservasPasadas">
         <div class="card-header">
           <h4>{{ r.alojamiento }}</h4>
-          <span class="badge" [class.pasada]="r.estado === 'pasada'" [class.cancelada]="r.estado === 'cancelada'">
-            {{ r.estado === 'pasada' ? 'Completada' : 'Cancelada' }}
+          <span class="badge"
+            [class.pasada]="r.estado === 'completada'"
+            [class.cancelada]="r.estado === 'cancelada'">
+            {{ r.estado === 'completada' ? 'Completada' : 'Cancelada' }}
           </span>
         </div>
         <div class="card-body">
           <div class="info-row">
             <span class="label">Entrada:</span>
-            <span>{{ r.fechaEntrada }}</span>
+            <span>{{ r.fechaEntrada | date:'dd/MM/yyyy' }}</span>
           </div>
           <div class="info-row">
             <span class="label">Salida:</span>
-            <span>{{ r.fechaSalida }}</span>
+            <span>{{ r.fechaSalida | date:'dd/MM/yyyy' }}</span>
           </div>
           <div class="info-row">
             <span class="label">Huéspedes:</span>
@@ -67,10 +69,19 @@
             <span>${{ r.total }}</span>
           </div>
         </div>
+        <div class="card-actions" *ngIf="r.estado === 'completada'">
+          <button class="btn-resena" (click)="abrirResena(r.id)"
+            *ngIf="!resenasExistentes.has(r.id)">
+            ★ Dejar reseña
+          </button>
+          <span class="badge-resena" *ngIf="resenasExistentes.has(r.id)">
+            ✓ Ya reseñado
+          </span>
+        </div>
       </div>
     </div>
     <ng-template #noPasadas>
-      <p class="empty">No tienes reservas pasadas.</p>
+      <p class="empty">No tienes reservas en el historial.</p>
     </ng-template>
   </div>
 </section>
@@ -83,6 +94,48 @@
     <div class="modal-actions">
       <button class="btn-secondary" (click)="closeCancelModal()">No, mantener</button>
       <button class="btn-danger" (click)="cancelReserva()">Sí, cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de reseña -->
+<div class="modal-overlay" *ngIf="showResenaModal" (click)="cerrarResena()">
+  <div class="modal modal--resena" (click)="$event.stopPropagation()">
+    <h3>Dejar una reseña</h3>
+    <p class="modal-subtitle">Contá tu experiencia para ayudar a otros viajeros.</p>
+
+    <div class="rating-selector">
+      <label>Calificación:</label>
+      <div class="stars">
+        <button
+          *ngFor="let s of [1,2,3,4,5]"
+          type="button"
+          class="star-btn"
+          [class.star-btn--active]="s <= resenaModel.calificacion"
+          (click)="setCalificacion(s)">★</button>
+      </div>
+      <span class="rating-label">{{ resenaModel.calificacion }} / 5</span>
+    </div>
+
+    <div class="field">
+      <label>Comentario <small>(mínimo 10 caracteres)</small></label>
+      <textarea
+        [(ngModel)]="resenaModel.comentario"
+        rows="4"
+        maxlength="2000"
+        placeholder="Contá tu experiencia: el lugar, la atención, qué te gustó...">
+      </textarea>
+      <small class="char-count">{{ resenaModel.comentario.length }} / 2000</small>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" (click)="cerrarResena()" [disabled]="submittingResena">Cancelar</button>
+      <button
+        class="btn-primary"
+        (click)="enviarResena()"
+        [disabled]="submittingResena || resenaModel.comentario.length < 10">
+        {{ submittingResena ? 'Enviando...' : 'Enviar reseña' }}
+      </button>
     </div>
   </div>
 </div>

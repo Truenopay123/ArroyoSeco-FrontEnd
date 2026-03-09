@@ -1,1 +1,61 @@
-// AdminQuejas component removed per latest requirements
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { first } from 'rxjs/operators';
+import { ApiService } from '../../../core/services/api.service';
+import { ToastService } from '../../../shared/services/toast.service';
+
+@Component({
+	selector: 'app-admin-quejas',
+	standalone: true,
+	imports: [CommonModule, FormsModule],
+	templateUrl: './admin-quejas.component.html',
+	styleUrl: './admin-quejas.component.scss'
+})
+export class AdminQuejasComponent implements OnInit {
+	private readonly api = inject(ApiService);
+	private readonly toast = inject(ToastService);
+
+	loading = false;
+	filtroEstado = '';
+	resenas: any[] = [];
+
+	ngOnInit(): void {
+		this.cargar();
+	}
+
+	cargar() {
+		this.loading = true;
+		const q = this.filtroEstado ? { estado: this.filtroEstado } : undefined;
+		this.api.get<any[]>('/resenas', q as any).pipe(first()).subscribe({
+			next: (rows) => {
+				this.resenas = rows || [];
+				this.loading = false;
+			},
+			error: () => {
+				this.toast.error('No se pudieron cargar las reseñas');
+				this.loading = false;
+			}
+		});
+	}
+
+	moderar(id: number, estado: 'Aprobada' | 'Rechazada') {
+		this.api.patch(`/resenas/${id}/moderar`, { estado }).pipe(first()).subscribe({
+			next: () => {
+				this.toast.success(`Reseña ${estado.toLowerCase()} correctamente`);
+				this.cargar();
+			},
+			error: () => this.toast.error('No se pudo moderar la reseña')
+		});
+	}
+
+	eliminar(id: number) {
+		this.api.delete(`/resenas/${id}`).pipe(first()).subscribe({
+			next: () => {
+				this.toast.success('Reseña eliminada');
+				this.cargar();
+			},
+			error: () => this.toast.error('No se pudo eliminar la reseña')
+		});
+	}
+}

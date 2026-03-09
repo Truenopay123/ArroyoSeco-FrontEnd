@@ -1,0 +1,17 @@
+.admin-resenas { padding: 1rem; }
+.panel-header { display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; margin-bottom: 1rem; }
+.resenas-list { display: grid; gap: 0.75rem; }
+.resena-card { border: 1px solid #e5e7eb; border-radius: 10px; background: #fff; padding: 0.75rem; }
+.resena-header { display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; }
+.meta { display: flex; align-items: center; gap: 0.5rem; }
+.badge-estado { font-size: 0.75rem; border-radius: 999px; padding: 0.2rem 0.5rem; border: 1px solid #d1d5db; }
+.badge-estado.pendiente { background: #fff7ed; border-color: #fdba74; color: #9a3412; }
+.badge-estado.aprobada { background: #f0fdf4; border-color: #86efac; color: #166534; }
+.badge-estado.rechazada { background: #fef2f2; border-color: #fca5a5; color: #991b1b; }
+.comentario { margin: 0.5rem 0; color: #334155; }
+.resena-footer { display: flex; justify-content: space-between; color: #64748b; font-size: 0.85rem; }
+.acciones { display: flex; gap: 0.5rem; margin-top: 0.6rem; }
+button { border: 1px solid #d1d5db; border-radius: 8px; padding: 0.4rem 0.7rem; cursor: pointer; }
+.btn-approve { background: #22c55e; color: #fff; border-color: #22c55e; }
+.btn-reject { background: #f59e0b; color: #fff; border-color: #f59e0b; }
+.btn-delete { background: #ef4444; color: #fff; border-color: #ef4444; }

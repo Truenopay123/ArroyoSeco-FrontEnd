@@ -1,0 +1,68 @@
+<section class="admin-estadisticas">
+  <h2>Estadísticas de Turismo — {{ anioActual }}</h2>
+
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner-lg"></div>
+    <p>Cargando estadísticas...</p>
+  </div>
+
+  <ng-container *ngIf="!loading">
+
+    <!-- ── KPIs ── -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <span class="kpi-value">{{ resumen.totalVisitantes | number }}</span>
+        <span class="kpi-label">Visitantes registrados</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-value">{{ resumen.totalReservas | number }}</span>
+        <span class="kpi-label">Reservas totales</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-value">{{ resumen.reservasActivas | number }}</span>
+        <span class="kpi-label">Reservas activas</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-value">$ {{ resumen.ingresoTotal | number:'1.0-0' }}</span>
+        <span class="kpi-label">Ingresos confirmados</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-value">{{ resumen.totalResenas | number }}</span>
+        <span class="kpi-label">Reseñas publicadas</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-value">{{ resumen.promedioGlobal }}</span>
+        <span class="kpi-label">Calificación promedio</span>
+      </div>
+    </div>
+
+    <!-- ── Charts row 1 ── -->
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Género de visitantes</h3>
+        <canvas #sexoChart></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Grupos etarios</h3>
+        <canvas #edadChart></canvas>
+      </div>
+    </div>
+
+    <!-- ── Charts row 2 ── -->
+    <div class="charts-row">
+      <div class="chart-card wide">
+        <h3>Reservas por mes ({{ anioActual }})</h3>
+        <canvas #reservasChart></canvas>
+      </div>
+    </div>
+
+    <!-- ── Charts row 3 ── -->
+    <div class="charts-row">
+      <div class="chart-card wide">
+        <h3>Lugar de origen (Top 15)</h3>
+        <canvas #origenChart></canvas>
+      </div>
+    </div>
+
+  </ng-container>
+</section>

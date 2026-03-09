@@ -30,90 +30,171 @@
         <div class="form-header">
           <h2>Crear cuenta</h2>
           <p class="form-subtitle">Regístrate para vivir la experiencia Arroyo Seco</p>
+          <span><p class="form-subtitle">Te llegará una liga a tu correo para que puedas iniciar sesión</p></span>
         </div>
 
+        <ng-container *ngIf="step === 'form'; else totpStep">
         <form #f="ngForm" (ngSubmit)="submit(f)" class="register-form">
+          <!-- Correo -->
           <div class="input-group">
             <label for="email">Correo Electrónico</label>
             <div class="input-wrapper">
               <svg class="input-icon" viewBox="0 0 24 24">
                 <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
               </svg>
-              <input
-                id="email"
-                type="email"
-                name="email"
-                [(ngModel)]="model.email"
-                placeholder="tu&#64;correo.com"
-                required
-                pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$"
-                autocomplete="email"
-                #email="ngModel"
-              />
+              <input id="email" type="email" name="email" [(ngModel)]="model.email"
+                placeholder="tu&#64;correo.com" required pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$"
+                autocomplete="email" #email="ngModel" />
             </div>
             <small class="field-error" *ngIf="email.invalid && (email.dirty || email.touched)">Ingresa un correo válido</small>
           </div>
 
+          <!-- Contraseña -->
           <div class="input-group">
             <label for="password">Contraseña</label>
             <div class="input-wrapper">
               <svg class="input-icon" viewBox="0 0 24 24">
                 <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/>
               </svg>
-              <input
-                id="password"
-                [type]="showPassword ? 'text' : 'password'"
-                name="password"
-                [(ngModel)]="model.password"
-                placeholder="Mínimo 6 caracteres"
-                required
-                minlength="6"
-                autocomplete="new-password"
-                #pwd="ngModel"
-              />
+              <input id="password" [type]="showPassword ? 'text' : 'password'" name="password"
+                [(ngModel)]="model.password" placeholder="Mínimo 8 caracteres" required minlength="8"
+                autocomplete="new-password" #pwd="ngModel" />
               <button type="button" class="toggle-pass" (click)="showPassword = !showPassword" tabindex="-1">
                 <svg *ngIf="!showPassword" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-                <svg *ngIf="showPassword" viewBox="0 0 24 24"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>
+                <svg *ngIf="showPassword" viewBox="0 0 24 24"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27z"/></svg>
               </button>
             </div>
-            <small class="field-error" *ngIf="pwd.invalid && (pwd.dirty || pwd.touched)">Mínimo 6 caracteres</small>
+            <!-- Indicador de fortaleza -->
+            <div class="password-strength" *ngIf="model.password.length > 0">
+              <div class="strength-bar" [class]="passwordStrength"></div>
+              <span class="strength-label">{{ passwordStrength === 'weak' ? 'Débil' : passwordStrength === 'medium' ? 'Aceptable' : 'Fuerte' }}</span>
+            </div>
+            <ul class="pwd-hints" *ngIf="passwordErrors.length > 0">
+              <li *ngFor="let err of passwordErrors">{{ err }}</li>
+            </ul>
           </div>
 
+          <!-- Confirmar contraseña -->
           <div class="input-group">
             <label for="confirm">Confirmar Contraseña</label>
             <div class="input-wrapper">
               <svg class="input-icon" viewBox="0 0 24 24">
                 <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
               </svg>
-              <input
-                id="confirm"
-                [type]="showConfirm ? 'text' : 'password'"
-                name="confirm"
-                [(ngModel)]="model.confirm"
-                placeholder="Repite tu contraseña"
-                required
-                autocomplete="new-password"
-                #conf="ngModel"
-              />
+              <input id="confirm" [type]="showConfirm ? 'text' : 'password'" name="confirm"
+                [(ngModel)]="model.confirm" placeholder="Repite tu contraseña" required
+                autocomplete="new-password" #conf="ngModel" />
               <button type="button" class="toggle-pass" (click)="showConfirm = !showConfirm" tabindex="-1">
                 <svg *ngIf="!showConfirm" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-                <svg *ngIf="showConfirm" viewBox="0 0 24 24"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>
+                <svg *ngIf="showConfirm" viewBox="0 0 24 24"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27z"/></svg>
               </button>
             </div>
             <small class="field-error" *ngIf="model.confirm && model.password !== model.confirm">Las contraseñas no coinciden</small>
           </div>
 
-          <button type="submit" class="btn-submit" [disabled]="f.invalid || loading || (model.password !== model.confirm)">
+          <!-- ────────── Datos demográficos (opcionales) ────────── -->
+          <div class="section-title">
+            <span>Datos de origen (opcionales)</span>
+          </div>
+
+          <div class="input-row">
+            <div class="input-group half">
+              <label for="sexo">Género</label>
+              <select id="sexo" name="sexo" [(ngModel)]="model.sexo">
+                <option value="">Prefiero no decir</option>
+                <option *ngFor="let op of sexoOpciones" [value]="op.value">{{ op.label }}</option>
+              </select>
+            </div>
+            <div class="input-group half">
+              <label for="fechaNacimiento">Fecha de nacimiento</label>
+              <input id="fechaNacimiento" type="date" name="fechaNacimiento" [(ngModel)]="model.fechaNacimiento"
+                max="{{ '2025-01-01' }}" />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="lugarOrigen">Ciudad / Localidad de origen</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+              </svg>
+              <input id="lugarOrigen" type="text" name="lugarOrigen" [(ngModel)]="model.lugarOrigen"
+                placeholder="Ej: Querétaro, Monterrey, CDMX..." maxlength="100" />
+            </div>
+          </div>
+
+          <!-- ────────── Aviso de privacidad ────────── -->
+          <div class="privacy-notice">
+            <div class="privacy-box">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="flex-shrink:0">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+              </svg>
+              <p>
+                <strong>Aviso de privacidad:</strong> Los datos opcionales que proporciones (género, edad y lugar de origen)
+                son recopilados con fines estadísticos de turismo por el municipio de Arroyo Seco.
+                Esta información es confidencial, no será compartida con terceros y solo se utilizará de forma
+                agregada para la planificación turística local. Puedes omitirlos si lo prefieres.
+              </p>
+            </div>
+
+            <label class="checkbox-label" style="margin-top:0.75rem">
+              <input type="checkbox" name="privacy" [(ngModel)]="privacyChecked" required />
+              <span>He leído y acepto el aviso de privacidad y los términos de uso</span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn-submit"
+            [disabled]="f.invalid || loading || model.password !== model.confirm || passwordErrors.length > 0 || !privacyChecked">
             <span *ngIf="!loading">Crear mi cuenta</span>
             <span *ngIf="loading" class="spinner"></span>
           </button>
         </form>
+        </ng-container>
 
-        <div class="divider">
+        <ng-template #totpStep>
+          <section class="totp-onboarding">
+            <div class="totp-badge">Paso final de seguridad</div>
+            <h3>Configura Google Authenticator</h3>
+            <p class="totp-copy">
+              Tu cuenta ya fue creada. Escanea este QR en Google Authenticator (o Authy)
+              e ingresa el código de 6 dígitos para terminar.
+            </p>
+
+            <div class="qr-block">
+              <canvas #qrCanvas></canvas>
+            </div>
+
+            <details class="manual-key">
+              <summary>¿No puedes escanear? Usa esta clave manual</summary>
+              <code>{{ totpSetup.key }}</code>
+            </details>
+
+            <form #totpForm="ngForm" (ngSubmit)="confirmarTotp(totpForm)" class="totp-form">
+              <input
+                type="text"
+                name="codigoTotp"
+                [(ngModel)]="totpSetup.codigo"
+                placeholder="000000"
+                required
+                maxlength="6"
+                pattern="[0-9]{6}"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+              />
+
+              <button type="submit" class="btn-submit" [disabled]="totpForm.invalid || verifyingTotp">
+                <span *ngIf="!verifyingTotp">Verificar y activar 2FA</span>
+                <span *ngIf="verifyingTotp" class="spinner"></span>
+              </button>
+            </form>
+          </section>
+        </ng-template>
+
+        <div class="divider" *ngIf="step === 'form'">
           <span>o</span>
         </div>
 
-        <div class="secondary-actions">
+        <div class="secondary-actions" *ngIf="step === 'form'">
           <p class="register-text">
             ¿Ya tienes cuenta?
             <a routerLink="/cliente/login" class="link-accent">Iniciar sesión</a>

@@ -43,13 +43,25 @@ import { AdminOferentesGastronomiaComponent } from './alojamiento/components/adm
 import { AdminSolicitudesComponent } from './alojamiento/components/admin-solicitudes/admin-solicitudes.component';
 import { CheckoutComponent } from './alojamiento/components/checkout/checkout.component';
 import { CambiarPasswordForzadoComponent } from './shared/components/cambiar-password-forzado/cambiar-password-forzado.component';
+import { ConfirmEmailComponent } from './shared/components/confirm-email/confirm-email.component';
+import { ForgotPasswordComponent } from './shared/components/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './shared/components/reset-password/reset-password.component';
 import { cambioPasswordGuard } from './core/guards/cambio-password.guard';
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import { ForbiddenComponent } from './shared/components/forbidden/forbidden.component';
+import { TotpSetupComponent } from './alojamiento/components/totp-setup/totp-setup.component';
+import { PagoResultadoComponent } from './alojamiento/components/pago-resultado/pago-resultado.component';
+import { AdminResenasComponent } from './alojamiento/components/admin-resenas/admin-resenas.component';
+import { AdminEstadisticasComponent } from './alojamiento/components/admin-estadisticas/admin-estadisticas.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginSelectorComponent },
+  { path: 'confirm-email', component: ConfirmEmailComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'cambiar-password', component: CambiarPasswordForzadoComponent },
+  { path: 'forbidden', component: ForbiddenComponent },
   
   // Rutas públicas - sin autenticación
   {
@@ -138,6 +150,24 @@ export const routes: Routes = [
               heroImage: 'assets/images/hero-oferentes.svg'
             }
           },
+          {
+            path: 'resenas',
+            component: AdminResenasComponent,
+            data: {
+              heroTitle: 'Moderación de Reseñas',
+              heroSubtitle: 'Revisa y aprueba reseñas de visitantes.',
+              heroImage: 'assets/images/hero-notificaciones.svg'
+            }
+          },
+          {
+            path: 'estadisticas',
+            component: AdminEstadisticasComponent,
+            data: {
+              heroTitle: 'Estadísticas Turísticas',
+              heroSubtitle: 'Análisis de visitantes y reservas.',
+              heroImage: 'assets/images/hero-dashboard.svg'
+            }
+          },
           { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
       },
@@ -208,11 +238,12 @@ export const routes: Routes = [
     children: [
       { path: 'login', redirectTo: '/login', pathMatch: 'full' },
       { path: 'solicitud', component: OferenteSolicitudComponent },
-      { path: 'home', component: OferenteHomeSelectorComponent, canActivate: [authGuard, cambioPasswordGuard] },
+      { path: 'home', component: OferenteHomeSelectorComponent, canActivate: [authGuard, cambioPasswordGuard], data: { roles: ['Oferente'] } },
       {
         path: '',
         component: OferenteLayoutComponent,
         canActivate: [authGuard, cambioPasswordGuard],
+        data: { roles: ['Oferente'] },
         children: [
           {
             path: 'dashboard',
@@ -289,11 +320,12 @@ export const routes: Routes = [
     children: [
       { path: 'login', redirectTo: '/login', pathMatch: 'full' },
       { path: 'registrar', component: ClienteRegisterComponent },
-      { path: 'home', component: HomeSelectorComponent, canActivate: [authGuard, cambioPasswordGuard] },
+      { path: 'home', component: HomeSelectorComponent, canActivate: [authGuard, cambioPasswordGuard], data: { roles: ['Cliente'] } },
       {
         path: '',
         component: ClienteLayoutComponent,
         canActivate: [authGuard, cambioPasswordGuard],
+        data: { roles: ['Cliente'] },
         children: [
           {
             path: 'alojamientos',
@@ -357,6 +389,24 @@ export const routes: Routes = [
               heroImage: 'assets/images/hero-oferentes.svg'
             }
           },
+          {
+            path: 'seguridad',
+            component: TotpSetupComponent,
+            data: {
+              heroTitle: 'Seguridad',
+              heroSubtitle: 'Configura la autenticación en dos pasos.',
+              heroImage: 'assets/images/hero-dashboard.svg'
+            }
+          },
+          {
+            path: 'pagos/resultado',
+            component: PagoResultadoComponent,
+            data: {
+              heroTitle: 'Resultado del Pago',
+              heroSubtitle: 'Estado de tu pago con Mercado Pago.',
+              heroImage: 'assets/images/hero-dashboard.svg'
+            }
+          },
           { path: '', redirectTo: 'alojamientos', pathMatch: 'full' }
         ]
       },
@@ -365,6 +415,7 @@ export const routes: Routes = [
         path: 'gastronomia',
         component: ClienteLayoutGastronomiaComponent,
         canActivate: [authGuard, cambioPasswordGuard],
+        data: { roles: ['Cliente'] },
         children: [
           {
             path: '',
@@ -419,6 +470,7 @@ export const routes: Routes = [
     path: 'oferente/gastronomia',
     component: OferenteLayoutGastronomiaComponent,
     canActivate: [authGuard, cambioPasswordGuard],
+    data: { roles: ['Oferente'] },
     children: [
       {
         path: 'dashboard',

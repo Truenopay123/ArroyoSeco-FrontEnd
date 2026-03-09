@@ -46,16 +46,6 @@ export class AdminOferentesComponent {
   nuevo: Partial<Oferente> = { nombre: '', correo: '', telefono: '', alojamientos: 0, estado: 'Pendiente' };
   editar: Partial<Oferente> | null = null;
 
-  private readonly MOCK_OFERENTES: Oferente[] = [
-    { id: 'mock-1', nombre: 'María González Rivera', correo: 'maria.gonzalez@email.com', telefono: '442-123-4567', alojamientos: 3, estado: 'Activo', tipo: TipoOferente.Alojamiento },
-    { id: 'mock-2', nombre: 'Carlos Hernández López', correo: 'carlos.hl@email.com', telefono: '442-234-5678', alojamientos: 1, estado: 'Activo', tipo: TipoOferente.Gastronomia },
-    { id: 'mock-3', nombre: 'Ana Martínez Soto', correo: 'ana.martinez@email.com', telefono: '442-345-6789', alojamientos: 2, estado: 'Pendiente', tipo: TipoOferente.Ambos },
-    { id: 'mock-4', nombre: 'Roberto Díaz Fuentes', correo: 'roberto.diaz@email.com', telefono: '442-456-7890', alojamientos: 5, estado: 'Activo', tipo: TipoOferente.Alojamiento },
-    { id: 'mock-5', nombre: 'Laura Sánchez Vega', correo: 'laura.sanchez@email.com', telefono: '442-567-8901', alojamientos: 0, estado: 'Inactivo', tipo: TipoOferente.Gastronomia },
-    { id: 'mock-6', nombre: 'Pedro Ramírez Cruz', correo: 'pedro.ramirez@email.com', telefono: '442-678-9012', alojamientos: 4, estado: 'Activo', tipo: TipoOferente.Alojamiento },
-    { id: 'mock-7', nombre: 'Sofía Torres Medina', correo: 'sofia.torres@email.com', telefono: '442-789-0123', alojamientos: 1, estado: 'Pendiente', tipo: TipoOferente.Gastronomia },
-  ];
-
   get filteredOferentes(): Oferente[] {
     const term = this.searchTerm.trim().toLowerCase();
     if (!term) {
@@ -89,11 +79,11 @@ export class AdminOferentesComponent {
           estado: (d.estado as any) || 'Pendiente',
           tipo: d.tipo ?? TipoOferente.Alojamiento
         }));
-        this.oferentes = mapped.length > 0 ? mapped : this.MOCK_OFERENTES;
+        this.oferentes = mapped;
       },
       error: (err) => {
-        console.error('Error al cargar oferentes, usando datos de demostración:', err);
-        this.oferentes = this.MOCK_OFERENTES;
+        console.error('Error al cargar oferentes:', err);
+        this.oferentes = [];
       }
     });
   }
@@ -136,13 +126,11 @@ export class AdminOferentesComponent {
     if (form.invalid) return;
     const payload = {
       email: this.nuevo.correo!,
-      password: 'Temporal.123',
       nombre: this.nuevo.nombre!,
       telefono: this.nuevo.telefono!,
-      role: 'Oferente',
-      tipoOferente: this.nuevo.tipo
+      tipo: this.nuevo.tipo
     };
-    if (!payload.tipoOferente) {
+    if (!payload.tipo) {
       this.toastService.error('Selecciona el tipo de oferente');
       return;
     }

@@ -1,0 +1,9 @@
+<section class="confirm-wrapper">
+  <div class="card">
+    <h2>Confirmación de correo</h2>
+    <p>{{ message }}</p>
+
+    <a *ngIf="success" routerLink="/login" class="btn">Ir a iniciar sesión</a>
+    <a *ngIf="!success && !loading" routerLink="/login" class="btn">Volver</a>
+  </div>
+</section>

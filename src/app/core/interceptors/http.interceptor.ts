@@ -53,6 +53,10 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
           console.warn('401 en endpoint de reserva/comprobante - no hacer logout automático:', req.url);
         }
       }
+
+      if (error.status === 403) {
+        router.navigateByUrl('/forbidden');
+      }
       return throwError(() => error);
     }),
     finalize(() => loading.hide())

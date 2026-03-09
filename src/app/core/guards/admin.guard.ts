@@ -7,6 +7,5 @@ export const adminGuard: CanActivateFn = () => {
   const router = inject(Router);
   if (!auth.isAuthenticated()) return router.parseUrl('/admin/login');
   if (auth.isAdmin()) return true;
-  // Authenticated but not admin: redirect to client home (or 403 page if exists)
-  return router.parseUrl('/cliente/alojamientos');
+  return router.parseUrl('/forbidden');
 };

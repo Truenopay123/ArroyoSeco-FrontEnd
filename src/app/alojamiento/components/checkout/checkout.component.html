@@ -1,282 +1,138 @@
 <div class="checkout-container">
-  <!-- Stepper Bar -->
-  <div class="stepper">
-    <div class="stepper__step" [class.stepper__step--active]="currentStep >= 1" [class.stepper__step--done]="currentStep > 1" (click)="goToStep(1)">
-      <div class="stepper__circle">
-        <span *ngIf="currentStep <= 1">1</span>
-        <svg *ngIf="currentStep > 1" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12" />
+
+  <div class="card">
+    <h2 class="card__title">Revisá tu reserva</h2>
+
+    <div class="property-summary">
+      <div class="property-summary__image">
+        <svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="120" height="90" rx="12" fill="#fce4e4"/>
+          <path d="M60 20L25 50V80H50V60H70V80H95V50L60 20Z" fill="#E31B23" opacity="0.7"/>
+          <rect x="42" y="55" width="14" height="14" rx="2" fill="#fff"/>
+          <rect x="64" y="55" width="14" height="14" rx="2" fill="#fff"/>
+          <polygon points="60,12 20,48 24,48 60,16 96,48 100,48" fill="#c41019" opacity="0.9"/>
         </svg>
       </div>
-      <span class="stepper__label">Revisión</span>
-    </div>
-
-    <div class="stepper__connector" [class.stepper__connector--active]="currentStep > 1"></div>
-
-    <div class="stepper__step" [class.stepper__step--active]="currentStep >= 2" [class.stepper__step--done]="currentStep > 2" (click)="goToStep(2)">
-      <div class="stepper__circle">
-        <span *ngIf="currentStep <= 2">2</span>
-        <svg *ngIf="currentStep > 2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12" />
-        </svg>
-      </div>
-      <span class="stepper__label">Pago</span>
-    </div>
-
-    <div class="stepper__connector" [class.stepper__connector--active]="currentStep > 2"></div>
-
-    <div class="stepper__step" [class.stepper__step--active]="currentStep >= 3">
-      <div class="stepper__circle">3</div>
-      <span class="stepper__label">Confirmación</span>
-    </div>
-  </div>
-
-  <!-- Step 1: Revisión de reserva -->
-  <div class="step-content" *ngIf="currentStep === 1">
-    <div class="card">
-      <h2 class="card__title">Revisión de tu reserva</h2>
-
-      <div class="property-summary">
-        <div class="property-summary__image">
-          <!-- Placeholder illustration -->
-          <svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="120" height="90" rx="12" fill="#fce4e4"/>
-            <path d="M60 20L25 50V80H50V60H70V80H95V50L60 20Z" fill="#E31B23" opacity="0.7"/>
-            <rect x="42" y="55" width="14" height="14" rx="2" fill="#fff"/>
-            <rect x="64" y="55" width="14" height="14" rx="2" fill="#fff"/>
-            <polygon points="60,12 20,48 24,48 60,16 96,48 100,48" fill="#c41019" opacity="0.9"/>
-          </svg>
-        </div>
-        <div class="property-summary__details">
-          <h3 class="property-summary__name">{{ propertyName }}</h3>
-          <div class="property-summary__meta">
-            <div class="property-summary__meta-item">
-              <!-- Calendar icon -->
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E31B23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                <line x1="16" y1="2" x2="16" y2="6"/>
-                <line x1="8" y1="2" x2="8" y2="6"/>
-                <line x1="3" y1="10" x2="21" y2="10"/>
-              </svg>
-              <div>
-                <span class="property-summary__label">Check-in</span>
-                <span class="property-summary__value">{{ formatDisplayDate(checkIn) }}</span>
-              </div>
-            </div>
-            <div class="property-summary__meta-item">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E31B23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                <line x1="16" y1="2" x2="16" y2="6"/>
-                <line x1="8" y1="2" x2="8" y2="6"/>
-                <line x1="3" y1="10" x2="21" y2="10"/>
-              </svg>
-              <div>
-                <span class="property-summary__label">Check-out</span>
-                <span class="property-summary__value">{{ formatDisplayDate(checkOut) }}</span>
-              </div>
-            </div>
-            <div class="property-summary__meta-item">
-              <!-- Users icon -->
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E31B23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle cx="9" cy="7" r="4"/>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-              </svg>
-              <div>
-                <span class="property-summary__label">Huéspedes</span>
-                <span class="property-summary__value">{{ guests }} huéspedes</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="price-breakdown">
-        <h4 class="price-breakdown__title">Detalle de precio</h4>
-        <div class="price-breakdown__row">
-          <span>{{ formatCurrency(pricePerNight) }} × {{ nights }} noches</span>
-          <span>{{ formatCurrency(subtotal) }}</span>
-        </div>
-        <div class="price-breakdown__row">
-          <span>Tarifa de servicio (8%)</span>
-          <span>{{ formatCurrency(serviceFee) }}</span>
-        </div>
-        <div class="price-breakdown__divider"></div>
-        <div class="price-breakdown__row price-breakdown__row--total">
-          <span>Total</span>
-          <span>{{ formatCurrency(total) }}</span>
-        </div>
-      </div>
-
-      <div class="step-actions">
-        <button class="btn btn--primary" (click)="nextStep()">Continuar al pago</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Step 2: Método de pago -->
-  <div class="step-content" *ngIf="currentStep === 2">
-    <div class="card">
-      <h2 class="card__title">Método de pago</h2>
-
-      <div class="payment-option payment-option--selected">
-        <div class="payment-option__header">
-          <div class="payment-option__radio">
-            <div class="payment-option__radio-dot"></div>
-          </div>
-          <div class="payment-option__info">
-            <!-- Credit card icon -->
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E31B23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-              <line x1="1" y1="10" x2="23" y2="10"/>
-            </svg>
-            <div>
-              <span class="payment-option__name">Mercado Pago</span>
-              <span class="payment-option__desc">Pagá con tarjeta, débito o dinero en cuenta</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="payment-option__body">
-          <div class="mercadopago-badge">
-            <!-- MP shield icon -->
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="#009ee3">
-              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 15l-4-4 1.41-1.41L11 13.17l5.59-5.59L18 9l-7 7z"/>
-            </svg>
-            <span>Pago seguro con Mercado Pago</span>
-          </div>
-
-          <!-- Credit Card Form -->
-          <div class="credit-card-form">
-            <div class="card-preview" [class.card-preview--visa]="cardBrand === 'visa'" [class.card-preview--mastercard]="cardBrand === 'mastercard'" [class.card-preview--amex]="cardBrand === 'amex'">
-              <div class="card-preview__chip">
-                <svg width="36" height="28" viewBox="0 0 36 28"><rect width="36" height="28" rx="4" fill="#d4a73a" opacity="0.7"/><rect x="4" y="8" width="28" height="12" rx="2" fill="#c49b30" opacity="0.5"/><line x1="4" y1="14" x2="32" y2="14" stroke="#b8912a" stroke-width="1"/><line x1="18" y1="8" x2="18" y2="20" stroke="#b8912a" stroke-width="1"/></svg>
-              </div>
-              <div class="card-preview__number">{{ cardNumber || '•••• •••• •••• ••••' }}</div>
-              <div class="card-preview__bottom">
-                <div class="card-preview__holder">{{ cardHolder || 'TITULAR DE LA TARJETA' }}</div>
-                <div class="card-preview__expiry">{{ cardExpiry || 'MM/AA' }}</div>
-              </div>
-              <div class="card-preview__brand" *ngIf="cardBrand">
-                <span *ngIf="cardBrand === 'visa'" class="brand-visa">VISA</span>
-                <span *ngIf="cardBrand === 'mastercard'" class="brand-mc">MC</span>
-                <span *ngIf="cardBrand === 'amex'" class="brand-amex">AMEX</span>
-              </div>
-            </div>
-
-            <div class="cc-fields">
-              <div class="cc-field cc-field--full">
-                <label class="cc-label">Número de tarjeta</label>
-                <div class="cc-input-wrapper">
-                  <svg class="cc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                  <input type="text" [ngModel]="cardNumber" (input)="formatCardNumber($event)" placeholder="1234 5678 9012 3456" maxlength="19" class="cc-input" />
-                </div>
-              </div>
-              <div class="cc-field">
-                <label class="cc-label">Vencimiento</label>
-                <input type="text" [ngModel]="cardExpiry" (input)="formatExpiry($event)" placeholder="MM/AA" maxlength="5" class="cc-input" />
-              </div>
-              <div class="cc-field">
-                <label class="cc-label">CVV</label>
-                <div class="cc-input-wrapper">
-                  <input type="text" [(ngModel)]="cardCVV" placeholder="123" maxlength="4" class="cc-input" />
-                  <svg class="cc-icon-right" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                </div>
-              </div>
-              <div class="cc-field cc-field--full">
-                <label class="cc-label">Titular de la tarjeta</label>
-                <input type="text" [(ngModel)]="cardHolder" placeholder="Como aparece en la tarjeta" class="cc-input" style="text-transform: uppercase" />
-              </div>
-            </div>
-          </div>
-
-          <div class="payment-summary">
-            <div class="payment-summary__row">
-              <span>Total a pagar</span>
-              <span class="payment-summary__amount">{{ formatCurrency(total) }}</span>
-            </div>
-          </div>
-
-          <button
-            class="btn btn--mercadopago"
-            (click)="simulatePayment()"
-            [disabled]="isProcessingPayment || !cardValid">
-            <span *ngIf="!isProcessingPayment">Pagar {{ formatCurrency(total) }}</span>
-            <span *ngIf="isProcessingPayment" class="btn__spinner-wrapper">
-              <span class="btn__spinner"></span>
-              Procesando pago...
-            </span>
-          </button>
-        </div>
-      </div>
-
-      <div class="step-actions">
-        <button class="btn btn--outline" (click)="prevStep()" [disabled]="isProcessingPayment">
-          <!-- Arrow left -->
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"/>
-            <polyline points="12 19 5 12 12 5"/>
-          </svg>
-          Volver
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Step 3: Confirmación -->
-  <div class="step-content" *ngIf="currentStep === 3">
-    <div class="card card--confirmation">
-      <div class="confirmation">
-        <div class="confirmation__icon">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-        </div>
-
-        <h2 class="confirmation__title">¡Reserva confirmada!</h2>
-        <p class="confirmation__subtitle">Tu reserva ha sido procesada exitosamente</p>
-
-        <div class="confirmation__code-box">
-          <span class="confirmation__code-label">Código de reserva</span>
-          <span class="confirmation__code">{{ reservationCode }}</span>
-        </div>
-
-        <div class="confirmation__details">
-          <div class="confirmation__detail-row">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E31B23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
-              <circle cx="12" cy="10" r="3"/>
-            </svg>
-            <span>{{ propertyName }}</span>
-          </div>
-          <div class="confirmation__detail-row">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E31B23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <div class="property-summary__details">
+        <h3 class="property-summary__name">{{ propertyName }}</h3>
+        <div class="property-summary__meta">
+          <div class="property-summary__meta-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E31B23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
               <line x1="16" y1="2" x2="16" y2="6"/>
               <line x1="8" y1="2" x2="8" y2="6"/>
               <line x1="3" y1="10" x2="21" y2="10"/>
             </svg>
-            <span>{{ formatDisplayDate(checkIn) }} — {{ formatDisplayDate(checkOut) }}</span>
+            <div>
+              <span class="property-summary__label">Check-in</span>
+              <span class="property-summary__value">{{ formatDisplayDate(checkIn) }}</span>
+            </div>
           </div>
-          <div class="confirmation__detail-row">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E31B23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <div class="property-summary__meta-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E31B23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <div>
+              <span class="property-summary__label">Check-out</span>
+              <span class="property-summary__value">{{ formatDisplayDate(checkOut) }}</span>
+            </div>
+          </div>
+          <div class="property-summary__meta-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E31B23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
               <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
             </svg>
-            <span>{{ guests }} huéspedes</span>
-          </div>
-          <div class="confirmation__detail-row confirmation__detail-row--total">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E31B23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="1" x2="12" y2="23"/>
-              <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
-            </svg>
-            <span>Total pagado: {{ formatCurrency(total) }}</span>
+            <div>
+              <span class="property-summary__label">Huéspedes</span>
+              <span class="property-summary__value">{{ guests }} huésped{{ guests > 1 ? 'es' : '' }}</span>
+            </div>
           </div>
         </div>
+      </div>
+    </div>
 
-        <a class="btn btn--primary" routerLink="/mis-reservas">Ir a mis reservas</a>
+    <div class="price-breakdown">
+      <h4 class="price-breakdown__title">Detalle de precio</h4>
+      <div class="price-breakdown__row">
+        <span>{{ formatCurrency(pricePerNight) }} × {{ nights }} noche{{ nights > 1 ? 's' : '' }}</span>
+        <span>{{ formatCurrency(subtotal) }}</span>
+      </div>
+      <div class="price-breakdown__row">
+        <span>Tarifa de servicio (8%)</span>
+        <span>{{ formatCurrency(serviceFee) }}</span>
+      </div>
+      <div class="price-breakdown__divider"></div>
+      <div class="price-breakdown__row price-breakdown__row--total">
+        <span>Total</span>
+        <span>{{ formatCurrency(total) }}</span>
       </div>
     </div>
   </div>
+
+  <div class="card card--payment">
+    <h2 class="card__title">Método de pago</h2>
+
+    <div class="payment-option payment-option--selected">
+      <div class="payment-option__header">
+        <div class="payment-option__radio">
+          <div class="payment-option__radio-dot"></div>
+        </div>
+        <div class="payment-option__info">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E31B23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+            <line x1="1" y1="10" x2="23" y2="10"/>
+          </svg>
+          <div>
+            <span class="payment-option__name">Mercado Pago</span>
+            <span class="payment-option__desc">Pagá con tarjeta, débito o dinero en cuenta</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="payment-option__body">
+        <div class="mercadopago-badge">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="#009ee3">
+            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 15l-4-4 1.41-1.41L11 13.17l5.59-5.59L18 9l-7 7z"/>
+          </svg>
+          <span>Pago seguro con Mercado Pago</span>
+        </div>
+
+        <p class="mp-redirect-info">
+          Al hacer clic serás redirigido a Mercado Pago para completar el pago de forma segura.
+          Podés abonar con tarjeta de crédito, débito o saldo en cuenta.
+        </p>
+
+        <div *ngIf="errorPago" class="error-banner">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          {{ errorPago }}
+        </div>
+
+        <button
+          class="btn btn--mercadopago"
+          (click)="pagarConMercadoPago()"
+          [disabled]="isProcessingPayment">
+          <span *ngIf="!isProcessingPayment">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:6px">
+              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 15l-4-4 1.41-1.41L11 13.17l5.59-5.59L18 9l-7 7z"/>
+            </svg>
+            Pagar con Mercado Pago {{ formatCurrency(total) }}
+          </span>
+          <span *ngIf="isProcessingPayment" class="btn__spinner-wrapper">
+            <span class="btn__spinner"></span>
+            Redirigiendo a Mercado Pago...
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
 </div>
