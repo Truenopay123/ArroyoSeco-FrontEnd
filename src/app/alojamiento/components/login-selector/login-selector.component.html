@@ -53,6 +53,7 @@
                   type="email"
                   name="email"
                   [(ngModel)]="model.email"
+                  (ngModelChange)="onLoginInputChanged()"
                   placeholder="tu&#64;correo.com"
                   required
                   autocomplete="email"
@@ -71,6 +72,7 @@
                   [type]="showPassword ? 'text' : 'password'"
                   name="password"
                   [(ngModel)]="model.password"
+                  (ngModelChange)="onLoginInputChanged()"
                   placeholder="Ingresa tu contraseña"
                   required
                   autocomplete="current-password"
@@ -94,6 +96,23 @@
               <span *ngIf="!loading">Iniciar Sesión</span>
               <span *ngIf="loading" class="spinner"></span>
             </button>
+
+            <div class="email-confirmation-help" *ngIf="showResendConfirmation">
+              <p>
+                Este correo aun no esta confirmado:
+                <strong>{{ unconfirmedEmail }}</strong>
+              </p>
+              <button
+                type="button"
+                class="btn-resend"
+                [disabled]="resendLoading || resendCooldownSeconds > 0"
+                (click)="resendConfirmationEmail()"
+              >
+                <span *ngIf="!resendLoading && resendCooldownSeconds === 0">Reenviar correo de confirmacion</span>
+                <span *ngIf="!resendLoading && resendCooldownSeconds > 0">Reenviar en {{ resendCooldownSeconds }}s</span>
+                <span *ngIf="resendLoading" class="spinner spinner-sm"></span>
+              </button>
+            </div>
           </form>
 
           <div class="divider"><span>o</span></div>

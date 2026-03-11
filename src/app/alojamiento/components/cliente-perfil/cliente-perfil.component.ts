@@ -12,6 +12,7 @@ interface Perfil {
   telefono: string;
   direccion: string;
   ciudad: string;
+  sexo: string;
 }
 
 @Component({
@@ -32,22 +33,44 @@ export class ClientePerfilComponent implements OnInit {
     email: '',
     telefono: '',
     direccion: '',
-    ciudad: ''
+    ciudad: '',
+    sexo: ''
   });
 
+  readonly opcionesSexo = [
+    { value: 'Hombre', label: 'Hombre' },
+    { value: 'Mujer', label: 'Mujer' },
+    { value: 'Otro', label: 'Otro' }
+  ];
+
   ngOnInit() {
-    // Obtener datos del token JWT
-    const token = this.authService.getToken();
-    if (token) {
-      const payload = this.decodeToken(token);
-      this.perfil.set({
-        nombre: payload['name'] || payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || 'Usuario',
-        email: payload['email'] || payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] || '',
-        telefono: payload['phone'] || '',
-        direccion: '',
-        ciudad: ''
-      });
-    }
+    this.authService.me().subscribe({
+      next: (me: any) => {
+        const token = this.authService.getToken();
+        const payload = token ? this.decodeToken(token) : {};
+        this.perfil.set({
+          nombre: me?.nombre || me?.name || payload['name'] || payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || 'Usuario',
+          email: me?.email || payload['email'] || payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] || '',
+          telefono: me?.telefono || me?.phoneNumber || payload['phone'] || '',
+          direccion: me?.direccion || '',
+          ciudad: me?.ciudad || '',
+          sexo: me?.sexo || ''
+        });
+      },
+      error: () => {
+        const token = this.authService.getToken();
+        if (!token) return;
+        const payload = this.decodeToken(token);
+        this.perfil.set({
+          nombre: payload['name'] || payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || 'Usuario',
+          email: payload['email'] || payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] || '',
+          telefono: payload['phone'] || '',
+          direccion: '',
+          ciudad: '',
+          sexo: payload['sexo'] || ''
+        });
+      }
+    });
   }
 
   private decodeToken(token: string): any {
@@ -60,10 +83,17 @@ export class ClientePerfilComponent implements OnInit {
   }
 
   guardarPerfil() {
-    const { nombre, email, telefono } = this.perfil();
+    const { nombre, email, telefono, sexo } = this.perfil();
     this.usuarioService.updatePerfil({ nombre, email, telefono }).subscribe({
-      next: async () => {
-        await this.modalService.confirm({ title: 'Perfil actualizado', message: 'Tus datos han sido guardados correctamente.', confirmText: 'Aceptar' });
+      next: () => {
+        this.authService.updateDemografia({ sexo: sexo || undefined }).subscribe({
+          next: async () => {
+            await this.modalService.confirm({ title: 'Perfil actualizado', message: 'Tus datos han sido guardados correctamente.', confirmText: 'Aceptar' });
+          },
+          error: async () => {
+            await this.modalService.confirm({ title: 'Perfil actualizado parcialmente', message: 'Se guardaron tus datos principales, pero no fue posible actualizar el sexo.', confirmText: 'Aceptar' });
+          }
+        });
       },
       error: (err) => {
         console.error('Error al actualizar perfil:', err);

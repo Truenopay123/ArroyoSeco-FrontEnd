@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, ActivatedRoute } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PagoService } from '../../services/pago.service';
 import { ToastService } from '../../../shared/services/toast.service';
@@ -30,6 +30,7 @@ export class CheckoutComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private pagoService: PagoService,
     private toast: ToastService
   ) {}
@@ -55,8 +56,8 @@ export class CheckoutComponent implements OnInit {
   }
 
   get subtotal(): number { return this.pricePerNight * this.nights; }
-  get serviceFee(): number { return Math.round(this.subtotal * 0.08); }
-  get total(): number { return this.totalAmount || (this.subtotal + this.serviceFee); }
+  get serviceFee(): number { return 0; }
+  get total(): number { return this.totalAmount || this.subtotal; }
 
   /** Inicia el pago con Mercado Pago */
   pagarConMercadoPago(): void {
@@ -73,10 +74,23 @@ export class CheckoutComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.isProcessingPayment = false;
-          // Redirigir al checkout de Mercado Pago
+          // Abrir MP en nueva pestaña para no perder el contexto del sitio.
           const url = res.initPoint || res.sandboxInitPoint;
           if (url) {
-            window.location.href = url;
+            const popup = window.open(url, '_blank', 'noopener,noreferrer');
+            if (popup) {
+              this.toast.info('Se abrió Mercado Pago en otra pestaña. Aquí verás el estado de tu pago.');
+              this.router.navigate(['/cliente/pagos/resultado'], {
+                queryParams: {
+                  estado: 'pendiente',
+                  reservaId: this.reservaId,
+                  fromCheckout: 1
+                }
+              });
+            } else {
+              // Si el navegador bloquea popups, usar redirección en la misma pestaña.
+              window.location.href = url;
+            }
           } else {
             this.errorPago = 'No se pudo obtener el enlace de pago.';
           }
@@ -96,6 +110,6 @@ export class CheckoutComponent implements OnInit {
   }
 
   formatCurrency(value: number): string {
-    return value.toLocaleString('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 });
+    return value.toLocaleString('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0 });
   }
 }

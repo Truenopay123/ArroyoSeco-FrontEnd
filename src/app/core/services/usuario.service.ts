@@ -19,8 +19,8 @@ export class UsuarioService {
   private readonly api = inject(ApiService);
 
   updatePerfil(payload: PerfilUpdateDto): Observable<any> {
-    // Endpoint tentativo; ajustar según backend
-    return this.api.put('/usuarios/perfil', payload).pipe(
+    // Endpoint para actualizar email y teléfono
+    return this.api.put('/auth/perfil', { email: payload.email, telefono: payload.telefono }).pipe(
       catchError((err) => throwError(() => err))
     );
   }

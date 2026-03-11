@@ -4,66 +4,82 @@
       <h2>Gestión de Reservas</h2>
       <p class="subtitle">Administra las reservas de tus hospedajes.</p>
     </div>
+  </header>
 
-    <div class="reservas__actions">
+  <div class="filter-bar">
+    <div class="filter-search">
+      <span class="filter-icon">🔍</span>
       <input
         type="search"
         placeholder="Buscar por folio, huésped o hospedaje"
         [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange()"
       />
-      <select [(ngModel)]="estadoFiltro">
-        <option value="">-- Estado --</option>
+    </div>
+    <div class="filter-group">
+      <label class="filter-label">Estado</label>
+      <select [(ngModel)]="estadoFiltro" (ngModelChange)="onEstadoChange()">
+        <option value="">Todos</option>
         <option *ngFor="let e of estadosPosibles" [value]="e">{{ e }}</option>
       </select>
     </div>
-  </header>
+  </div>
 
   <div *ngIf="loading" class="loading">Cargando reservas...</div>
   <div *ngIf="!loading && error" class="error">{{ error }}</div>
 
-  <div class="table-wrapper" *ngIf="!loading && !error && filteredReservas.length; else emptyState">
-    <table>
-      <thead>
-        <tr>
-          <th>Folio</th>
-          <th>Hospedaje</th>
-          <th>Huésped</th>
-          <th>Entrada</th>
-          <th>Salida</th>
-          <th>Total</th>
-          <th>Estado</th>
-          <th class="actions">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let reserva of filteredReservas">
-          <td>{{ reserva.folio || reserva.id }}</td>
-          <td>{{ reserva.hospedaje }}</td>
-          <td>{{ reserva.huesped }}</td>
-          <td>{{ reserva.fechaEntrada }}</td>
-          <td>{{ reserva.fechaSalida }}</td>
-          <td>${{ reserva.total.toLocaleString() }} MXN</td>
-          <td>
-            <span
-              class="pill"
-              [ngClass]="reserva.estado.toLowerCase()"
-            >
-              {{ reserva.estado }}
-            </span>
-          </td>
-          <td class="actions">
-            <button type="button" class="btn ghost" (click)="abrirDetalle(reserva)">Ver detalle</button>
-            <button type="button" class="btn success" *ngIf="reserva.estado === 'Pendiente' || reserva.estado === 'PagoEnRevision'" (click)="confirmar(reserva)">Confirmar</button>
-            <button type="button" class="btn danger" *ngIf="reserva.estado === 'Pendiente' || reserva.estado === 'PagoEnRevision'" (click)="rechazar(reserva)">Rechazar</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="reservas-lista" *ngIf="!loading && !error && filteredReservas.length; else emptyState">
+    <article class="reserva-card" *ngFor="let reserva of pagedReservas">
+      <div class="rcard__top">
+        <div class="rcard__folio">
+          <span class="folio-label">Folio</span>
+          <span class="folio-value">{{ reserva.folio || reserva.id }}</span>
+        </div>
+        <span class="pill" [ngClass]="reserva.estado.toLowerCase()">{{ reserva.estado }}</span>
+      </div>
+
+      <div class="rcard__body">
+        <div class="rcard__info-grid">
+          <div class="rcard__field">
+            <span class="field-label">🏠 Hospedaje</span>
+            <span class="field-value">{{ reserva.hospedaje }}</span>
+          </div>
+          <div class="rcard__field">
+            <span class="field-label">👤 Huésped</span>
+            <span class="field-value email">{{ reserva.huesped }}</span>
+          </div>
+          <div class="rcard__field">
+            <span class="field-label">📅 Entrada</span>
+            <span class="field-value">{{ reserva.fechaEntrada | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="rcard__field">
+            <span class="field-label">📅 Salida</span>
+            <span class="field-value">{{ reserva.fechaSalida | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="rcard__field">
+            <span class="field-label">💰 Total</span>
+            <span class="field-value total">${{ reserva.total.toLocaleString() }} MXN</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="rcard__actions">
+        <button type="button" class="btn ghost" (click)="abrirDetalle(reserva)">Ver detalle</button>
+        <button type="button" class="btn success" *ngIf="reserva.estado === 'Pendiente' || reserva.estado === 'PagoEnRevision'" (click)="confirmar(reserva)">✓ Confirmar</button>
+        <button type="button" class="btn danger" *ngIf="reserva.estado === 'Pendiente' || reserva.estado === 'PagoEnRevision'" (click)="rechazar(reserva)">✕ Rechazar</button>
+      </div>
+    </article>
+
+    <div class="pager" *ngIf="totalPages > 1">
+      <button type="button" class="btn ghost" [disabled]="page <= 1" (click)="goToPage(page - 1)">Anterior</button>
+      <span>Página {{ page }} de {{ totalPages }} · {{ totalReservasFiltradas }} reservas</span>
+      <button type="button" class="btn ghost" [disabled]="page >= totalPages" (click)="goToPage(page + 1)">Siguiente</button>
+    </div>
   </div>
 
   <ng-template #emptyState>
     <div class="empty">
-      <p>No se encontraron reservas para "{{ searchTerm }}".</p>
+      <p>No se encontraron reservas{{ searchTerm ? ' para "' + searchTerm + '"' : '' }}.</p>
     </div>
   </ng-template>
 
@@ -75,11 +91,11 @@
     </div>
     <div class="modal__body" *ngIf="reservaSeleccionada as r">
       <div class="detail-grid">
-        <div><strong>Folio:</strong> {{ r.id }}</div>
+        <div><strong>Folio:</strong> {{ r.folio || r.id }}</div>
         <div><strong>Hospedaje:</strong> {{ r.hospedaje }}</div>
         <div><strong>Huésped:</strong> {{ r.huesped }}</div>
-        <div><strong>Entrada:</strong> {{ r.fechaEntrada }}</div>
-        <div><strong>Salida:</strong> {{ r.fechaSalida }}</div>
+        <div><strong>Entrada:</strong> {{ r.fechaEntrada | date:'dd/MM/yyyy' }}</div>
+        <div><strong>Salida:</strong> {{ r.fechaSalida | date:'dd/MM/yyyy' }}</div>
         <div><strong>Total:</strong> ${{ r.total.toLocaleString() }} MXN</div>
         <div><strong>Estado:</strong> {{ r.estado }}</div>
       </div>

@@ -47,7 +47,7 @@
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--color-primary, #E31B23), #ff6b6b);
+  background: linear-gradient(135deg, var(--color-primary, #1F7D4D), var(--color-secondary, #17A2B8));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -129,8 +129,8 @@
 
   &:hover {
     background: #fafafa;
-    border-color: var(--color-primary-light, #fee2e2);
-    box-shadow: 0 4px 12px rgba(227, 27, 35, 0.08);
+    border-color: var(--color-primary-light, #E8F5E9);
+    box-shadow: 0 4px 12px rgba(31, 125, 77, 0.08);
   }
 }
 
@@ -138,7 +138,7 @@
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background: linear-gradient(135deg, var(--color-primary, #E31B23), var(--color-primary-dark, #c41019));
+  background: linear-gradient(135deg, var(--color-primary, #1F7D4D), var(--color-primary-dark, #155E3E));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -160,7 +160,7 @@
   svg { width: 18px; height: 18px; fill: #d1d5db; transition: fill 0.2s; }
 }
 
-.dashboard-card:hover .card-arrow svg { fill: var(--color-primary, #E31B23); }
+.dashboard-card:hover .card-arrow svg { fill: var(--color-primary, #1F7D4D); }
 
 /* Occupancy Chart */
 .chart-bars {
@@ -184,7 +184,7 @@
   width: 100%;
   max-width: 32px;
   border-radius: 6px 6px 0 0;
-  background: linear-gradient(180deg, var(--color-primary, #E31B23), #ff8a8a);
+  background: linear-gradient(180deg, var(--color-primary, #1F7D4D), #6fcf97);
   transition: height 0.6s ease;
   min-height: 4px;
 }
@@ -211,7 +211,7 @@
 
 .reserva-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.75rem;
   padding: 0.85rem 0;
   border-bottom: 1px solid #f5f5f5;
@@ -244,12 +244,18 @@
 .reserva-propiedad { font-size: 0.78rem; color: #6b7280; }
 .reserva-fechas { font-size: 0.72rem; color: #9ca3af; }
 
+.reserva-huesped,
+.reserva-propiedad {
+  overflow-wrap: anywhere;
+}
+
 .reserva-right {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 0.2rem;
   flex-shrink: 0;
+  min-width: 110px;
 }
 
 .reserva-monto {
@@ -279,4 +285,7 @@
 @media (max-width: 640px) {
   .stats-grid { grid-template-columns: 1fr; }
   .card-grid { grid-template-columns: 1fr; }
+  .reserva-item { gap: .5rem; }
+  .reserva-right { min-width: 92px; }
+  .reserva-monto { font-size: .8rem; }
 }

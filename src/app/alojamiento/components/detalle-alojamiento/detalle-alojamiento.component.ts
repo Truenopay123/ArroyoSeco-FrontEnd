@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ToastService } from '../../../shared/services/toast.service';
@@ -8,10 +8,11 @@ import { ReservasService } from '../../services/reservas.service';
 import { PagoService } from '../../services/pago.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { first, switchMap } from 'rxjs/operators';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDatepickerModule, MatDateRangePicker } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { ApiService } from '../../../core/services/api.service';
 
 @Component({
   selector: 'app-detalle-alojamiento',
@@ -28,6 +29,7 @@ export class DetalleAlojamientoComponent implements OnInit {
   private readonly alojamientosService = inject(AlojamientoService);
   private readonly reservasService = inject(ReservasService);
   private readonly pagoService = inject(PagoService);
+  private readonly api = inject(ApiService);
 
   alojamientoId!: number;
   alojamiento?: AlojamientoDto;
@@ -36,16 +38,34 @@ export class DetalleAlojamientoComponent implements OnInit {
   loading = false;
   error: string | null = null;
   reservedDateSet = new Set<string>();
-  private isDisponible(d: Date | null): boolean {
-    return !!d && !this.reservedDateSet.has(this.key(d));
-  }
+  ratingPromedio = 0;
+  totalResenas = 0;
+  resenasPublicas: Array<{ id: number; calificacion: number; comentario: string; fechaCreacion: string }> = [];
+  @ViewChild('picker') picker!: MatDateRangePicker<Date>;
+
+  dateFilter = (d: Date | null): boolean => {
+    if (!d) return false;
+    const day = new Date(d);
+    day.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return day >= today && !this.reservedDateSet.has(this.key(day));
+  };
+
+  dateClass = (d: Date, view: string): string => {
+    if (view !== 'month') return '';
+    return this.reservedDateSet.has(this.key(d)) ? 'reserved-date' : '';
+  };
+
   showPagoModal = false;
   creando = false;
   isPublic = false;
+  aceptaCondiciones = false;
 
   // Lightbox
   lightboxOpen = false;
   lightboxIndex = 0;
+  readonly placeholderImage = 'https://placehold.co/1200x800?text=Sin+foto';
 
   get amenities(): Array<{ icon: string; label: string }> {
     const fromDb = this.alojamiento?.amenidades || [];
@@ -53,33 +73,40 @@ export class DetalleAlojamientoComponent implements OnInit {
 
     return fromDb.map(label => ({
       label,
-      icon: this.getAmenityIcon()
+      icon: this.getAmenityIcon(label)
     }));
   }
 
-  private getAmenityIcon(): string {
+  get condicionesUso(): string[] {
+    return this.alojamiento?.condicionesUso || [];
+  }
+
+  get anfitrionNombre(): string {
+    return this.alojamiento?.anfitrionNombre || 'Anfitrión';
+  }
+
+  private getAmenityIcon(label: string): string {
+    const key = label.toLowerCase().trim();
+    if (key.includes('wifi')) return 'M12 18c.69 0 1.25.56 1.25 1.25S12.69 20.5 12 20.5s-1.25-.56-1.25-1.25S11.31 18 12 18zm3.53-2.47a5 5 0 00-7.06 0l-.88-.88a6.25 6.25 0 018.82 0l-.88.88zm2.12-2.12a8 8 0 00-11.3 0l-.88-.88a9.25 9.25 0 0113.06 0l-.88.88zm2.12-2.12a11 11 0 00-15.54 0l-.88-.88a12.25 12.25 0 0117.3 0l-.88.88z';
+    if (key.includes('aire')) return 'M3 11h18v2H3v-2zm2-4h14v2H5V7zm0 8h14v2H5v-2z';
+    if (key.includes('tv')) return 'M4 5h16a1 1 0 011 1v10a1 1 0 01-1 1h-6l2 2h-4l2-2H4a1 1 0 01-1-1V6a1 1 0 011-1z';
+    if (key.includes('asador')) return 'M5 5h14v2H5V5zm2 4h10l-1 8H8L7 9zm3 10h4v2h-4v-2z';
+    if (key.includes('pet')) return 'M12 3l-2.5 2H7a2 2 0 00-2 2v4a7 7 0 0014 0V7a2 2 0 00-2-2h-2.5L12 3zm-3 6a1 1 0 110-2 1 1 0 010 2zm6 0a1 1 0 110-2 1 1 0 010 2zm-3 6a2.5 2.5 0 01-2.45-2h4.9A2.5 2.5 0 0112 15z';
+    if (key.includes('estacionamiento')) return 'M7 4h6a4 4 0 010 8H9v8H7V4zm2 2v4h4a2 2 0 000-4H9z';
     return 'M12 2a10 10 0 100 20 10 10 0 000-20z';
   }
 
   // Gallery fallback images
-  readonly defaultGalleryImages = [
-    'https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&h=400&fit=crop',
-    'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&h=400&fit=crop',
-    'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=400&fit=crop',
-    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop'
-  ];
-
   get galleryImages(): string[] {
+    if (!this.gallery.length) return [this.placeholderImage];
     if (this.gallery.length >= 5) return this.gallery;
-    if (this.gallery.length > 0) {
-      const padded = [...this.gallery];
-      while (padded.length < 5) {
-        padded.push(this.defaultGalleryImages[padded.length % this.defaultGalleryImages.length]);
-      }
-      return padded;
+    const padded = [...this.gallery];
+    let idx = 0;
+    while (padded.length < 5) {
+      padded.push(this.gallery[idx % this.gallery.length]);
+      idx++;
     }
-    return this.defaultGalleryImages;
+    return padded;
   }
 
   get nights(): number {
@@ -89,11 +116,15 @@ export class DetalleAlojamientoComponent implements OnInit {
   }
 
   get serviceFee(): number {
-    return Math.round(this.total * 0.08);
+    return 0;
   }
 
   get grandTotal(): number {
     return this.total + this.serviceFee;
+  }
+
+  get ratingLabel(): string {
+    return this.totalResenas > 0 ? this.ratingPromedio.toFixed(1) : 'Nuevo';
   }
 
   openLightbox(index: number) {
@@ -132,7 +163,28 @@ export class DetalleAlojamientoComponent implements OnInit {
     if (this.alojamientoId) {
       this.cargar();
       this.cargarCalendario();
+      this.cargarResenas();
     }
+  }
+
+  private cargarResenas() {
+    this.api.get<any>(`/resenas/alojamiento/${this.alojamientoId}`).pipe(first()).subscribe({
+      next: (res) => {
+        this.ratingPromedio = Number(res?.promedio || 0);
+        this.totalResenas = Number(res?.total || 0);
+        this.resenasPublicas = (res?.resenas || []).map((r: any) => ({
+          id: Number(r.id || 0),
+          calificacion: Number(r.calificacion || 0),
+          comentario: String(r.comentario || ''),
+          fechaCreacion: String(r.fechaCreacion || ''),
+        }));
+      },
+      error: () => {
+        this.ratingPromedio = 0;
+        this.totalResenas = 0;
+        this.resenasPublicas = [];
+      }
+    });
   }
 
   private cargar() {
@@ -141,7 +193,9 @@ export class DetalleAlojamientoComponent implements OnInit {
       next: (a) => {
         this.alojamiento = a;
         const fotos = a.fotosUrls || [];
-        this.gallery = [a.fotoPrincipal, ...fotos].filter(Boolean) as string[];
+        this.gallery = [a.fotoPrincipal, ...fotos]
+          .filter(Boolean)
+          .filter((url, idx, arr) => arr.indexOf(url) === idx) as string[];
         this.loading = false;
       },
       error: () => {
@@ -156,28 +210,35 @@ export class DetalleAlojamientoComponent implements OnInit {
       next: rangos => {
         const days: string[] = [];
         for (const r of rangos) {
-          const start = new Date(r.inicio);
-          const end = new Date(r.fin);
-          for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+          const start = this.parseBackendDate(r.inicio);
+          const end = this.parseBackendDate(r.fin);
+          if (!start || !end) continue;
+          for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
             days.push(this.key(d));
           }
         }
         this.reservedDateSet = new Set(days);
+        console.log('[Calendario] Fechas ocupadas cargadas:', days.length, days);
+
+        // Reasignar las funciones para que Angular detecte el cambio y
+        // el datepicker vuelva a renderizar las celdas del calendario.
+        const prevFilter = this.dateFilter;
+        this.dateFilter = (d: Date | null): boolean => prevFilter(d);
+        const prevClass = this.dateClass;
+        this.dateClass = (d: Date, view: string): string => prevClass(d, view);
       },
-      error: () => {}
+      error: (err) => console.error('[Calendario] Error cargando fechas ocupadas:', err)
     });
   }
-
-  dateClass = (d: Date) => this.reservedDateSet.has(this.key(d)) ? 'reserved-date' : '';
 
   // Verifica que el rango seleccionado no incluya días ocupados
   rangoDisponible(): boolean {
     const inicio = this.booking.entrada;
     const fin = this.booking.salida;
     if (!inicio || !fin) return false;
-    if (fin < inicio) return false;
+    if (fin <= inicio) return false;
     const d = new Date(inicio);
-    while (d <= fin) {
+    while (d < fin) {
       if (this.reservedDateSet.has(this.key(d))) return false;
       d.setDate(d.getDate() + 1);
     }
@@ -208,12 +269,13 @@ export class DetalleAlojamientoComponent implements OnInit {
       this.toast.error('El rango seleccionado incluye fechas ocupadas');
       return;
     }
+    this.aceptaCondiciones = false;
     this.showPagoModal = true;
   }
 
   onEntradaChange(ev: any) {
     const d: Date | null = ev?.value ?? null;
-    if (!this.isDisponible(d)) {
+    if (!this.dateFilter(d)) {
       this.booking.entrada = null;
       this.toast.error('Fecha de entrada ocupada');
     } else {
@@ -227,7 +289,7 @@ export class DetalleAlojamientoComponent implements OnInit {
 
   onSalidaChange(ev: any) {
     const d: Date | null = ev?.value ?? null;
-    if (!this.isDisponible(d)) {
+    if (!this.dateFilter(d)) {
       this.booking.salida = null;
       this.toast.error('Fecha de salida ocupada');
     } else {
@@ -241,6 +303,7 @@ export class DetalleAlojamientoComponent implements OnInit {
 
   cerrarModalPago() {
     if (this.creando) return;
+    this.aceptaCondiciones = false;
     this.showPagoModal = false;
   }
 
@@ -254,13 +317,21 @@ export class DetalleAlojamientoComponent implements OnInit {
       this.toast.error('Fechas requeridas');
       return;
     }
+    if (this.condicionesUso.length > 0 && !this.aceptaCondiciones) {
+      this.toast.error('Debes aceptar las condiciones de uso para continuar');
+      return;
+    }
+
+    const maxHuespedes = this.alojamiento?.maxHuespedes || 1;
+    const numeroHuespedes = Math.min(maxHuespedes, Math.max(1, Number(this.booking.huespedes || 1)));
+    this.booking.huespedes = numeroHuespedes;
 
     this.creando = true;
     const payload = {
       alojamientoId: this.alojamientoId,
       fechaEntrada: this.formatDateLocal(this.booking.entrada),
       fechaSalida: this.formatDateLocal(this.booking.salida),
-      huespedes: this.booking.huespedes,
+      numeroHuespedes,
       aceptaPoliticaDatos: true
     };
 
@@ -295,6 +366,24 @@ export class DetalleAlojamientoComponent implements OnInit {
 
   private key(d: Date) {
     return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+
+  private parseBackendDate(value: string | null | undefined): Date | null {
+    if (!value) return null;
+
+    // Use yyyy-MM-dd part only to avoid timezone shifts from ISO timestamps.
+    const raw = String(value).trim();
+    const datePart = raw.includes('T') ? raw.split('T')[0] : raw;
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(datePart);
+    if (!m) {
+      const fallback = new Date(raw);
+      return Number.isNaN(fallback.getTime()) ? null : new Date(fallback.getFullYear(), fallback.getMonth(), fallback.getDate());
+    }
+
+    const y = Number(m[1]);
+    const mo = Number(m[2]) - 1;
+    const d = Number(m[3]);
+    return new Date(y, mo, d);
   }
 
   private formatDateLocal(d: Date): string {

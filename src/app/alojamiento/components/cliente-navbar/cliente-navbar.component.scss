@@ -1,10 +1,10 @@
-/* ===== Cliente Navbar — Red & White ===== */
+/* ===== Cliente Navbar — Natural Green & Teal ===== */
 .navbar {
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(12px) saturate(180%);
   -webkit-backdrop-filter: blur(12px) saturate(180%);
-  border-bottom: 2px solid var(--color-primary, #E31B23);
-  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.06));
+  border-bottom: 2px solid var(--color-primary);
+  box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -86,6 +86,16 @@
 
 .nav-drawer.open { transform: translateX(0); }
 
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: rgba(17, 24, 39, 0.42);
+  backdrop-filter: blur(2px);
+  z-index: 250;
+}
+
 .nav-drawer .close-btn {
   align-self: flex-end;
   background: none;
@@ -101,12 +111,16 @@
 }
 
 .nav-drawer .drawer-actions {
-  margin-top: 1rem;
+  margin-top: auto;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
   border-top: 1px solid var(--color-border, #e5e7eb);
   padding-top: 1rem;
+  padding-bottom: calc(0.8rem + env(safe-area-inset-bottom, 0));
+  background: #fff;
+  position: sticky;
+  bottom: -2.5rem;
 }
 
 .drawer-links {
@@ -175,10 +189,15 @@
 
 @media (max-width: 767px) {
   .hamburger { display: flex; align-items: center; justify-content: center; }
+  .nav-drawer { z-index: 300; }
 }
 
 /* Desktop layout: inline nav */
 @media (min-width: 768px) {
+  .drawer-backdrop {
+    display: none;
+  }
+
   .nav-drawer {
     position: static;
     transform: none !important;

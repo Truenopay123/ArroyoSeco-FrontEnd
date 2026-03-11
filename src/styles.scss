@@ -1,23 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap');
 @import 'leaflet/dist/leaflet.css';
 
-/* ===== Design Tokens — Red & White ===== */
+/* ===== Design Tokens — Natural Green & Teal ===== */
 :root {
-	--color-primary: #E31B23;
-	--color-primary-dark: #c41019;
-	--color-primary-light: #fee2e2;
-	--color-primary-rgb: 227, 27, 35;
+	--color-primary: #1F7D4D;
+	--color-primary-dark: #155E3E;
+	--color-primary-light: #E8F5E9;
+	--color-primary-rgb: 31, 125, 77;
+	--color-secondary: #17A2B8;
+	--color-secondary-dark: #118FA3;
+	--color-secondary-light: #E0F2F7;
+	--color-accent: #E87E31;
+	--color-accent-dark: #D67C23;
+	--color-accent-light: #FDF1E6;
 	--color-white: #ffffff;
-	--color-bg: #fafafa;
+	--color-bg: #f5faf8;
+	--color-bg-secondary: #f0f5f3;
 	--color-text: #1f2937;
 	--color-text-secondary: #6b7280;
-	--color-border: #e5e7eb;
+	--color-border: #d1e8e0;
+	--color-success: #10b981;
+	--color-warning: #f59e0b;
+	--color-error: #ef4444;
 	--radius-sm: 8px;
 	--radius-md: 12px;
 	--radius-lg: 16px;
-	--shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
-	--shadow-md: 0 4px 16px rgba(0,0,0,0.10);
-	--shadow-lg: 0 12px 32px rgba(0,0,0,0.12);
+	--shadow-sm: 0 2px 8px rgba(31, 125, 77, 0.06);
+	--shadow-md: 0 4px 16px rgba(31, 125, 77, 0.10);
+	--shadow-lg: 0 12px 32px rgba(31, 125, 77, 0.12);
 }
 
 *, *::before, *::after {
@@ -94,4 +104,47 @@ html {
 	.with-bottom-nav {
 		padding-bottom: 0;
 	}
+}
+
+/*
+ * =============================================
+ *  Calendario de reservas — fechas ocupadas
+ *  El overlay del datepicker se renderiza en
+ *  <body> fuera del componente, por eso los
+ *  estilos van aquí (global) y no en el .scss
+ *  del componente.
+ * =============================================
+ */
+
+/* ---- Celda ocupada (habilitada — día futuro sin dateFilter) ---- */
+.reservas-calendar-panel .mat-calendar-body-cell.reserved-date > .mat-calendar-body-cell-content {
+	background-color: #fecaca !important;
+	color: #991b1b !important;
+	border: 2px solid #ef4444 !important;
+	border-radius: 50% !important;
+}
+
+/* ---- Celda ocupada + deshabilitada (dateFilter la bloquea) ---- */
+.reservas-calendar-panel .mat-calendar-body-cell.mat-calendar-body-disabled.reserved-date {
+	opacity: 1 !important;            /* anula el opacity:.5 de Material */
+	pointer-events: none !important;  /* doble seguro: no se puede hacer clic */
+}
+.reservas-calendar-panel .mat-calendar-body-cell.mat-calendar-body-disabled.reserved-date > .mat-calendar-body-cell-content {
+	background-color: #fecaca !important;
+	color: #991b1b !important;
+	border: 2px solid #ef4444 !important;
+	border-radius: 50% !important;
+	text-decoration: line-through !important;
+	cursor: not-allowed !important;
+}
+
+/* ---- Anular hover en celdas ocupadas ---- */
+.reservas-calendar-panel .mat-calendar-body-cell.reserved-date:hover > .mat-calendar-body-cell-content {
+	background-color: #fca5a5 !important;
+}
+
+/* ---- Forzar variables CSS de Material para disabled+reserved ---- */
+.reservas-calendar-panel .mat-calendar-body-cell.mat-calendar-body-disabled.reserved-date > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical) {
+	color: #991b1b !important;
+	background-color: #fecaca !important;
 }

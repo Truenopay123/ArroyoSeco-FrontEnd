@@ -66,13 +66,20 @@ export class MobileBottomNavComponent {
         return [
           { path: '/cliente/gastronomia', label: 'Inicio', icon: 'restaurant' },
           { path: '/cliente/gastronomia/reservas', label: 'Reservas', icon: 'event' },
-          { path: '/cliente/gastronomia/perfil', label: 'Perfil', icon: 'person' }
+          { path: '/cliente/notificaciones', label: 'Notif.', icon: 'notifications' },
+          { path: '/cliente/perfil', label: 'Perfil', icon: 'person' },
+          { path: '/cliente/seguridad', label: 'Seguridad', icon: 'verified_user' },
+          { path: '/cliente/alojamientos', label: 'Hospedajes', icon: 'hotel' }
         ];
       }
       return [
         { path: '/cliente/alojamientos', label: 'Inicio', icon: 'home' },
         { path: '/cliente/reservas', label: 'Reservas', icon: 'event' },
-        { path: '/cliente/perfil', label: 'Perfil', icon: 'person' }
+        { path: '/cliente/favoritos', label: 'Favoritos', icon: 'favorite' },
+        { path: '/cliente/notificaciones', label: 'Notif.', icon: 'notifications' },
+        { path: '/cliente/perfil', label: 'Perfil', icon: 'person' },
+        { path: '/cliente/seguridad', label: 'Seguridad', icon: 'verified_user' },
+        { path: '/cliente/gastronomia', label: 'Rest.', icon: 'restaurant' }
       ];
     }
     return [];

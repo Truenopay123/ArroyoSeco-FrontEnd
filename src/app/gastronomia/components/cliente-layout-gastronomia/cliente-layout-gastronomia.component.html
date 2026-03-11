@@ -1,12 +1,23 @@
 <app-cliente-navbar-gastronomia></app-cliente-navbar-gastronomia>
 
 <header class="hero" *ngIf="heroTitle">
+  <div class="hero-decor hero-decor--left"></div>
+  <div class="hero-decor hero-decor--right"></div>
   <div class="hero-inner">
-    <div class="hero-text">
-      <h1>{{ heroTitle }}</h1>
-      <p *ngIf="heroSubtitle">{{ heroSubtitle }}</p>
+    <div class="hero-copy">
+      <span class="hero-kicker">Sabores de Arroyo Seco</span>
+      <div class="hero-text">
+        <h1>{{ heroTitle }}</h1>
+        <p *ngIf="heroSubtitle">{{ heroSubtitle }}</p>
+      </div>
     </div>
-    <img *ngIf="heroImage" [src]="heroImage" [alt]="heroTitle" />
+
+    <div class="hero-visual" *ngIf="heroImage">
+      <div class="hero-visual-frame"></div>
+      <img [src]="heroImage" [alt]="heroTitle" />
+      <div class="hero-badge hero-badge--top">Sabores locales y tradición</div>
+      <div class="hero-badge hero-badge--bottom">Encuentra tu próxima parada</div>
+    </div>
   </div>
 </header>
 

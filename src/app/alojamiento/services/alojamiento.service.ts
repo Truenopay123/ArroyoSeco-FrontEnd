@@ -18,6 +18,8 @@ export interface AlojamientoDto {
   fotoPrincipal?: string;
   fotosUrls?: string[];
   amenidades?: string[];
+  condicionesUso?: string[];
+  anfitrionNombre?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -25,10 +27,32 @@ export class AlojamientoService {
   private readonly api = inject(ApiService);
 
   private normalize(item: AlojamientoDto): AlojamientoDto {
+    const anyItem = item as any;
+    const fotosFromCollection = Array.isArray(anyItem?.fotos)
+      ? anyItem.fotos
+          .map((f: any) => this.api.toPublicUrl(f?.url) || f?.url)
+          .filter((u: string | undefined) => !!u)
+      : [];
+
+    const fotosUrls = [
+      ...(item.fotosUrls || []).map(url => this.api.toPublicUrl(url) || url),
+      ...fotosFromCollection
+    ].filter((u, idx, arr) => !!u && arr.indexOf(u) === idx);
+
+    const amenidadesRaw = (item.amenidades || []).map(a => (a || '').trim()).filter(Boolean);
+    const condicionesUso = amenidadesRaw
+      .filter(a => a.startsWith('CONDICION::'))
+      .map(a => a.replace('CONDICION::', '').trim())
+      .filter(Boolean);
+    const amenidades = amenidadesRaw.filter(a => !a.startsWith('CONDICION::'));
+
     return {
       ...item,
       fotoPrincipal: this.api.toPublicUrl(item.fotoPrincipal),
-      fotosUrls: (item.fotosUrls || []).map(url => this.api.toPublicUrl(url) || url)
+      fotosUrls,
+      amenidades,
+      condicionesUso,
+      anfitrionNombre: anyItem?.anfitrionNombre || anyItem?.oferente?.nombre || anyItem?.oferente?.nombreCompleto || ''
     };
   }
 

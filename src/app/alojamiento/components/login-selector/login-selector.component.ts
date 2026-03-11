@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
@@ -13,15 +13,20 @@ import { first } from 'rxjs/operators';
   templateUrl: './login-selector.component.html',
   styleUrl: './login-selector.component.scss'
 })
-export class LoginSelectorComponent implements OnInit {
+export class LoginSelectorComponent implements OnInit, OnDestroy {
   model        = { email: '', password: '' };
   totpModel    = { codigo: '' };
   loading      = false;
+  resendLoading = false;
+  resendCooldownSeconds = 0;
   showPassword = false;
   rememberMe   = false;
+  showResendConfirmation = false;
+  unconfirmedEmail = '';
   step: 'login' | 'totp' = 'login';
   pendingEmail = '';
   private returnUrl: string | null = null;
+  private resendCooldownTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -46,9 +51,15 @@ export class LoginSelectorComponent implements OnInit {
     }
   }
 
+  ngOnDestroy(): void {
+    this.clearResendCooldownTimer();
+  }
+
   submit(form: NgForm) {
     if (form.invalid || this.loading) return;
     this.loading = true;
+    this.showResendConfirmation = false;
+    this.unconfirmedEmail = '';
 
     this.auth.login({ email: this.model.email, password: this.model.password })
       .pipe(first())
@@ -75,14 +86,59 @@ export class LoginSelectorComponent implements OnInit {
           if (accountLocked) {
             this.toast.show(err?.error?.message || 'Cuenta bloqueada temporalmente. Intenta en 15 minutos.', 'error');
           } else if (requiresConfirmation && this.model.email) {
-            this.auth.resendConfirmation(this.model.email).pipe(first()).subscribe();
-            this.toast.show('Debes confirmar tu correo. Te enviamos un nuevo enlace.', 'warning');
+            this.unconfirmedEmail = this.model.email.trim();
+            this.showResendConfirmation = this.unconfirmedEmail.length > 0;
+            this.toast.show(err?.error?.message || 'Debes confirmar tu correo antes de iniciar sesión.', 'warning');
           } else {
             this.toast.show(err?.error?.message || 'Credenciales inválidas', 'error');
           }
           this.loading = false;
         }
       });
+  }
+
+  resendConfirmationEmail() {
+    if (this.resendLoading || this.resendCooldownSeconds > 0 || !this.unconfirmedEmail) return;
+
+    this.resendLoading = true;
+    this.auth.resendConfirmation(this.unconfirmedEmail)
+      .pipe(first())
+      .subscribe({
+        next: () => {
+          this.resendLoading = false;
+          this.startResendCooldown(30);
+          this.toast.show('Te enviamos un nuevo enlace de confirmación a tu correo.', 'success');
+        },
+        error: (err: any) => {
+          this.resendLoading = false;
+          this.toast.show(err?.error?.message || 'No se pudo reenviar el correo de confirmación.', 'error');
+        }
+      });
+  }
+
+  onLoginInputChanged() {
+    if (!this.showResendConfirmation) return;
+    this.showResendConfirmation = false;
+    this.unconfirmedEmail = '';
+    this.resendCooldownSeconds = 0;
+    this.clearResendCooldownTimer();
+  }
+
+  private startResendCooldown(seconds: number) {
+    this.clearResendCooldownTimer();
+    this.resendCooldownSeconds = seconds;
+    this.resendCooldownTimer = setInterval(() => {
+      this.resendCooldownSeconds = Math.max(0, this.resendCooldownSeconds - 1);
+      if (this.resendCooldownSeconds === 0) {
+        this.clearResendCooldownTimer();
+      }
+    }, 1000);
+  }
+
+  private clearResendCooldownTimer() {
+    if (!this.resendCooldownTimer) return;
+    clearInterval(this.resendCooldownTimer);
+    this.resendCooldownTimer = null;
   }
 
   submitTotp(form: NgForm) {

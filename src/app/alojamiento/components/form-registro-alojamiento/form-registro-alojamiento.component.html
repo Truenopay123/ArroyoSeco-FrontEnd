@@ -1,71 +1,85 @@
-<section class="alojamiento-form">
-  <header>
-    <h2>{{ modoTitulo }}</h2>
-    <p class="subtitle">Completa la información del alojamiento.</p>
+﻿<section class="alojamiento-form-page">
+  <header class="form-head">
+    <div class="head-icon">AL</div>
+    <div>
+      <h2>{{ modoTitulo }}</h2>
+      <p class="subtitle">Crea o actualiza tu alojamiento con informacion clara, fotos y condiciones para tus huespedes.</p>
+    </div>
   </header>
 
-  <form #f="ngForm" (ngSubmit)="onSubmit(f)" class="form-grid">
-    <label>
-      Nombre del alojamiento
-      <input type="text" name="nombre" [(ngModel)]="formModel.nombre" required />
-    </label>
+  <form #f="ngForm" (ngSubmit)="onSubmit(f)" class="form-shell">
+    <section class="form-block">
+      <h3>Informacion principal</h3>
+      <div class="form-grid">
+        <label>
+          Nombre del alojamiento
+          <input type="text" name="nombre" [(ngModel)]="formModel.nombre" required placeholder="Ej: Cabana La Montana" />
+        </label>
 
-    <label class="col-span-2">
-      📍 Ubicación (texto)
-      <input 
-        type="text" 
-        name="ubicacion" 
-        [(ngModel)]="formModel.ubicacion"
-        placeholder="Ej: Centro de Arroyo Seco, Querétaro"
-        required 
-      />
-    </label>
+        <label>
+          Precio por noche (MXN)
+          <input type="number" name="precio" min="0" [(ngModel)]="formModel.precio" required />
+        </label>
 
-    <div class="col-span-2">
-      <label>📍 Marcar en el mapa (opcional pero recomendado)</label>
-      <app-map-picker 
-        [latitud]="formModel.latitud" 
+        <label class="col-span-2">
+          Ubicacion
+          <input
+            type="text"
+            name="ubicacion"
+            [(ngModel)]="formModel.ubicacion"
+            placeholder="Ej: Centro de Arroyo Seco, Queretaro"
+            required
+          />
+        </label>
+      </div>
+    </section>
+
+    <section class="form-block">
+      <h3>Capacidad y distribucion</h3>
+      <div class="stats-grid">
+        <label>
+          Huespedes
+          <input type="number" name="huespedes" min="1" [(ngModel)]="formModel.huespedes" required />
+        </label>
+
+        <label>
+          Habitaciones
+          <input type="number" name="habitaciones" min="1" [(ngModel)]="formModel.habitaciones" required />
+        </label>
+
+        <label>
+          Banos
+          <input type="number" name="banos" min="1" [(ngModel)]="formModel.banos" required />
+        </label>
+      </div>
+    </section>
+
+    <section class="form-block">
+      <h3>Ubicacion en mapa</h3>
+      <p class="hint info">Marcar en mapa es opcional, pero mejora la precision para tus huespedes.</p>
+      <app-map-picker
+        [latitud]="formModel.latitud"
         [longitud]="formModel.longitud"
         (locationSelected)="onLocationSelected($event)">
       </app-map-picker>
-    </div>
+    </section>
 
-    <label>
-      Huéspedes
-      <input type="number" name="huespedes" min="1" [(ngModel)]="formModel.huespedes" required />
-    </label>
-
-    <label>
-      Habitaciones
-      <input type="number" name="habitaciones" min="1" [(ngModel)]="formModel.habitaciones" required />
-    </label>
-
-    <label>
-      Baños
-      <input type="number" name="banos" min="1" [(ngModel)]="formModel.banos" required />
-    </label>
-
-    <label>
-      Precio por noche (MXN)
-      <input type="number" name="precio" min="0" [(ngModel)]="formModel.precio" required />
-    </label>
-
-    <div class="col-span-2">
-      <label>Fotos del alojamiento</label>
-      <div class="fotos">
+    <section class="form-block">
+      <h3>Fotos del alojamiento</h3>
+      <div class="upload-box">
         <input type="file" accept="image/*" (change)="onFotoSeleccionada($event)" [disabled]="subiendoFoto" />
         <span *ngIf="subiendoFoto">Subiendo imagen...</span>
       </div>
       <div class="galeria" *ngIf="formModel.fotos.length">
         <div class="thumb" *ngFor="let f of formModel.fotos; index as i">
-          <img [src]="f" alt="foto" />
-          <button type="button" class="remove" (click)="eliminarFoto(i)">×</button>
+          <img [src]="f" alt="foto alojamiento" />
+          <button type="button" class="remove" (click)="eliminarFoto(i)">x</button>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="col-span-2">
-      <label>Amenidades disponibles</label>
+    <section class="form-block">
+      <h3>Amenidades</h3>
       <div class="amenidades-grid">
         <label *ngFor="let amenidad of amenidadesDisponibles" class="amenidad-item">
           <input
@@ -77,11 +91,32 @@
           <span>{{ amenidad }}</span>
         </label>
       </div>
-    </div>
+    </section>
 
-    <div class="form-actions col-span-2">
+    <section class="form-block">
+      <h3>Condiciones de uso</h3>
+      <div class="condiciones-input-row">
+        <input
+          type="text"
+          name="nuevaCondicion"
+          [(ngModel)]="nuevaCondicion"
+          placeholder="Ej: Anticipacion de un 30% del hospedaje"
+          (keyup.enter)="agregarCondicion()"
+        />
+        <button type="button" class="btn secondary" (click)="agregarCondicion()">Agregar</button>
+      </div>
+      <p class="hint info">Estas condiciones se mostraran al cliente antes de continuar con el pago.</p>
+      <div class="condiciones-list" *ngIf="formModel.condicionesUso.length > 0">
+        <div class="condicion-item" *ngFor="let c of formModel.condicionesUso; index as i">
+          <span>{{ c }}</span>
+          <button type="button" class="remove" (click)="eliminarCondicion(i)">x</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="form-actions">
       <a routerLink="/oferente/hospedajes" class="btn ghost">Cancelar</a>
-      <button class="btn primary" [disabled]="f.invalid">Guardar</button>
+      <button class="btn primary" [disabled]="f.invalid">Guardar alojamiento</button>
     </div>
   </form>
 </section>

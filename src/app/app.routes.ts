@@ -332,7 +332,7 @@ export const routes: Routes = [
             component: ListaAlojamientosComponent,
             data: {
               heroTitle: 'Encuentra tu hospedaje ideal',
-              heroSubtitle: 'Explora opciones en Arroyo Seco y sus alrededores.',
+              heroSubtitle: 'Descubre rincones para descansar entre montañas, ríos y paisajes inolvidables de Arroyo Seco.',
               heroImage: 'assets/images/hero-dashboard.svg'
             }
           },
@@ -358,7 +358,7 @@ export const routes: Routes = [
             component: ClienteReservasComponent,
             data: {
               heroTitle: 'Mis Reservas',
-              heroSubtitle: 'Gestiona tus hospedajes reservados.',
+              heroSubtitle: 'Sigue tus solicitudes, estancias activas y viajes ya vividos en un solo lugar.',
               heroImage: 'assets/images/hero-notificaciones.svg'
             }
           },
@@ -367,7 +367,7 @@ export const routes: Routes = [
             component: ClienteNotificacionesComponent,
             data: {
               heroTitle: 'Notificaciones',
-              heroSubtitle: 'Mantente al día con nuestras novedades.',
+              heroSubtitle: 'Mantente al tanto de respuestas, novedades y movimientos importantes de tu cuenta.',
               heroImage: 'assets/images/hero-notificaciones.svg'
             }
           },
@@ -376,7 +376,7 @@ export const routes: Routes = [
             component: ClientePerfilComponent,
             data: {
               heroTitle: 'Mi Perfil',
-              heroSubtitle: 'Administra tu información personal.',
+              heroSubtitle: 'Personaliza tu cuenta para viajar con todo listo y guardar tu información importante.',
               heroImage: 'assets/images/hero-dashboard.svg'
             }
           },
@@ -385,7 +385,7 @@ export const routes: Routes = [
             component: ClienteFavoritosComponent,
             data: {
               heroTitle: 'Mis Favoritos',
-              heroSubtitle: 'Alojamientos guardados para más tarde.',
+              heroSubtitle: 'Guarda esos lugares que te hicieron decir “aquí sí me quedo”.',
               heroImage: 'assets/images/hero-oferentes.svg'
             }
           },
@@ -394,7 +394,7 @@ export const routes: Routes = [
             component: TotpSetupComponent,
             data: {
               heroTitle: 'Seguridad',
-              heroSubtitle: 'Configura la autenticación en dos pasos.',
+              heroSubtitle: 'Protege tu cuenta y mantén seguras tus reservas, datos y accesos.',
               heroImage: 'assets/images/hero-dashboard.svg'
             }
           },
@@ -422,7 +422,7 @@ export const routes: Routes = [
             component: ListaGastronomiaComponent,
             data: {
               heroTitle: 'Descubre la gastronomía local',
-              heroSubtitle: 'Explora restaurantes en Arroyo Seco.',
+              heroSubtitle: 'Explora sabores regionales, cocinas con identidad y paradas que también forman parte del viaje.',
               heroImage: 'assets/images/hero-dashboard.svg'
             }
           },
@@ -431,7 +431,7 @@ export const routes: Routes = [
             component: ClienteReservasGastronomiaComponent,
             data: {
               heroTitle: 'Mis Reservas de Restaurantes',
-              heroSubtitle: 'Gestiona tus reservas gastronómicas.',
+              heroSubtitle: 'Consulta tus mesas apartadas, próximas visitas y experiencias gastronómicas guardadas.',
               heroImage: 'assets/images/hero-notificaciones.svg'
             }
           },
@@ -440,7 +440,7 @@ export const routes: Routes = [
             component: ClienteNotificacionesComponent,
             data: {
               heroTitle: 'Notificaciones',
-              heroSubtitle: 'Mantente al día con nuestras novedades.',
+              heroSubtitle: 'Recibe avisos de tus reservas, cambios y novedades gastronómicas importantes.',
               heroImage: 'assets/images/hero-notificaciones.svg'
             }
           },
@@ -449,7 +449,7 @@ export const routes: Routes = [
             component: ClientePerfilComponent,
             data: {
               heroTitle: 'Mi Perfil',
-              heroSubtitle: 'Administra tu información personal.',
+              heroSubtitle: 'Ten tus datos listos para reservar más rápido y disfrutar sin fricción.',
               heroImage: 'assets/images/hero-dashboard.svg'
             }
           },

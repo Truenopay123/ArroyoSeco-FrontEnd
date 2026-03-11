@@ -19,6 +19,7 @@ interface AlojamientoForm {
   precio: number;
   fotos: string[];
   amenidades: string[];
+  condicionesUso: string[];
 }
 
 @Component({
@@ -46,8 +47,10 @@ export class FormRegistroAlojamientoComponent implements OnInit {
     banos: 1,
     precio: 0,
     fotos: [],
-    amenidades: []
+    amenidades: [],
+    condicionesUso: []
   };
+  nuevaCondicion = '';
 
   readonly amenidadesDisponibles = [
     'WiFi',
@@ -86,7 +89,8 @@ export class FormRegistroAlojamientoComponent implements OnInit {
               banos: a.banos,
               precio: a.precioPorNoche,
               fotos: [a.fotoPrincipal, ...(a.fotosUrls || [])].filter(Boolean) as string[],
-              amenidades: a.amenidades || []
+              amenidades: a.amenidades || [],
+              condicionesUso: a.condicionesUso || []
             };
             this.busquedaDireccion = a.direccion || a.ubicacion;
           },
@@ -151,6 +155,18 @@ export class FormRegistroAlojamientoComponent implements OnInit {
     this.formModel.amenidades = this.formModel.amenidades.filter(a => a !== amenidad);
   }
 
+  agregarCondicion() {
+    const text = this.nuevaCondicion.trim();
+    if (!text) return;
+    if (this.formModel.condicionesUso.includes(text)) return;
+    this.formModel.condicionesUso.push(text);
+    this.nuevaCondicion = '';
+  }
+
+  eliminarCondicion(index: number) {
+    this.formModel.condicionesUso.splice(index, 1);
+  }
+
   onSubmit(form: NgForm) {
     if (form.invalid) return;
     
@@ -171,7 +187,13 @@ export class FormRegistroAlojamientoComponent implements OnInit {
       precioPorNoche: this.formModel.precio,
       fotoPrincipal: this.formModel.fotos[0] || '',
       fotosUrls: this.formModel.fotos.slice(1),
-      amenidades: this.formModel.amenidades
+      amenidades: [
+        ...this.formModel.amenidades,
+        ...this.formModel.condicionesUso
+          .map(c => c.trim())
+          .filter(Boolean)
+          .map(c => `CONDICION::${c}`)
+      ]
     };
     const obs = this.idEdicion
       ? this.alojamientosService.update(Number.parseInt(this.idEdicion ?? '0', 10), payload)

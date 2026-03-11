@@ -77,7 +77,7 @@
             <span class="reserva-fechas">{{ r.fechaInicio | date:'dd/MM' }} – {{ r.fechaFin | date:'dd/MM' }}</span>
           </div>
           <div class="reserva-right">
-            <span class="reserva-monto">{{ r.monto | currency:'ARS':'symbol':'1.0-0' }}</span>
+            <span class="reserva-monto">{{ r.monto | currency:'MXN':'symbol':'1.0-0' }}</span>
             <span class="reserva-estado" [class]="r.estado.toLowerCase()">{{ r.estado }}</span>
           </div>
         </div>

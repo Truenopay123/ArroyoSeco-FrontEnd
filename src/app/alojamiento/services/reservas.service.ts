@@ -8,7 +8,7 @@ export interface CrearReservaDto {
   alojamientoId: number;
   fechaEntrada: string; // ISO string
   fechaSalida: string;  // ISO string
-  huespedes?: number;
+  numeroHuespedes?: number;
 }
 
 export interface ReservaDto {
@@ -41,11 +41,13 @@ export class ReservasService {
     // Intento 1: endpoint/lowercase con camelCase
     const token = this.auth.getToken();
     const clienteId = token ? this.extractUserId(token) : undefined;
+    const numeroHuespedes = Math.max(1, Number(payload.numeroHuespedes ?? 1));
     const bodyCamel: any = {
       alojamientoId: payload.alojamientoId,
       fechaEntrada: payload.fechaEntrada,
       fechaSalida: payload.fechaSalida,
-      huespedes: payload.huespedes,
+      numeroHuespedes,
+      huespedes: numeroHuespedes,
       clienteId
     };
     return this.api.post('/reservas', bodyCamel).pipe(
@@ -55,7 +57,7 @@ export class ReservasService {
           AlojamientoId: payload.alojamientoId,
           FechaEntrada: payload.fechaEntrada,
           FechaSalida: payload.fechaSalida,
-          Huespedes: payload.huespedes,
+          NumeroHuespedes: numeroHuespedes,
           ClienteId: clienteId
         };
         return this.api.post('/Reservas', pascal);

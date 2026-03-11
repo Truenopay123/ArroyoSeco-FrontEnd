@@ -58,6 +58,8 @@ export class GestionReservasComponent implements OnInit {
   reservas: ReservaUI[] = [];
   loading = false;
   error: string | null = null;
+  page = 1;
+  pageSize = 8;
 
   constructor() {
     this.hospedajeFiltro = this.route.snapshot.paramMap.get('id');
@@ -262,6 +264,33 @@ export class GestionReservasComponent implements OnInit {
       list = list.filter(r => r.estado === this.estadoFiltro);
     }
     return list;
+  }
+
+  get totalReservasFiltradas(): number {
+    return this.filteredReservas.length;
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.totalReservasFiltradas / this.pageSize));
+  }
+
+  get pagedReservas(): ReservaUI[] {
+    const p = Math.min(this.page, this.totalPages);
+    const start = (p - 1) * this.pageSize;
+    return this.filteredReservas.slice(start, start + this.pageSize);
+  }
+
+  onSearchChange() {
+    this.page = 1;
+  }
+
+  onEstadoChange() {
+    this.page = 1;
+  }
+
+  goToPage(next: number) {
+    if (next < 1 || next > this.totalPages) return;
+    this.page = next;
   }
 
   abrirDetalle(reserva: ReservaUI) {

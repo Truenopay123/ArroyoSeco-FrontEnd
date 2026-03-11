@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { ToastService } from '../../../shared/services/toast.service';
 import { ReservasService } from '../../services/reservas.service';
 import { first, switchMap } from 'rxjs/operators';
-import { forkJoin, of } from 'rxjs';
+import { of } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { ApiService } from '../../../core/services/api.service';
 
@@ -16,8 +16,12 @@ interface Reserva {
   fechaSalida: string;
   huespedes: number;
   total: number;
-  estado: 'activa' | 'completada' | 'cancelada';
+  estadoRaw: string;
+  estado: 'pendiente' | 'caducada' | 'activa' | 'completada' | 'cancelada';
 }
+
+type FiltroReservas = 'resumen' | 'pendientes' | 'activas' | 'caducadas' | 'completadas' | 'canceladas';
+type OrdenReservas = 'proxima-entrada' | 'mas-reciente' | 'precio-mayor';
 
 @Component({
   selector: 'app-cliente-reservas',
@@ -34,6 +38,9 @@ export class ClienteReservasComponent implements OnInit {
 
   reservas: Reserva[] = [];
   resenasExistentes = new Set<number>();
+  filtroActual: FiltroReservas = 'resumen';
+  busqueda = '';
+  ordenActual: OrdenReservas = 'proxima-entrada';
 
   selectedReserva: Reserva | null = null;
   showCancelModal = false;
@@ -61,23 +68,53 @@ export class ClienteReservasComponent implements OnInit {
       })
     ).subscribe({
       next: (items: any[]) => {
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+
+        const toDateOnly = (value: string | null | undefined): Date | null => {
+          if (!value) return null;
+          const raw = String(value).trim();
+          const datePart = raw.includes('T') ? raw.split('T')[0] : raw;
+          const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(datePart);
+          if (m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+          const fallback = new Date(raw);
+          if (Number.isNaN(fallback.getTime())) return null;
+          return new Date(fallback.getFullYear(), fallback.getMonth(), fallback.getDate());
+        };
+
         const mapItem = (it: any): Reserva => {
-          const estadoBackend = String(it.estado || it.Estado || '').toLowerCase();
+          const estadoBackend = String(it.estado || it.Estado || '').trim();
+          const estadoLower = estadoBackend.toLowerCase();
+          const salida = toDateOnly(it.fechaSalida || it.FechaSalida || '');
+          const reservaTerminada = !!salida && salida < hoy;
+
+          const esCancelada = /cancel|rechaz/i.test(estadoLower);
+          const esCompletada = /complet/i.test(estadoLower);
+          const esConfirmada = /confirm|aprob|activa/i.test(estadoLower);
+
           let estado: Reserva['estado'];
-          if (/activa|confirm/i.test(estadoBackend)) {
-            estado = 'activa';
-          } else if (/cancel/i.test(estadoBackend)) {
+          if (esCancelada) {
             estado = 'cancelada';
-          } else {
+          } else if (esConfirmada && reservaTerminada) {
             estado = 'completada';
+          } else if (esCompletada) {
+            estado = 'completada';
+          } else if (esConfirmada) {
+            estado = 'activa';
+          } else if (reservaTerminada) {
+            estado = 'caducada';
+          } else {
+            estado = 'pendiente';
           }
+
           return {
             id: Number(it.id || it.Id || 0),
             alojamiento: it.alojamientoNombre || it.AlojamientoNombre || '',
             fechaEntrada: it.fechaEntrada || it.FechaEntrada || '',
             fechaSalida:  it.fechaSalida  || it.FechaSalida  || '',
-            huespedes:    1,
+            huespedes:    Number(it.numeroHuespedes || it.NumeroHuespedes || 1),
             total:        Number(it.total || it.Total || 0),
+            estadoRaw: estadoBackend,
             estado
           };
         };
@@ -133,6 +170,53 @@ export class ClienteReservasComponent implements OnInit {
     this.resenaModel.calificacion = n;
   }
 
+  setFiltro(filtro: FiltroReservas) {
+    this.filtroActual = filtro;
+  }
+
+  private parseDate(value: string): Date | null {
+    if (!value) return null;
+    const raw = String(value).trim();
+    const datePart = raw.includes('T') ? raw.split('T')[0] : raw;
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(datePart);
+    if (m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    const fallback = new Date(raw);
+    if (Number.isNaN(fallback.getTime())) return null;
+    return new Date(fallback.getFullYear(), fallback.getMonth(), fallback.getDate());
+  }
+
+  private isSolicitudCaducada(reserva: Reserva): boolean {
+    return reserva.estado === 'caducada';
+  }
+
+  private filtrarYOrdenar(items: Reserva[]): Reserva[] {
+    const term = this.busqueda.trim().toLowerCase();
+    let result = term
+      ? items.filter(r =>
+          r.alojamiento.toLowerCase().includes(term)
+          || String(r.id).includes(term)
+          || r.estadoRaw.toLowerCase().includes(term))
+      : [...items];
+
+    result.sort((a, b) => {
+      const entradaA = this.parseDate(a.fechaEntrada)?.getTime() ?? 0;
+      const entradaB = this.parseDate(b.fechaEntrada)?.getTime() ?? 0;
+      const salidaA = this.parseDate(a.fechaSalida)?.getTime() ?? 0;
+      const salidaB = this.parseDate(b.fechaSalida)?.getTime() ?? 0;
+
+      switch (this.ordenActual) {
+        case 'mas-reciente':
+          return salidaB - salidaA;
+        case 'precio-mayor':
+          return b.total - a.total;
+        default:
+          return entradaA - entradaB;
+      }
+    });
+
+    return result;
+  }
+
   enviarResena() {
     if (!this.resenaReservaId || this.submittingResena) return;
     if (this.resenaModel.comentario.trim().length < 10) {
@@ -162,10 +246,48 @@ export class ClienteReservasComponent implements OnInit {
   // ── Getters ───────────────────────────────────────────────────────────
 
   get reservasActivas() {
-    return this.reservas.filter(r => r.estado === 'activa');
+    return this.filtrarYOrdenar(this.reservas.filter(r => r.estado === 'activa'));
+  }
+
+  get reservasPendientes() {
+    return this.filtrarYOrdenar(this.reservas.filter(r => r.estado === 'pendiente'));
+  }
+
+  get solicitudesCaducadas() {
+    return this.filtrarYOrdenar(this.reservas.filter(r => this.isSolicitudCaducada(r)));
   }
 
   get reservasPasadas() {
-    return this.reservas.filter(r => r.estado === 'completada' || r.estado === 'cancelada');
+    return this.filtrarYOrdenar(this.reservas.filter(r => r.estado === 'completada' || r.estado === 'cancelada'));
+  }
+
+  get reservasCompletadas() {
+    return this.filtrarYOrdenar(this.reservas.filter(r => r.estado === 'completada'));
+  }
+
+  get reservasCanceladas() {
+    return this.filtrarYOrdenar(this.reservas.filter(r => r.estado === 'cancelada'));
+  }
+
+  get mostrarPendientes() {
+    return this.filtroActual === 'resumen' || this.filtroActual === 'pendientes';
+  }
+
+  get mostrarActivas() {
+    return this.filtroActual === 'resumen' || this.filtroActual === 'activas';
+  }
+
+  get mostrarCaducadas() {
+    return this.filtroActual === 'caducadas';
+  }
+
+  get mostrarHistorial() {
+    return this.filtroActual === 'resumen' || this.filtroActual === 'completadas' || this.filtroActual === 'canceladas';
+  }
+
+  get historialVisible() {
+    if (this.filtroActual === 'completadas') return this.reservasCompletadas;
+    if (this.filtroActual === 'canceladas') return this.reservasCanceladas;
+    return this.reservasPasadas;
   }
 }

@@ -39,6 +39,14 @@
       </div>
 
       <div class="form-group">
+        <label for="sexo">Sexo</label>
+        <select id="sexo" [(ngModel)]="perfil().sexo" name="sexo">
+          <option value="">Selecciona una opción</option>
+          <option *ngFor="let opcion of opcionesSexo" [value]="opcion.value">{{ opcion.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
         <label for="direccion">Dirección</label>
         <input
           type="text"

@@ -73,9 +73,12 @@
       <div class="card-body">
         <div class="card-header">
           <h3 class="card-title">{{ a.nombre }}</h3>
-          <div class="card-rating" *ngIf="a.rating > 0">
+          <div class="card-rating" *ngIf="a.totalResenas > 0">
             <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
             <span>{{ a.rating | number:'1.1-1' }}</span>
+          </div>
+          <div class="card-rating card-rating--empty" *ngIf="a.totalResenas === 0">
+            <span>Sin valoraciones</span>
           </div>
         </div>
         <p class="card-location">
@@ -87,6 +90,7 @@
             ${{ a.precioNoche | number }}
             <small>/ noche</small>
           </span>
+          <span class="card-reviews" *ngIf="a.totalResenas > 0">{{ a.totalResenas }} reseña{{ a.totalResenas > 1 ? 's' : '' }}</span>
         </div>
       </div>
     </div>
