@@ -1,128 +1,117 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit, OnDestroy, ElementRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-hero-landing',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule],
   templateUrl: './hero-landing.component.html',
   styleUrl: './hero-landing.component.scss'
 })
-export class HeroLandingComponent {
-  scrollOffset = 0;
-  searchQuery = '';
-  checkIn = '';
-  checkOut = '';
-  guests = 1;
+export class HeroLandingComponent implements OnInit, OnDestroy {
+  cursorX = 0;
+  cursorY = 0;
+  cursorVisible = false;
 
-  readonly categories = [
-    { svg: 'M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z', label: 'Cabañas' },
-    { svg: 'M7 14.5h10v-1H7v1zM7 11h10v-1H7v1zM19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z', label: 'Hoteles' },
-    { svg: 'M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2zm0 2.84L18.16 11H17v8h-2v-6H9v6H7v-8H5.84L12 4.84z', label: 'Camping' },
-    { svg: 'M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z', label: 'Restaurantes' },
-    { svg: 'M21 18H3v2h18v-2zM17.12 5.56A3.07 3.07 0 0 0 12 2.68 3.07 3.07 0 0 0 6.88 5.56L3 16h18l-3.88-10.44z', label: 'Río' },
-    { svg: 'M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z', label: 'Montaña' }
-  ];
+  sectionsVisible: Record<string, boolean> = {
+    hero: false,
+    intro: false,
+    landscape: false,
+    properties: false,
+    experience: false
+  };
 
-  readonly featuredAlojamientos = [
+  private observer!: IntersectionObserver;
+
+  readonly featuredCabanas = [
     {
       id: 1,
       nombre: 'Cabaña El Encino',
-      ubicacion: 'Arroyo Seco Centro',
-      precio: 1200,
-      rating: 4.8,
-      imagen: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=600&h=400&fit=crop',
-      badge: 'Popular'
+      descripcion: 'Cabaña rústica con vista al río, rodeada de vegetación nativa.',
+      capacidad: '2–4 huéspedes',
+      precio: '$1,200 / noche',
+      imagen: 'assets/images/CabañaAyutla.png'
     },
     {
       id: 2,
-      nombre: 'Hotel Río Escondido',
-      ubicacion: 'Camino al Río Escanela',
-      precio: 1850,
-      rating: 4.9,
-      imagen: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop',
-      badge: 'Mejor valorado'
+      nombre: 'Cabaña Sierra Gorda',
+      descripcion: 'Experiencia inmersiva en la sierra con terraza panorámica.',
+      capacidad: '2–6 huéspedes',
+      precio: '$1,850 / noche',
+      imagen: 'assets/images/CabañaAyutla2.png'
     },
     {
       id: 3,
-      nombre: 'Glamping Las Cascadas',
-      ubicacion: 'Zona de Cascadas',
-      precio: 2200,
-      rating: 5.0,
-      imagen: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&h=400&fit=crop',
-      badge: 'Nuevo'
-    },
-    {
-      id: 4,
-      nombre: 'Casa Rural El Mirador',
-      ubicacion: 'Mirador de Arroyo Seco',
-      precio: 1500,
-      rating: 4.7,
-      imagen: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop',
-      badge: ''
+      nombre: 'Cabaña Río Escanela',
+      descripcion: 'A orillas del río, ideal para desconectar y disfrutar la naturaleza.',
+      capacidad: '2–4 huéspedes',
+      precio: '$2,200 / noche',
+      imagen: 'assets/images/CabañaAyutla3.png'
     }
   ];
 
-  readonly featuredRestaurantes = [
-    {
-      id: 1,
-      nombre: 'Restaurante El Mirador',
-      ubicacion: 'Centro de Arroyo Seco',
-      descripcion: 'Cocina tradicional queretana con vista panorámica al valle.',
-      imagen: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop',
-      badge: 'Recomendado'
-    },
-    {
-      id: 2,
-      nombre: 'La Trucha Feliz',
-      ubicacion: 'Camino al Río Escanela',
-      descripcion: 'Trucha fresca del río, preparada al estilo serrano.',
-      imagen: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=400&fit=crop',
-      badge: 'Favorito local'
-    },
-    {
-      id: 3,
-      nombre: 'Café Sierra Gorda',
-      ubicacion: 'Calle Hidalgo 12',
-      descripcion: 'Café de altura y postres artesanales de la región.',
-      imagen: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&h=400&fit=crop',
-      badge: ''
-    },
-    {
-      id: 4,
-      nombre: 'Fonda Doña María',
-      ubicacion: 'Plaza Principal',
-      descripcion: 'Comida casera de la Sierra Gorda. Gorditas y tamales.',
-      imagen: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&h=400&fit=crop',
-      badge: 'Tradicional'
-    }
-  ];
+  constructor(
+    private readonly router: Router,
+    private readonly el: ElementRef,
+    private readonly zone: NgZone
+  ) {}
 
-  constructor(private router: Router) {}
-
-  @HostListener('window:scroll')
-  onScroll() {
-    this.scrollOffset = window.scrollY;
+  ngOnInit(): void {
+    this.setupIntersectionObserver();
   }
 
-  search() {
-    this.router.navigate(['/publica/alojamientos'], {
-      queryParams: {
-        q: this.searchQuery || undefined,
-        guests: this.guests > 1 ? this.guests : undefined
-      }
-    });
+  ngOnDestroy(): void {
+    this.observer?.disconnect();
   }
 
-  filterByCategory(label: string) {
-    this.router.navigate(['/publica/alojamientos'], {
-      queryParams: { category: label }
-    });
+  @HostListener('document:mousemove', ['$event'])
+  onMouseMove(e: MouseEvent) {
+    this.cursorX = e.clientX;
+    this.cursorY = e.clientY;
+    this.cursorVisible = true;
+  }
+
+  @HostListener('document:mouseleave')
+  onMouseLeave() {
+    this.cursorVisible = false;
+  }
+
+  scrollToSection(id: string) {
+    const section = this.el.nativeElement.querySelector('#' + id);
+    section?.scrollIntoView({ behavior: 'smooth' });
   }
 
   navigateTo(path: string) {
     this.router.navigateByUrl(path);
+  }
+
+  private setupIntersectionObserver(): void {
+    this.zone.runOutsideAngular(() => {
+      this.observer = new IntersectionObserver(
+        (entries) => this.handleIntersection(entries),
+        { threshold: 0.15 }
+      );
+
+      setTimeout(() => {
+        const sections = this.el.nativeElement.querySelectorAll(
+          '#hero, #intro, #landscape, #properties, #experience'
+        );
+        sections.forEach((s: Element) => this.observer.observe(s));
+      });
+    });
+  }
+
+  private handleIntersection(entries: IntersectionObserverEntry[]): void {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        if (id && id in this.sectionsVisible) {
+          this.zone.run(() => {
+            this.sectionsVisible[id] = true;
+          });
+        }
+      }
+    });
   }
 }

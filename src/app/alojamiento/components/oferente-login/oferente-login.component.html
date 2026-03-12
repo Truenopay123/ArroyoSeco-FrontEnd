@@ -1,9 +1,23 @@
 <section class="login">
   <div class="visual">
+    <video class="visual-video" autoplay muted loop playsinline preload="auto">
+      <source src="assets/images/Adjuntas.mp4" type="video/mp4" />
+    </video>
     <div class="visual-overlay"></div>
     <div class="visual-text">
+      <span class="visual-badge">Portal de Oferentes</span>
       <h1>Arroyo Seco</h1>
       <p>"El tesoro escondido de Querétaro"</p>
+      <div class="visual-features">
+        <div class="visual-feature">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          <span>Gestiona tu negocio</span>
+        </div>
+        <div class="visual-feature">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          <span>Reservas en línea</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -23,7 +37,7 @@
             <input
               type="email"
               name="email"
-              placeholder="Ejemplo: correo@gmail.com"
+              placeholder="Ejemplo: correo&#64;gmail.com"
               [(ngModel)]="loginModel.email"
               required
             />
@@ -49,7 +63,7 @@
         </form>
 
         <div class="links">
-          <a href="#">¿Olvidaste tu contraseña?</a>
+          <a routerLink="/forgot-password">¿Olvidaste tu contraseña?</a>
           <a routerLink="/login">Cambiar de rol</a>
           <a routerLink="/oferente/solicitud">¿No estás registrado? Envía tu solicitud</a>
         </div>

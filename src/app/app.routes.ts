@@ -62,7 +62,7 @@ export const routes: Routes = [
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'cambiar-password', component: CambiarPasswordForzadoComponent },
   { path: 'forbidden', component: ForbiddenComponent },
-  
+
   // Rutas públicas - sin autenticación
   {
     path: 'publica',
@@ -74,7 +74,7 @@ export const routes: Routes = [
         data: {
           heroTitle: 'Encuentra tu hospedaje ideal',
           heroSubtitle: 'Explora opciones en Arroyo Seco y sus alrededores.',
-          heroImage: 'assets/images/hero-dashboard.svg'
+          heroImage: 'assets/images/RioAyutla3.jpeg'
         }
       },
       {
@@ -82,7 +82,7 @@ export const routes: Routes = [
         component: DetalleAlojamientoComponent,
         data: {
           heroTitle: 'Detalles del alojamiento',
-          heroImage: 'assets/images/hero-oferentes.svg'
+          heroImage: 'assets/images/RioAyutla.jpeg'
         }
       },
       {
@@ -91,7 +91,7 @@ export const routes: Routes = [
         data: {
           heroTitle: 'Descubre la gastronomía local',
           heroSubtitle: 'Explora restaurantes en Arroyo Seco.',
-          heroImage: 'assets/images/hero-dashboard.svg'
+          heroImage: 'assets/images/RioAyutla.jpeg'
         }
       },
       {
@@ -99,7 +99,7 @@ export const routes: Routes = [
         component: DetalleGastronomiaComponent,
         data: {
           heroTitle: 'Detalles del restaurante',
-          heroImage: 'assets/images/hero-oferentes.svg'
+          heroImage: 'assets/images/RioAyutla.jpeg'
         }
       },
       { path: '', redirectTo: 'alojamientos', pathMatch: 'full' }
@@ -122,7 +122,7 @@ export const routes: Routes = [
             data: {
               heroTitle: '¡Bienvenido Administrador!',
               heroSubtitle: 'Gestiona la actividad turística de Arroyo Seco.',
-              heroImage: 'assets/images/hero-dashboard.svg'
+              heroImage: 'assets/images/PuenteRio2.jpeg'
             }
           },
           {
@@ -130,7 +130,7 @@ export const routes: Routes = [
             component: AdminOferentesComponent,
             data: {
               heroTitle: '¡Gestión de oferentes!',
-              heroImage: 'assets/images/hero-oferentes.svg'
+              heroImage: 'assets/images/PuenteRio2.jpeg'
             }
           },
           {
@@ -138,7 +138,7 @@ export const routes: Routes = [
             component: AdminNotificacionesComponent,
             data: {
               heroTitle: '¡Gestión de notificaciones!',
-              heroImage: 'assets/images/hero-notificaciones.svg'
+              heroImage: 'assets/images/PuenteRio2.jpeg'
             }
           },
           {
@@ -147,7 +147,7 @@ export const routes: Routes = [
             data: {
               heroTitle: 'Solicitudes de Oferentes',
               heroSubtitle: 'Revisa y aprueba nuevas solicitudes',
-              heroImage: 'assets/images/hero-oferentes.svg'
+              heroImage: 'assets/images/PuenteRio2.jpeg'
             }
           },
           {
@@ -156,7 +156,7 @@ export const routes: Routes = [
             data: {
               heroTitle: 'Moderación de Reseñas',
               heroSubtitle: 'Revisa y aprueba reseñas de visitantes.',
-              heroImage: 'assets/images/hero-notificaciones.svg'
+              heroImage: 'assets/images/PuenteRio2.jpeg'
             }
           },
           {
@@ -165,7 +165,7 @@ export const routes: Routes = [
             data: {
               heroTitle: 'Estadísticas Turísticas',
               heroSubtitle: 'Análisis de visitantes y reservas.',
-              heroImage: 'assets/images/hero-dashboard.svg'
+              heroImage: 'assets/images/PuenteRio2.jpeg'
             }
           },
           { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
@@ -183,7 +183,7 @@ export const routes: Routes = [
             data: {
               heroTitle: 'Dashboard de Gastronomía',
               heroSubtitle: 'Gestiona restaurantes y reservas.',
-              heroImage: 'assets/images/hero-dashboard.svg'
+              heroImage: 'assets/images/PuenteRio.jpeg'
             }
           },
           {
@@ -191,7 +191,7 @@ export const routes: Routes = [
             component: AdminOferentesGastronomiaComponent,
             data: {
               heroTitle: 'Gestión de Oferentes de Gastronomía',
-              heroImage: 'assets/images/hero-oferentes.svg'
+              heroImage: 'assets/images/PuenteRio.jpeg'
             }
           },
           {
@@ -199,7 +199,7 @@ export const routes: Routes = [
             component: AdminOferentesGastronomiaComponent,
             data: {
               heroTitle: 'Gestión de Oferentes de Gastronomía',
-              heroImage: 'assets/images/hero-oferentes.svg'
+              heroImage: 'assets/images/PuenteRio.jpeg'
             }
           },
           {
@@ -207,7 +207,7 @@ export const routes: Routes = [
             component: AdminNotificacionesComponent,
             data: {
               heroTitle: 'Gestión de Reservas',
-              heroImage: 'assets/images/hero-notificaciones.svg'
+              heroImage: 'assets/images/PuenteRio.jpeg'
             }
           },
           {
@@ -216,7 +216,7 @@ export const routes: Routes = [
             data: {
               heroTitle: 'Solicitudes de Oferentes - Gastronomía',
               heroSubtitle: 'Revisa y aprueba nuevas solicitudes de gastronomía',
-              heroImage: 'assets/images/hero-oferentes.svg'
+              heroImage: 'assets/images/PuenteRio.jpeg'
             }
           },
           {
@@ -225,7 +225,7 @@ export const routes: Routes = [
             data: {
               heroTitle: 'Notificaciones - Gastronomía',
               heroSubtitle: 'Gestiona notificaciones del módulo de gastronomía',
-              heroImage: 'assets/images/hero-notificaciones.svg'
+              heroImage: 'assets/images/PuenteRio.jpeg'
             }
           },
           { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
@@ -251,7 +251,7 @@ export const routes: Routes = [
             data: {
               heroTitle: '¡Bienvenido Oferente!',
               heroSubtitle: 'Gestiona tus hospedajes y reservas.',
-              heroImage: 'assets/images/hero-dashboard.svg'
+              heroImage: 'assets/images/PaisajeCabaña.png'
             }
           },
           {
@@ -259,7 +259,7 @@ export const routes: Routes = [
             component: GestionHospedajesComponent,
             data: {
               heroTitle: 'Gestión de hospedajes',
-              heroImage: 'assets/images/hero-oferentes.svg'
+              heroImage: 'assets/images/PaisajeCabaña.png'
             }
           },
           {
@@ -267,7 +267,7 @@ export const routes: Routes = [
             component: FormRegistroAlojamientoComponent,
             data: {
               heroTitle: 'Agregar alojamiento',
-              heroImage: 'assets/images/hero-oferentes.svg'
+              heroImage: 'assets/images/PaisajeCabaña.png'
             }
           },
           {
@@ -275,7 +275,7 @@ export const routes: Routes = [
             component: FormRegistroAlojamientoComponent,
             data: {
               heroTitle: 'Editar alojamiento',
-              heroImage: 'assets/images/hero-oferentes.svg'
+              heroImage: 'assets/images/PaisajeCabaña.png'
             }
           },
           {
@@ -283,7 +283,7 @@ export const routes: Routes = [
             component: GestionReservasComponent,
             data: {
               heroTitle: 'Reservas del alojamiento',
-              heroImage: 'assets/images/hero-notificaciones.svg'
+              heroImage: 'assets/images/PaisajeCabaña.png'
             }
           },
           {
@@ -291,7 +291,7 @@ export const routes: Routes = [
             component: GestionReservasComponent,
             data: {
               heroTitle: 'Gestión de reservas',
-              heroImage: 'assets/images/hero-notificaciones.svg'
+              heroImage: 'assets/images/PaisajeCabaña.png'
             }
           },
           {
@@ -299,7 +299,7 @@ export const routes: Routes = [
             component: OferenteNotificacionesComponent,
             data: {
               heroTitle: 'Notificaciones',
-              heroImage: 'assets/images/hero-notificaciones.svg'
+              heroImage: 'assets/images/PaisajeCabaña.png'
             }
           },
           {
@@ -307,7 +307,7 @@ export const routes: Routes = [
             component: OferenteConfiguracionComponent,
             data: {
               heroTitle: 'Configuración',
-              heroImage: 'assets/images/hero-dashboard.svg'
+              heroImage: 'assets/images/PaisajeCabaña.png'
             }
           },
           { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
@@ -333,7 +333,7 @@ export const routes: Routes = [
             data: {
               heroTitle: 'Encuentra tu hospedaje ideal',
               heroSubtitle: 'Descubre rincones para descansar entre montañas, ríos y paisajes inolvidables de Arroyo Seco.',
-              heroImage: 'assets/images/hero-dashboard.svg'
+              heroImage: 'assets/images/RioAyutla3.jpeg'
             }
           },
           {
@@ -341,7 +341,7 @@ export const routes: Routes = [
             component: DetalleAlojamientoComponent,
             data: {
               heroTitle: 'Detalles del alojamiento',
-              heroImage: 'assets/images/hero-oferentes.svg'
+              heroImage: 'assets/images/PuenteRio.jpeg'
             }
           },
           {
@@ -350,7 +350,7 @@ export const routes: Routes = [
             data: {
               heroTitle: 'Completar Reserva',
               heroSubtitle: 'Revisa y confirma tu reserva.',
-              heroImage: 'assets/images/hero-dashboard.svg'
+              heroImage: 'assets/images/PuenteRio2.jpeg'
             }
           },
           {
@@ -359,7 +359,7 @@ export const routes: Routes = [
             data: {
               heroTitle: 'Mis Reservas',
               heroSubtitle: 'Sigue tus solicitudes, estancias activas y viajes ya vividos en un solo lugar.',
-              heroImage: 'assets/images/hero-notificaciones.svg'
+              heroImage: 'assets/images/RioAyutla7.jpeg'
             }
           },
           {
@@ -368,7 +368,7 @@ export const routes: Routes = [
             data: {
               heroTitle: 'Notificaciones',
               heroSubtitle: 'Mantente al tanto de respuestas, novedades y movimientos importantes de tu cuenta.',
-              heroImage: 'assets/images/hero-notificaciones.svg'
+              heroImage: 'assets/images/RioAyutla8.jpeg'
             }
           },
           {
@@ -377,7 +377,7 @@ export const routes: Routes = [
             data: {
               heroTitle: 'Mi Perfil',
               heroSubtitle: 'Personaliza tu cuenta para viajar con todo listo y guardar tu información importante.',
-              heroImage: 'assets/images/hero-dashboard.svg'
+              heroImage: 'assets/images/PaisajeCabaña.png'
             }
           },
           {
@@ -386,7 +386,7 @@ export const routes: Routes = [
             data: {
               heroTitle: 'Mis Favoritos',
               heroSubtitle: 'Guarda esos lugares que te hicieron decir “aquí sí me quedo”.',
-              heroImage: 'assets/images/hero-oferentes.svg'
+              heroImage: 'assets/images/ConcaLetras.jpeg'
             }
           },
           {
@@ -395,7 +395,7 @@ export const routes: Routes = [
             data: {
               heroTitle: 'Seguridad',
               heroSubtitle: 'Protege tu cuenta y mantén seguras tus reservas, datos y accesos.',
-              heroImage: 'assets/images/hero-dashboard.svg'
+              heroImage: 'assets/images/RioAyutla.jpeg'
             }
           },
           {
@@ -404,7 +404,7 @@ export const routes: Routes = [
             data: {
               heroTitle: 'Resultado del Pago',
               heroSubtitle: 'Estado de tu pago con Mercado Pago.',
-              heroImage: 'assets/images/hero-dashboard.svg'
+              heroImage: 'assets/images/RioAyutla2.jpeg'
             }
           },
           { path: '', redirectTo: 'alojamientos', pathMatch: 'full' }
@@ -423,7 +423,7 @@ export const routes: Routes = [
             data: {
               heroTitle: 'Descubre la gastronomía local',
               heroSubtitle: 'Explora sabores regionales, cocinas con identidad y paradas que también forman parte del viaje.',
-              heroImage: 'assets/images/hero-dashboard.svg'
+              heroImage: 'assets/images/RioAyutla3.jpeg'
             }
           },
           {
@@ -432,7 +432,7 @@ export const routes: Routes = [
             data: {
               heroTitle: 'Mis Reservas de Restaurantes',
               heroSubtitle: 'Consulta tus mesas apartadas, próximas visitas y experiencias gastronómicas guardadas.',
-              heroImage: 'assets/images/hero-notificaciones.svg'
+              heroImage: 'assets/images/RioAyutla7.jpeg'
             }
           },
           {
@@ -441,7 +441,7 @@ export const routes: Routes = [
             data: {
               heroTitle: 'Notificaciones',
               heroSubtitle: 'Recibe avisos de tus reservas, cambios y novedades gastronómicas importantes.',
-              heroImage: 'assets/images/hero-notificaciones.svg'
+              heroImage: 'assets/images/RioAyutla4.jpeg'
             }
           },
           {
@@ -450,7 +450,7 @@ export const routes: Routes = [
             data: {
               heroTitle: 'Mi Perfil',
               heroSubtitle: 'Ten tus datos listos para reservar más rápido y disfrutar sin fricción.',
-              heroImage: 'assets/images/hero-dashboard.svg'
+              heroImage: 'assets/images/RioAyutla5.jpeg'
             }
           },
           {
@@ -458,7 +458,7 @@ export const routes: Routes = [
             component: DetalleGastronomiaComponent,
             data: {
               heroTitle: 'Detalles del restaurante',
-              heroImage: 'assets/images/hero-oferentes.svg'
+              heroImage: 'assets/images/ConcaLetras.jpeg'
             }
           }
         ]

@@ -1,9 +1,23 @@
 <section class="login">
   <div class="visual">
+    <video class="visual-video" autoplay muted loop playsinline preload="auto">
+      <source src="assets/images/Iglesia.mp4" type="video/mp4" />
+    </video>
     <div class="visual-overlay"></div>
     <div class="visual-text">
+      <span class="visual-badge">Administración</span>
       <h1>Arroyo Seco</h1>
-      <p>“El tesoro escondido de Querétaro”</p>
+      <p>"El tesoro escondido de Querétaro"</p>
+      <div class="visual-features">
+        <div class="visual-feature">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+          <span>Panel de gestión</span>
+        </div>
+        <div class="visual-feature">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+          <span>Acceso seguro</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -48,7 +62,7 @@
         </form>
 
         <div class="links">
-          <a href="#">¿Olvidaste tu contraseña?</a>
+          <a routerLink="/forgot-password">¿Olvidaste tu contraseña?</a>
           <a routerLink="/login">Cambiar de rol</a>
         </div>
       </div>

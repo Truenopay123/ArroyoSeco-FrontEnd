@@ -1,9 +1,23 @@
 <section class="login">
   <div class="visual">
+    <video class="visual-video" autoplay muted loop playsinline preload="auto">
+      <source src="assets/images/Adjuntas.mp4" type="video/mp4" />
+    </video>
     <div class="visual-overlay"></div>
     <div class="visual-text">
+      <span class="visual-badge">Portal de Clientes</span>
       <h1>Arroyo Seco</h1>
       <p>"El tesoro escondido de Querétaro"</p>
+      <div class="visual-features">
+        <div class="visual-feature">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          <span>Alojamientos exclusivos</span>
+        </div>
+        <div class="visual-feature">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z"/></svg>
+          <span>Paisajes únicos</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -20,7 +34,7 @@
         <form #f="ngForm" (ngSubmit)="submit(f)">
           <label>
             Correo Electrónico
-            <input type="email" name="email" [(ngModel)]="model.email" placeholder="Ejemplo: correo@gmail.com" required />
+            <input type="email" name="email" [(ngModel)]="model.email" placeholder="Ejemplo: correo&#64;gmail.com" required />
           </label>
 
           <label>
@@ -37,7 +51,7 @@
         </form>
 
         <div class="links">
-          <a href="#">¿Olvidaste tu contraseña?</a>
+          <a routerLink="/forgot-password">¿Olvidaste tu contraseña?</a>
           <a routerLink="/login">Cambiar de rol</a>
           <a routerLink="/cliente/registrar">Crear cuenta</a>
         </div>

@@ -1,195 +1,135 @@
-<section class="hero" [style.--scroll]="scrollOffset + 'px'">
-  <!-- Video Background with Parallax -->
-  <div class="hero-bg">
-    <video
-      autoplay
-      muted
-      loop
-      playsinline
-      poster="assets/images/hero-login.svg"
-      class="hero-video"
-    >
-      <source src="https://cdn.coverr.co/videos/coverr-aerial-view-of-a-river-in-a-forest-3641/1080p.mp4" type="video/mp4" />
+<!-- Custom Cursor -->
+<div class="custom-cursor" [style.left.px]="cursorX" [style.top.px]="cursorY" [class.visible]="cursorVisible"></div>
+
+<!-- SECCIÓN 1 — HERO -->
+<section class="hero-section" id="hero">
+  <div class="hero-video-bg">
+    <video autoplay muted loop playsinline preload="auto">
+      <source src="assets/images/VideoLanding.mp4" type="video/mp4" />
     </video>
     <div class="hero-overlay"></div>
   </div>
 
-  <!-- Hero Content -->
-  <div class="hero-content">
-    <div class="hero-text">
-      <h1 class="hero-title">
-        Descubre <span class="highlight">Arroyo Seco</span>
-      </h1>
-      <p class="hero-subtitle">
-        Hospedajes únicos, gastronomía local y experiencias inolvidables en el corazón de Querétaro
+  <div class="hero-content" [class.visible]="sectionsVisible['hero']">
+    <h1 class="hero-title">ARROYO SECO</h1>
+    <p class="hero-subtitle">Una experiencia única en la naturaleza</p>
+    <button class="hero-cta" (click)="scrollToSection('intro')">
+      Descubrir
+    </button>
+  </div>
+
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- SECCIÓN 2 — INTRODUCCIÓN / CONCEPTO -->
+<section class="intro-section" id="intro">
+  <div class="intro-container" [class.visible]="sectionsVisible['intro']">
+    <div class="intro-text">
+      <h2 class="section-title">El refugio perfecto en la Sierra Gorda</h2>
+      <div class="gold-line"></div>
+      <p class="section-paragraph">
+        Enclavado en el corazón de Querétaro, Arroyo Seco es un destino donde la naturaleza
+        se funde con la tradición. Ríos cristalinos, montañas imponentes y una cultura
+        gastronómica única te esperan para ofrecerte una experiencia que trasciende
+        lo ordinario.
       </p>
     </div>
+    <div class="intro-image">
+      <img src="assets/images/RioCalidad.jpeg" alt="Río Arroyo Seco" loading="lazy" />
+    </div>
+  </div>
+</section>
 
-    <!-- Floating Search Card -->
-    <div class="search-card">
-      <div class="search-row">
-        <div class="search-field search-field--location">
-          <label>Destino</label>
-          <input
-            type="text"
-            placeholder="¿A dónde vas?"
-            [(ngModel)]="searchQuery"
-          />
+<!-- SECCIÓN 3 — GALERÍA / PAISAJE -->
+<section class="landscape-section" id="landscape">
+  <div class="landscape-video-bg">
+    <video autoplay muted loop playsinline preload="auto">
+      <source src="assets/images/VideoLanding2.mp4" type="video/mp4" />
+    </video>
+    <div class="landscape-overlay"></div>
+  </div>
+
+  <div class="landscape-content" [class.visible]="sectionsVisible['landscape']">
+    <h2 class="section-title section-title--light">Paisajes que inspiran</h2>
+    <p class="section-paragraph section-paragraph--light">
+      Cada rincón de Arroyo Seco cuenta una historia tallada por el agua y el tiempo.
+    </p>
+  </div>
+
+  <div class="landscape-gallery" [class.visible]="sectionsVisible['landscape']">
+    <div class="gallery-item">
+      <img src="assets/images/PaisajeCalidad.jpeg" alt="Paisaje Sierra Gorda" loading="lazy" />
+    </div>
+    <div class="gallery-item">
+      <img src="assets/images/RioAyutla.jpeg" alt="Río Ayutla" loading="lazy" />
+    </div>
+    <div class="gallery-item">
+      <img src="assets/images/PuenteRio.jpeg" alt="Puente sobre el río" loading="lazy" />
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN 4 — CABAÑAS / PROPIEDADES -->
+<section class="properties-section" id="properties">
+  <div class="properties-header" [class.visible]="sectionsVisible['properties']">
+    <h2 class="section-title">Propiedades selectas</h2>
+    <div class="gold-line gold-line--center"></div>
+    <p class="section-paragraph section-paragraph--center">
+      Descubre alojamientos cuidadosamente seleccionados para una estadía inolvidable.
+    </p>
+  </div>
+
+  <div class="properties-grid" [class.visible]="sectionsVisible['properties']">
+    <div class="property-card" *ngFor="let c of featuredCabanas" (click)="navigateTo('/publica/alojamientos/' + c.id)">
+      <div class="property-image">
+        <img [src]="c.imagen" [alt]="c.nombre" loading="lazy" />
+      </div>
+      <div class="property-body">
+        <h3 class="property-name">{{ c.nombre }}</h3>
+        <p class="property-desc">{{ c.descripcion }}</p>
+        <div class="property-meta">
+          <span class="property-capacity">{{ c.capacidad }}</span>
+          <span class="property-price">{{ c.precio }}</span>
         </div>
-
-        <div class="search-divider"></div>
-
-        <div class="search-field">
-          <label>Llegada</label>
-          <input type="date" [(ngModel)]="checkIn" />
-        </div>
-
-        <div class="search-divider"></div>
-
-        <div class="search-field">
-          <label>Salida</label>
-          <input type="date" [(ngModel)]="checkOut" />
-        </div>
-
-        <div class="search-divider"></div>
-
-        <div class="search-field search-field--guests">
-          <label>Huéspedes</label>
-          <select [(ngModel)]="guests">
-            <option [value]="1">1 huésped</option>
-            <option [value]="2">2 huéspedes</option>
-            <option [value]="3">3 huéspedes</option>
-            <option [value]="4">4 huéspedes</option>
-            <option [value]="5">5 huéspedes</option>
-            <option [value]="6">6+ huéspedes</option>
-          </select>
-        </div>
-
-        <button class="search-btn" (click)="search()">
-          <svg viewBox="0 0 24 24">
-            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-          </svg>
-          <span class="search-btn-text">Buscar</span>
+        <button class="property-btn" (click)="$event.stopPropagation(); navigateTo('/publica/alojamientos/' + c.id)">
+          Ver más
         </button>
       </div>
     </div>
   </div>
-
-  <!-- Stats Bar -->
-  <div class="stats-bar">
-    <div class="stat">
-      <span class="stat-number">50+</span>
-      <span class="stat-label">Alojamientos</span>
-    </div>
-    <div class="stat">
-      <span class="stat-number">30+</span>
-      <span class="stat-label">Restaurantes</span>
-    </div>
-    <div class="stat">
-      <span class="stat-number">1000+</span>
-      <span class="stat-label">Visitantes</span>
-    </div>
-    <div class="stat">
-      <span class="stat-number">4.8</span>
-      <span class="stat-label">Calificación</span>
-    </div>
-  </div>
 </section>
 
-<!-- Category Chips -->
-<div class="categories-section">
-  <div class="categories-scroll">
-    <button
-      *ngFor="let cat of categories"
-      class="category-chip"
-      (click)="filterByCategory(cat.label)"
-    >
-      <svg class="chip-icon" viewBox="0 0 24 24"><path [attr.d]="cat.svg"/></svg>
-      <span>{{ cat.label }}</span>
-    </button>
-  </div>
-</div>
-
-<!-- Alojamientos Destacados -->
-<section class="featured-section">
-  <div class="featured-header">
-    <div>
-      <h2 class="featured-title">Alojamientos Destacados</h2>
-      <p class="featured-subtitle">Los hospedajes mejor valorados de Arroyo Seco</p>
+<!-- SECCIÓN 5 — EXPERIENCIA / TERCER VIDEO -->
+<section class="experience-section" id="experience">
+  <div class="experience-container" [class.visible]="sectionsVisible['experience']">
+    <div class="experience-text">
+      <h2 class="section-title">Vive la experiencia</h2>
+      <div class="gold-line"></div>
+      <ul class="experience-list">
+        <li>
+          <span class="exp-icon">&#9672;</span>
+          Ríos cristalinos y pozas naturales
+        </li>
+        <li>
+          <span class="exp-icon">&#9672;</span>
+          Senderismo por la Sierra Gorda
+        </li>
+        <li>
+          <span class="exp-icon">&#9672;</span>
+          Gastronomía tradicional queretana
+        </li>
+        <li>
+          <span class="exp-icon">&#9672;</span>
+          Noches estrelladas en plena naturaleza
+        </li>
+      </ul>
     </div>
-    <a class="ver-todos" (click)="navigateTo('/publica/alojamientos')">
-      Ver todos
-      <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-    </a>
-  </div>
-  <div class="featured-grid">
-    <div class="featured-card" *ngFor="let a of featuredAlojamientos" (click)="navigateTo('/publica/alojamientos/' + a.id)">
-      <div class="featured-img" [style.background-image]="'url(' + a.imagen + ')'">
-        <span class="featured-badge" *ngIf="a.badge">{{ a.badge }}</span>
-      </div>
-      <div class="featured-body">
-        <div class="featured-card-header">
-          <h3>{{ a.nombre }}</h3>
-          <div class="featured-rating">
-            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-            {{ a.rating }}
-          </div>
-        </div>
-        <p class="featured-location">
-          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-          {{ a.ubicacion }}
-        </p>
-        <div class="featured-price">
-          ${{ a.precio | number }} <small>/ noche</small>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Restaurantes Destacados -->
-<section class="featured-section featured-section--gastro">
-  <div class="featured-header">
-    <div>
-      <h2 class="featured-title">Gastronomía Local</h2>
-      <p class="featured-subtitle">Descubre los sabores auténticos de la Sierra Gorda</p>
-    </div>
-    <a class="ver-todos" (click)="navigateTo('/publica/gastronomia')">
-      Ver todos
-      <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-    </a>
-  </div>
-  <div class="featured-grid">
-    <div class="featured-card" *ngFor="let r of featuredRestaurantes" (click)="navigateTo('/publica/gastronomia/' + r.id)">
-      <div class="featured-img" [style.background-image]="'url(' + r.imagen + ')'">
-        <span class="featured-badge gastro-badge" *ngIf="r.badge">{{ r.badge }}</span>
-      </div>
-      <div class="featured-body">
-        <h3>{{ r.nombre }}</h3>
-        <p class="featured-location">
-          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-          {{ r.ubicacion }}
-        </p>
-        <p class="featured-description">{{ r.descripcion }}</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA Final -->
-<section class="cta-section">
-  <div class="cta-content">
-    <h2>¿Listo para vivir la experiencia?</h2>
-    <p>Reserva tu alojamiento o restaurante favorito en Arroyo Seco</p>
-    <div class="cta-buttons">
-      <button class="cta-btn cta-btn--primary" (click)="navigateTo('/publica/alojamientos')">
-        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        Explorar Alojamientos
-      </button>
-      <button class="cta-btn cta-btn--secondary" (click)="navigateTo('/publica/gastronomia')">
-        <svg viewBox="0 0 24 24"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/></svg>
-        Ver Restaurantes
-      </button>
+    <div class="experience-video">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="assets/images/VideoLanding3.mp4" type="video/mp4" />
+      </video>
     </div>
   </div>
 </section>
