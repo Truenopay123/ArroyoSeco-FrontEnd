@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 // ── Design Tokens ────────────────────────────
 $color-primary: #E31B23;
 $color-primary-dark: #c41019;
@@ -234,7 +236,7 @@ $transition: 0.25s ease;
   align-items: flex-end;
   gap: 8px;
   padding: 12px 0;
-  border-bottom: 1px solid lighten($color-border, 3%);
+  border-bottom: 1px solid color.adjust($color-border, $lightness: 3%);
 
   &:last-child {
     border-bottom: none;

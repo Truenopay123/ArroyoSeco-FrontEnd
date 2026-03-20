@@ -170,9 +170,9 @@
               <div class="guests-control">
                 <button type="button" class="guests-btn" (click)="booking.huespedes = booking.huespedes > 1 ? booking.huespedes - 1 : 1">-</button>
                 <span class="guests-count">{{ booking.huespedes }}</span>
-                <button type="button" class="guests-btn" (click)="booking.huespedes = booking.huespedes < (alojamiento?.maxHuespedes || 1) ? booking.huespedes + 1 : booking.huespedes">+</button>
+                <button type="button" class="guests-btn" (click)="booking.huespedes = booking.huespedes < (alojamiento.maxHuespedes || 1) ? booking.huespedes + 1 : booking.huespedes">+</button>
               </div>
-              <small>Máximo {{ alojamiento?.maxHuespedes || 1 }} huéspedes</small>
+              <small>Máximo {{ alojamiento.maxHuespedes || 1 }} huéspedes</small>
             </div>
 
             <button type="submit" class="booking-submit" [disabled]="b.invalid || !total || !rangoDisponible()">

@@ -54,6 +54,7 @@ import { TotpSetupComponent } from './alojamiento/components/totp-setup/totp-set
 import { PagoResultadoComponent } from './alojamiento/components/pago-resultado/pago-resultado.component';
 import { AdminResenasComponent } from './alojamiento/components/admin-resenas/admin-resenas.component';
 import { AdminEstadisticasComponent } from './alojamiento/components/admin-estadisticas/admin-estadisticas.component';
+import { OferenteResenasComponent } from './alojamiento/components/oferente-resenas/oferente-resenas.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginSelectorComponent },
@@ -154,8 +155,8 @@ export const routes: Routes = [
             path: 'resenas',
             component: AdminResenasComponent,
             data: {
-              heroTitle: 'Moderación de Reseñas',
-              heroSubtitle: 'Revisa y aprueba reseñas de visitantes.',
+              heroTitle: 'Reseñas Reportadas',
+              heroSubtitle: 'Revisa y gestiona reseñas reportadas por oferentes.',
               heroImage: 'assets/images/PuenteRio2.jpeg'
             }
           },
@@ -307,6 +308,15 @@ export const routes: Routes = [
             component: OferenteConfiguracionComponent,
             data: {
               heroTitle: 'Configuración',
+              heroImage: 'assets/images/PaisajeCabaña.png'
+            }
+          },
+          {
+            path: 'resenas',
+            component: OferenteResenasComponent,
+            data: {
+              heroTitle: 'Reseñas de mis alojamientos',
+              heroSubtitle: 'Consulta y reporta reseñas injustas.',
               heroImage: 'assets/images/PaisajeCabaña.png'
             }
           },

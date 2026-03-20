@@ -1,32 +1,29 @@
 <section class="admin-resenas">
 	<div class="header">
-		<h2>Moderación de Reseñas</h2>
+		<h2>Reseñas Reportadas</h2>
 		<div class="actions">
-			<select [(ngModel)]="filtroEstado" (change)="cargar()">
-				<option value="">Todas</option>
-				<option value="Pendiente">Pendientes</option>
-				<option value="Aprobada">Aprobadas</option>
-				<option value="Rechazada">Rechazadas</option>
-			</select>
 			<button type="button" (click)="cargar()">Actualizar</button>
 		</div>
 	</div>
 
-	<p *ngIf="loading">Cargando reseñas...</p>
-	<p *ngIf="!loading && resenas.length === 0">No hay reseñas para mostrar.</p>
+	<p *ngIf="loading">Cargando reseñas reportadas...</p>
+	<p *ngIf="!loading && resenas.length === 0">No hay reseñas reportadas pendientes de revisión.</p>
 
 	<div class="resena" *ngFor="let r of resenas">
 		<div class="top">
 			<strong>{{ r.alojamientoNombre || 'Alojamiento' }}</strong>
-			<span>{{ r.estado }}</span>
+			<span class="badge-reportada">Reportada</span>
 		</div>
 		<p><strong>Calificación:</strong> {{ r.calificacion }} / 5</p>
 		<p><strong>Comentario:</strong> {{ r.comentario }}</p>
-		<p><small>{{ r.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</small></p>
+		<div class="motivo-reporte" *ngIf="r.motivoReporte">
+			<strong>Motivo del reporte:</strong>
+			<p>{{ r.motivoReporte }}</p>
+		</div>
+		<p><small>Reseña: {{ r.fechaCreacion | date:'dd/MM/yyyy HH:mm' }} | Reportada: {{ r.fechaReporte | date:'dd/MM/yyyy HH:mm' }}</small></p>
 		<div class="buttons">
-			<button type="button" (click)="moderar(r.id, 'Aprobada')">Aprobar</button>
-			<button type="button" (click)="moderar(r.id, 'Rechazada')">Rechazar</button>
-			<button type="button" (click)="eliminar(r.id)">Eliminar</button>
+			<button type="button" class="btn-dismiss" (click)="desestimar(r.id)">Desestimar reporte</button>
+			<button type="button" class="btn-delete" (click)="eliminar(r.id)">Eliminar reseña</button>
 		</div>
 	</div>
 </section>

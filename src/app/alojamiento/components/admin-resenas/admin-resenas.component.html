@@ -1,14 +1,7 @@
 <section class="admin-resenas">
   <div class="panel-header">
-    <h2>Moderación de Reseñas</h2>
-    <div class="filter-row">
-      <select [(ngModel)]="filtroEstado" (change)="cargar()">
-        <option value="">Todas</option>
-        <option value="Pendiente">Pendientes</option>
-        <option value="Aprobada">Aprobadas</option>
-        <option value="Rechazada">Rechazadas</option>
-      </select>
-    </div>
+    <h2>Reseñas Reportadas</h2>
+    <button class="btn-refresh" (click)="cargar()">Actualizar</button>
   </div>
 
   <div class="loading-state" *ngIf="loading">
@@ -16,15 +9,15 @@
   </div>
 
   <div class="empty-state" *ngIf="!loading && resenas.length === 0">
-    <p>No hay reseñas en esta categoría.</p>
+    <p>No hay reseñas reportadas pendientes de revisión.</p>
   </div>
 
   <div class="resenas-list" *ngIf="!loading && resenas.length > 0">
-    <div class="resena-card" *ngFor="let r of resenas; trackBy: trackById" [class]="r.estado.toLowerCase()">
+    <div class="resena-card reportada" *ngFor="let r of resenas; trackBy: trackById">
       <div class="resena-header">
         <div class="meta">
           <span class="alojamiento">{{ r.alojamientoNombre }}</span>
-          <span class="badge-estado" [class]="r.estado.toLowerCase()">{{ r.estado }}</span>
+          <span class="badge-estado reportada">Reportada</span>
         </div>
         <div class="calificacion">
           <span class="estrella filled" *ngFor="let s of estrellasArr(r.calificacion)">★</span>
@@ -34,18 +27,20 @@
 
       <p class="comentario">{{ r.comentario }}</p>
 
+      <div class="motivo-reporte">
+        <strong>Motivo del reporte:</strong>
+        <p>{{ r.motivoReporte }}</p>
+      </div>
+
       <div class="resena-footer">
-        <span class="fecha">{{ r.fechaCreacion | date:'dd/MM/yyyy' }}</span>
+        <span class="fecha">Reseña: {{ r.fechaCreacion | date:'dd/MM/yyyy' }}</span>
+        <span class="fecha">Reportada: {{ r.fechaReporte | date:'dd/MM/yyyy' }}</span>
         <span class="cliente-id">Cliente: {{ r.clienteId | slice:0:8 }}...</span>
       </div>
 
-      <div class="acciones" *ngIf="r.estado === 'Pendiente'">
-        <button class="btn-approve" (click)="moderar(r.id, 'Aprobada')">Aprobar</button>
-        <button class="btn-reject"  (click)="moderar(r.id, 'Rechazada')">Rechazar</button>
-        <button class="btn-delete"  (click)="eliminar(r.id)">Eliminar</button>
-      </div>
-      <div class="acciones" *ngIf="r.estado !== 'Pendiente'">
-        <button class="btn-delete" (click)="eliminar(r.id)">Eliminar</button>
+      <div class="acciones">
+        <button class="btn-dismiss" (click)="desestimar(r.id)">Desestimar reporte</button>
+        <button class="btn-delete" (click)="eliminar(r.id)">Eliminar reseña</button>
       </div>
     </div>
   </div>

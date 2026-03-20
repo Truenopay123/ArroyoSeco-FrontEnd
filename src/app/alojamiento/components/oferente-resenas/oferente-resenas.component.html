@@ -1,0 +1,71 @@
+<section class="oferente-resenas">
+  <div class="panel-header">
+    <h2>Reseñas de mis alojamientos</h2>
+    <button class="btn-refresh" (click)="cargar()">Actualizar</button>
+  </div>
+
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner-lg"></div>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && resenas.length === 0">
+    <p>Aún no hay reseñas para tus alojamientos.</p>
+  </div>
+
+  <div class="resenas-list" *ngIf="!loading && resenas.length > 0">
+    <div class="resena-card" *ngFor="let r of resenas; trackBy: trackById"
+         [class.reportada]="r.estado === 'reportada'">
+      <div class="resena-header">
+        <div class="meta">
+          <span class="alojamiento">{{ r.alojamientoNombre }}</span>
+          <span class="badge-estado" [ngClass]="r.estado">{{ r.estado }}</span>
+        </div>
+        <div class="calificacion">
+          <span class="estrella filled" *ngFor="let s of estrellasArr(r.calificacion)">★</span>
+          <span class="estrella empty" *ngFor="let s of estrellasArr(5 - r.calificacion)">☆</span>
+        </div>
+      </div>
+
+      <p class="comentario">{{ r.comentario }}</p>
+
+      <div class="motivo-reporte" *ngIf="r.estado === 'reportada' && r.motivoReporte">
+        <strong>Tu reporte:</strong>
+        <p>{{ r.motivoReporte }}</p>
+      </div>
+
+      <div class="resena-footer">
+        <span class="fecha">{{ r.fechaCreacion | date:'dd/MM/yyyy' }}</span>
+        <span class="cliente-id">Cliente: {{ r.clienteId | slice:0:8 }}...</span>
+      </div>
+
+      <div class="acciones" *ngIf="r.estado === 'publicada'">
+        <button class="btn-report" (click)="abrirModalReporte(r.id)">
+          Reportar reseña
+        </button>
+      </div>
+
+      <div class="estado-info" *ngIf="r.estado === 'reportada'">
+        <span class="info-badge">⏳ Pendiente de revisión por Admin</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal de reporte -->
+<div class="modal-overlay" *ngIf="mostrarModalReporte" (click)="cerrarModalReporte()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h3>Reportar reseña</h3>
+    <p class="modal-desc">Explica por qué consideras que esta reseña es injusta o falsa. El Admin revisará tu reporte.</p>
+    <textarea [(ngModel)]="motivoReporte" rows="4"
+              placeholder="Motivo del reporte (mínimo 10 caracteres)..."
+              maxlength="500"></textarea>
+    <div class="char-count">{{ motivoReporte.length }}/500</div>
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="cerrarModalReporte()">Cancelar</button>
+      <button class="btn-submit" (click)="enviarReporte()"
+              [disabled]="enviandoReporte || motivoReporte.trim().length < 10">
+        {{ enviandoReporte ? 'Enviando...' : 'Enviar reporte' }}
+      </button>
+    </div>
+  </div>
+</div>

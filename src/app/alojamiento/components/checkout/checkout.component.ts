@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PagoService } from '../../services/pago.service';
 import { ToastService } from '../../../shared/services/toast.service';
@@ -9,7 +9,7 @@ import { first } from 'rxjs/operators';
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.scss',
 })

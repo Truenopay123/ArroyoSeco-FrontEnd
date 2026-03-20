@@ -20,6 +20,7 @@ export class OferenteNavbarComponent {
     { label: 'Inicio', route: '/oferente/dashboard' },
     { label: 'Mis Hospedajes', route: '/oferente/hospedajes' },
     { label: 'Gestión de Reservas', route: '/oferente/reservas' },
+    { label: 'Reseñas', route: '/oferente/resenas' },
     { label: 'Notificaciones', route: '/oferente/notificaciones' },
     { label: 'Configuración', route: '/oferente/configuracion' }
   ];

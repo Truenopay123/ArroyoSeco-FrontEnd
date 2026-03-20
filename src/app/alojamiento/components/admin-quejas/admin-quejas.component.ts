@@ -17,7 +17,6 @@ export class AdminQuejasComponent implements OnInit {
 	private readonly toast = inject(ToastService);
 
 	loading = false;
-	filtroEstado = '';
 	resenas: any[] = [];
 
 	ngOnInit(): void {
@@ -26,36 +25,37 @@ export class AdminQuejasComponent implements OnInit {
 
 	cargar() {
 		this.loading = true;
-		const q = this.filtroEstado ? { estado: this.filtroEstado } : undefined;
-		this.api.get<any[]>('/resenas', q as any).pipe(first()).subscribe({
+		this.api.get<any[]>('/resenas/reportadas').pipe(first()).subscribe({
 			next: (rows) => {
 				this.resenas = rows || [];
 				this.loading = false;
 			},
 			error: () => {
-				this.toast.error('No se pudieron cargar las reseñas');
+				this.toast.error('No se pudieron cargar las reseñas reportadas');
 				this.loading = false;
 			}
 		});
 	}
 
-	moderar(id: number, estado: 'Aprobada' | 'Rechazada') {
-		this.api.patch(`/resenas/${id}/moderar`, { estado }).pipe(first()).subscribe({
-			next: () => {
-				this.toast.success(`Reseña ${estado.toLowerCase()} correctamente`);
-				this.cargar();
-			},
-			error: () => this.toast.error('No se pudo moderar la reseña')
-		});
-	}
-
 	eliminar(id: number) {
+		if (!confirm('¿Eliminar esta reseña? Ya no será visible para nadie.')) return;
 		this.api.delete(`/resenas/${id}`).pipe(first()).subscribe({
 			next: () => {
 				this.toast.success('Reseña eliminada');
 				this.cargar();
 			},
 			error: () => this.toast.error('No se pudo eliminar la reseña')
+		});
+	}
+
+	desestimar(id: number) {
+		if (!confirm('¿Desestimar el reporte? La reseña volverá a ser pública.')) return;
+		this.api.patch(`/resenas/${id}/desestimar-reporte`, {}).pipe(first()).subscribe({
+			next: () => {
+				this.toast.success('Reporte desestimado. Reseña restaurada.');
+				this.cargar();
+			},
+			error: () => this.toast.error('No se pudo desestimar el reporte')
 		});
 	}
 }
