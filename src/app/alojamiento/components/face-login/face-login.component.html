@@ -1,0 +1,56 @@
+<!-- Componente de verificación facial durante login -->
+<section class="face-login-container">
+  <div class="face-card">
+
+    <!-- Encabezado -->
+    <div class="face-header">
+      <mat-icon class="face-icon">face</mat-icon>
+      <h2>Verificación Facial</h2>
+      <p class="face-subtitle">{{ mensaje }}</p>
+    </div>
+
+    <!-- Video de la webcam -->
+    <div class="video-wrapper" *ngIf="estado !== 'error' && estado !== 'exito'">
+      <video #videoEl autoplay playsinline muted class="webcam-video"></video>
+      <div class="video-overlay" *ngIf="estado === 'comparando'">
+        <mat-spinner diameter="48"></mat-spinner>
+      </div>
+    </div>
+
+    <!-- Icono de éxito -->
+    <div class="resultado-icon exito" *ngIf="estado === 'exito'">
+      <mat-icon>check_circle</mat-icon>
+    </div>
+
+    <!-- Icono de error -->
+    <div class="resultado-icon error" *ngIf="estado === 'error'">
+      <mat-icon>error</mat-icon>
+    </div>
+
+    <!-- Contador de intentos -->
+    <p class="intentos-text" *ngIf="estado === 'listo' && intentos > 0">
+      Intento {{ intentos }}/{{ maxIntentos }}
+    </p>
+
+    <!-- Botones -->
+    <div class="face-actions">
+      <button
+        mat-raised-button
+        color="primary"
+        class="btn-verificar"
+        (click)="verificar()"
+        [disabled]="estado !== 'listo'">
+        <mat-icon>camera_alt</mat-icon>
+        Verificar Rostro
+      </button>
+
+      <button
+        mat-button
+        class="btn-cancelar"
+        (click)="cancelar()"
+        [disabled]="estado === 'comparando'">
+        Volver al Login
+      </button>
+    </div>
+  </div>
+</section>

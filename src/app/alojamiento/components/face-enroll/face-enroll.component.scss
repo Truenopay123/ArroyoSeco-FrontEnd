@@ -1,0 +1,165 @@
+/* ===== Face Enroll — Pantalla completa, estilo Luxury Dark + Gold ===== */
+
+:host {
+  --bg-dark: #0a0a0a;
+  --card-bg: #141414;
+  --text-light: #f0ebe3;
+  --accent-gold: #c9a96e;
+  --accent-gold-hover: #d4b67a;
+  --font-serif: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Inter', 'DM Sans', -apple-system, sans-serif;
+  display: block;
+}
+
+.face-enroll-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-dark);
+  font-family: var(--font-sans);
+  padding: 2rem;
+}
+
+.face-enroll-card {
+  background: var(--card-bg);
+  border: 1px solid rgba(201, 169, 110, 0.12);
+  border-radius: 16px;
+  padding: clamp(2rem, 4vw, 2.5rem);
+  width: min(100%, 480px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  font-family: var(--font-sans);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.enroll-header {
+  text-align: center;
+}
+
+.enroll-icon {
+  font-size: 40px !important;
+  width: 40px !important;
+  height: 40px !important;
+  color: var(--accent-gold);
+}
+
+.enroll-header h3 {
+  margin: 0.5rem 0 0;
+  font-size: 1.2rem;
+  color: var(--text-light);
+}
+
+.enroll-header h2 {
+  margin: 0.5rem 0 0;
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  color: var(--text-light);
+  letter-spacing: 0.02em;
+}
+
+.enroll-desc {
+  margin: 0.5rem 0 0;
+  color: rgba(240, 235, 227, 0.5);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  max-width: 350px;
+}
+
+.estado-mensaje {
+  color: rgba(240, 235, 227, 0.55);
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 0;
+}
+
+/* Video webcam */
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid rgba(201, 169, 110, 0.2);
+}
+
+.webcam-video {
+  width: 100%;
+  display: block;
+  border-radius: 12px;
+  background: #000;
+}
+
+.video-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Resultados */
+.resultado-icon {
+  mat-icon {
+    font-size: 56px !important;
+    width: 56px !important;
+    height: 56px !important;
+  }
+
+  &.exito mat-icon { color: #4caf50; }
+  &.error mat-icon { color: #f44336; }
+}
+
+/* Botones */
+.enroll-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 280px;
+  align-items: center;
+}
+
+.btn-gold {
+  background: var(--accent-gold) !important;
+  color: var(--bg-dark) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em;
+  border-radius: 10px !important;
+  width: 100%;
+
+  &:hover:not(:disabled) {
+    background: var(--accent-gold-hover) !important;
+  }
+}
+
+.btn-cancel {
+  color: var(--accent-gold) !important;
+}
+
+.exito-text {
+  color: #81c784;
+  font-size: 0.9rem;
+  margin: 0.5rem 0 0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 500px) {
+  .face-enroll-card {
+    padding: 1.5rem;
+  }
+}

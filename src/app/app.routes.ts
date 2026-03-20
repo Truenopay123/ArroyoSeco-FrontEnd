@@ -55,9 +55,13 @@ import { PagoResultadoComponent } from './alojamiento/components/pago-resultado/
 import { AdminResenasComponent } from './alojamiento/components/admin-resenas/admin-resenas.component';
 import { AdminEstadisticasComponent } from './alojamiento/components/admin-estadisticas/admin-estadisticas.component';
 import { OferenteResenasComponent } from './alojamiento/components/oferente-resenas/oferente-resenas.component';
+import { FaceLoginComponent } from './alojamiento/components/face-login/face-login.component';
+import { FaceEnrollComponent } from './alojamiento/components/face-enroll/face-enroll.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginSelectorComponent },
+  { path: 'face-login', component: FaceLoginComponent },
+  { path: 'face-enroll', component: FaceEnrollComponent },
   { path: 'confirm-email', component: ConfirmEmailComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },

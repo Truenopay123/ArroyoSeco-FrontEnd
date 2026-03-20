@@ -5,6 +5,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { first } from 'rxjs/operators';
+import { FaceAuthService } from '../../../core/services/face-auth.service';
 
 @Component({
   selector: 'app-login-selector',
@@ -72,6 +73,30 @@ export class LoginSelectorComponent implements OnInit, OnDestroy {
             this.pendingEmail = res.email || this.model.email;
             this.step = 'totp';
             this.toast.show('Ingresa el código de tu aplicación autenticadora.', 'info');
+            return;
+          }
+
+          // Si el usuario tiene rostro registrado, redirigir a verificación facial
+          if (res?.requiresFaceAuth) {
+            this.router.navigate(['/face-login'], {
+              state: {
+                tempToken: res.tempToken,
+                faceDescriptor: res.faceDescriptor,
+                returnUrl: this.returnUrl
+              }
+            });
+            return;
+          }
+
+          // Admin/Oferente sin rostro registrado → obligar a registrar rostro
+          if (res?.requiresFaceEnroll) {
+            this.router.navigate(['/face-enroll'], {
+              state: {
+                tempToken: res.tempToken,
+                returnUrl: this.returnUrl,
+                loginFlow: true
+              }
+            });
             return;
           }
 

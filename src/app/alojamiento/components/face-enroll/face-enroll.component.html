@@ -1,0 +1,58 @@
+<!-- Registro facial obligatorio durante el login para Admin/Oferente -->
+<section class="face-enroll-container">
+  <div class="face-enroll-card">
+
+    <div class="enroll-header">
+      <mat-icon class="enroll-icon">face_retouching_natural</mat-icon>
+      <h2>Registro Facial Requerido</h2>
+      <p class="enroll-desc">
+        Para completar tu inicio de sesión, necesitas registrar tu rostro.
+        Solo se almacena un descriptor numérico, no una foto.
+      </p>
+    </div>
+
+    <!-- Mensaje dinámico -->
+    <p class="estado-mensaje" *ngIf="mensaje">{{ mensaje }}</p>
+
+    <!-- Video webcam -->
+    <div class="video-wrapper" *ngIf="estado === 'camara' || estado === 'capturando' || estado === 'cargando'">
+      <video #videoEl autoplay playsinline muted class="webcam-video"></video>
+      <div class="video-overlay" *ngIf="estado === 'capturando' || estado === 'cargando'">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    </div>
+
+    <!-- Ícono de éxito -->
+    <div class="resultado-icon exito" *ngIf="estado === 'registrado'">
+      <mat-icon>check_circle</mat-icon>
+      <p class="exito-text">Redirigiendo…</p>
+    </div>
+
+    <!-- Ícono de error -->
+    <div class="resultado-icon error" *ngIf="estado === 'error'">
+      <mat-icon>error_outline</mat-icon>
+    </div>
+
+    <!-- Botones según estado -->
+    <div class="enroll-actions">
+
+      <!-- Estado cámara activa -->
+      <ng-container *ngIf="estado === 'camara'">
+        <button mat-raised-button class="btn-gold" (click)="capturar()">
+          <mat-icon>camera_alt</mat-icon>
+          Registrar Rostro
+        </button>
+        <button mat-button class="btn-cancel" (click)="cancelar()">
+          Volver al Login
+        </button>
+      </ng-container>
+
+      <!-- Estado error: reintentar o volver -->
+      <ng-container *ngIf="estado === 'error'">
+        <button mat-button class="btn-cancel" (click)="cancelar()">
+          Volver al Login
+        </button>
+      </ng-container>
+    </div>
+  </div>
+</section>
