@@ -1,0 +1,52 @@
+<section class="contact-page">
+  <div class="contact-card">
+    <h1>Contacto</h1>
+    <p>Envia tu consulta y abriremos un correo para <strong>{{ destino }}</strong>.</p>
+
+    <form #contactForm="ngForm" (ngSubmit)="enviarContacto()" class="contact-form">
+      <label for="nombre">Nombre</label>
+      <input
+        id="nombre"
+        name="nombre"
+        type="text"
+        required
+        [(ngModel)]="model.nombre"
+        placeholder="Tu nombre"
+      />
+
+      <label for="email">Correo</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        required
+        [(ngModel)]="model.email"
+        placeholder="tu@correo.com"
+      />
+
+      <label for="telefono">Telefono (opcional)</label>
+      <input
+        id="telefono"
+        name="telefono"
+        type="tel"
+        [(ngModel)]="model.telefono"
+        placeholder="442 000 0000"
+      />
+
+      <label for="mensaje">Mensaje</label>
+      <textarea
+        id="mensaje"
+        name="mensaje"
+        required
+        [(ngModel)]="model.mensaje"
+        rows="5"
+        placeholder="Escribe tu mensaje"
+      ></textarea>
+
+      <div class="actions">
+        <button type="button" class="btn-back" (click)="volverAtras()">Regresar</button>
+        <button type="submit" [disabled]="contactForm.invalid">Enviar correo</button>
+      </div>
+    </form>
+  </div>
+</section>

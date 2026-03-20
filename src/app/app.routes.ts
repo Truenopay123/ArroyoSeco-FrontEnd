@@ -57,6 +57,7 @@ import { AdminEstadisticasComponent } from './alojamiento/components/admin-estad
 import { OferenteResenasComponent } from './alojamiento/components/oferente-resenas/oferente-resenas.component';
 import { FaceLoginComponent } from './alojamiento/components/face-login/face-login.component';
 import { FaceEnrollComponent } from './alojamiento/components/face-enroll/face-enroll.component';
+import { ContactoComponent } from './shared/components/contacto/contacto.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginSelectorComponent },
@@ -104,6 +105,15 @@ export const routes: Routes = [
         component: DetalleGastronomiaComponent,
         data: {
           heroTitle: 'Detalles del restaurante',
+          heroImage: 'assets/images/RioAyutla.jpeg'
+        }
+      },
+      {
+        path: 'contacto',
+        component: ContactoComponent,
+        data: {
+          heroTitle: 'Contacto',
+          heroSubtitle: 'Estamos para ayudarte',
           heroImage: 'assets/images/RioAyutla.jpeg'
         }
       },

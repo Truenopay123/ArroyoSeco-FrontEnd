@@ -61,6 +61,59 @@
   }
 }
 
+.contact-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(90deg, #c41019 0%, #b91c1c 100%);
+  width: fit-content;
+
+  &:hover {
+    filter: brightness(1.05);
+  }
+}
+
+.social-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 0.65rem;
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: #1f2937;
+  text-decoration: none;
+  font-weight: 500;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+
+  &:hover {
+    color: #c41019;
+  }
+}
+
+.complementary-link {
+  color: #0f766e;
+  text-decoration: none;
+  font-weight: 600;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 @media (max-width: 768px) {
   .footer-inner {
     flex-direction: column;
