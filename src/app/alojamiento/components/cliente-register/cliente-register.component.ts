@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { first } from 'rxjs/operators';
+import * as QRCode from 'qrcode';
 
 @Component({
   selector: 'app-cliente-register',
@@ -31,6 +32,7 @@ export class ClienteRegisterComponent implements AfterViewInit {
   showConfirm    = false;
   privacyChecked = false;
   step: 'form' | 'totp' = 'form';
+  qrGenerationFailed = false;
   totpSetup = {
     email: '',
     key: '',
@@ -179,15 +181,33 @@ export class ClienteRegisterComponent implements AfterViewInit {
     if (!this.totpSetup.qrUri || !this.qrCanvas?.nativeElement) return;
     const canvas = this.qrCanvas.nativeElement;
 
-    import('qrcode').then(QRCode => {
+    try {
       QRCode.toCanvas(canvas, this.totpSetup.qrUri, { width: 210, margin: 1 }, (error: any) => {
         if (error) {
           console.error('QR error:', error);
+          this.qrGenerationFailed = true;
+        } else {
+          this.qrGenerationFailed = false;
         }
       });
-    }).catch(() => {
-      // Si la librería no está disponible, el usuario aún puede usar la clave manual.
-    });
+    } catch (err) {
+      console.error('QR generation failed:', err);
+      this.qrGenerationFailed = true;
+      // Fallback: try dynamic import as before
+      import('qrcode').then(QRCodeModule => {
+        QRCodeModule.toCanvas(canvas, this.totpSetup.qrUri, { width: 210, margin: 1 }, (error: any) => {
+          if (error) {
+            console.error('QR dynamic import error:', error);
+            this.qrGenerationFailed = true;
+          } else {
+            this.qrGenerationFailed = false;
+          }
+        });
+      }).catch(err => {
+        console.error('QR module not available:', err);
+        this.qrGenerationFailed = true;
+      });
+    }
   }
 
   private iniciarPasoTotp(email: string, key: string, qrUri: string) {

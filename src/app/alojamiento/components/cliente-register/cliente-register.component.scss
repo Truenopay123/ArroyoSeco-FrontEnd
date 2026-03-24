@@ -392,6 +392,16 @@ select option {
   font-size: 0.9rem;
 }
 
+.totp-optional-note {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(99, 184, 255, 0.1);
+  border-left: 3px solid rgb(99, 184, 255);
+  color: rgba(240, 235, 227, 0.7);
+  font-size: 0.85rem;
+  border-radius: 4px;
+}
+
 .qr-block {
   display: grid;
   place-items: center;
@@ -399,6 +409,15 @@ select option {
   border: 1px dashed rgba(201, 169, 110, 0.2);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.03);
+  position: relative;
+}
+
+.qr-error-message {
+  position: absolute;
+  color: #ff9999;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 0.5rem;
 }
 
 .manual-key summary {

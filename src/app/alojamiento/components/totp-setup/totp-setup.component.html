@@ -35,6 +35,10 @@
         2FA deshabilitado
       </div>
 
+      <p class="optional-note">
+        <strong>💡 Nota:</strong> La autenticación en dos pasos (2FA) es opcional. Puedes activarla ahora o en cualquier momento.
+      </p>
+
       <div class="steps">
         <div class="step">
           <span class="step-number">1</span>
@@ -45,6 +49,9 @@
           <p>Escanea el código QR con tu aplicación:</p>
           <div class="qr-container">
             <canvas #qrCanvas></canvas>
+            <div *ngIf="qrGenerationFailed" class="qr-error">
+              ⚠️ No se pudo generar el código QR. Por favor, usa la clave manual a continuación.
+            </div>
           </div>
           <details class="key-fallback">
             <summary>¿No puedes escanear el QR? Ingresa la clave manualmente</summary>

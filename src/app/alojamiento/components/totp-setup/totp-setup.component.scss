@@ -5,10 +5,12 @@
 .status-badge { display: inline-flex; align-items: center; gap: 0.4rem; border-radius: 999px; padding: 0.3rem 0.7rem; border: 1px solid #d1d5db; margin-bottom: 0.75rem; }
 .status-badge.enabled { background: #f0fdf4; border-color: #86efac; color: #166534; }
 .status-badge.disabled { background: #fff7ed; border-color: #fdba74; color: #9a3412; }
+.optional-note { margin-bottom: 0.75rem; padding: 0.5rem 0.75rem; background: #e0f2fe; border-left: 3px solid #0284c7; color: #0c4a6e; font-size: 0.9rem; border-radius: 4px; }
 .steps { display: grid; gap: 0.75rem; }
 .step { border: 1px solid #e5e7eb; border-radius: 10px; padding: 0.75rem; }
 .step-number { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #1d4ed8; color: #fff; font-weight: 700; margin-right: 0.5rem; }
-.qr-container { margin-top: 0.5rem; }
+.qr-container { margin-top: 0.5rem; position: relative; }
+.qr-error { color: #dc2626; font-size: 0.85rem; text-align: center; padding: 0.5rem; }
 .secret-key { display: block; margin-top: 0.4rem; background: #0f172a; color: #f8fafc; padding: 0.4rem; border-radius: 6px; overflow-wrap: anywhere; }
 .verify-form { display: grid; gap: 0.5rem; max-width: 320px; }
 .code-input { border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.55rem; }

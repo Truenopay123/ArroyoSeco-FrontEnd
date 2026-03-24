@@ -157,14 +157,20 @@
         <ng-template #totpStep>
           <section class="totp-onboarding">
             <div class="totp-badge">Paso final de seguridad</div>
-            <h3>Configura Google Authenticator</h3>
+            <h3>Configura Google Authenticator (Opcional)</h3>
             <p class="totp-copy">
               Tu cuenta ya fue creada. Escanea este QR en Google Authenticator (o Authy)
               e ingresa el código de 6 dígitos para terminar.
             </p>
+            <p class="totp-optional-note">
+              <strong>💡 Nota:</strong> Configurar Google Authenticator es opcional. Puedes activarlo más tarde desde el menú de Configuración de tu cuenta.
+            </p>
 
             <div class="qr-block">
               <canvas #qrCanvas></canvas>
+              <div *ngIf="qrGenerationFailed" class="qr-error-message">
+                ⚠️ No se pudo generar el código QR. Por favor, usa la clave manual a continuación.
+              </div>
             </div>
 
             <details class="manual-key">

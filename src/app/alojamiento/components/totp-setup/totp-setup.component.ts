@@ -4,9 +4,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { first } from 'rxjs/operators';
-
-// qrcode importado dinámicamente para evitar errores SSR
-declare const QRCode: any;
+import * as QRCodeLib from 'qrcode';
 
 @Component({
   selector: 'app-totp-setup',
@@ -20,6 +18,7 @@ export class TotpSetupComponent implements OnInit, AfterViewInit {
 
   loading      = false;
   verifying    = false;
+  qrGenerationFailed = false;
   step: 'loading' | 'setup' | 'verify' | 'enabled' | 'disabled' = 'loading';
   key          = '';
   qrUri        = '';
@@ -56,13 +55,35 @@ export class TotpSetupComponent implements OnInit, AfterViewInit {
 
   private generarQR() {
     if (!this.qrUri || !this.qrCanvas?.nativeElement) return;
-    import('qrcode').then(QRCode => {
-      QRCode.toCanvas(this.qrCanvas.nativeElement, this.qrUri, { width: 200, margin: 1 }, (error: any) => {
-        if (error) console.error('QR error:', error);
+    const canvas = this.qrCanvas.nativeElement;
+    
+    try {
+      QRCodeLib.toCanvas(canvas, this.qrUri, { width: 200, margin: 1 }, (error: any) => {
+        if (error) {
+          console.error('QR error:', error);
+          this.qrGenerationFailed = true;
+        } else {
+          this.qrGenerationFailed = false;
+        }
       });
-    }).catch(() => {
-      // qrcode not available - show URI manually
-    });
+    } catch (err) {
+      console.error('QR generation failed:', err);
+      this.qrGenerationFailed = true;
+      // Fallback: try dynamic import
+      import('qrcode').then(QRCode => {
+        QRCode.toCanvas(canvas, this.qrUri, { width: 200, margin: 1 }, (error: any) => {
+          if (error) {
+            console.error('QR dynamic import error:', error);
+            this.qrGenerationFailed = true;
+          } else {
+            this.qrGenerationFailed = false;
+          }
+        });
+      }).catch(err => {
+        console.error('QR module not available:', err);
+        this.qrGenerationFailed = true;
+      });
+    }
   }
 
   habilitar(form: NgForm) {
