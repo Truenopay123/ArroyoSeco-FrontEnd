@@ -22,6 +22,7 @@
     "@angular/platform-browser-dynamic": "^19.2.0",
     "@angular/router": "^19.2.0",
     "@angular/service-worker": "19.2.15",
+    "@microsoft/signalr": "^8.0.0",
     "@types/leaflet": "^1.9.21",
     "chart.js": "^4.4.0",
     "face-api.js": "^0.22.2",

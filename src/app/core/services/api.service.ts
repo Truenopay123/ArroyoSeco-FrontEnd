@@ -21,7 +21,16 @@ export class ApiService {
   toPublicUrl(path?: string | null): string | undefined {
     if (!path) return undefined;
     if (/^https?:\/\//i.test(path)) return path;
+    
     const normalized = path.startsWith('/') ? path : `/${path}`;
+    
+    // Convert legacy /comprobantes/* to new /api/storage/public/* endpoint
+    // This bypasses authentication and works in production
+    if (normalized.startsWith('/comprobantes/')) {
+      const relativePath = normalized.substring('/comprobantes/'.length);
+      return `${this.baseUrl}/storage/public/${relativePath}`;
+    }
+    
     return `${this.publicBaseUrl}${normalized}`;
   }
 

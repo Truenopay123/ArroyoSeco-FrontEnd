@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -50,7 +50,8 @@ export class ClienteRegisterComponent implements AfterViewInit {
   constructor(
     private readonly toast: ToastService,
     private readonly router: Router,
-    private readonly auth: AuthService
+    private readonly auth: AuthService,
+    private readonly cdr: ChangeDetectorRef
   ) {}
 
   ngAfterViewInit(): void {
@@ -178,34 +179,61 @@ export class ClienteRegisterComponent implements AfterViewInit {
   }
 
   private generarQR() {
-    if (!this.totpSetup.qrUri || !this.qrCanvas?.nativeElement) return;
-    const canvas = this.qrCanvas.nativeElement;
+    if (!this.totpSetup.qrUri) {
+      console.warn('QR URI not set');
+      return;
+    }
 
+    // Ensure canvas is available - if not, retry after render cycle
+    if (!this.qrCanvas?.nativeElement) {
+      console.warn('Canvas not available yet, retrying...');
+      requestAnimationFrame(() => this.generarQR());
+      return;
+    }
+
+    const canvas = this.qrCanvas.nativeElement;
+    
     try {
+      // Use static import first
       QRCode.toCanvas(canvas, this.totpSetup.qrUri, { width: 210, margin: 1 }, (error: any) => {
         if (error) {
-          console.error('QR error:', error);
+          console.error('QR generation error (static import):', error);
           this.qrGenerationFailed = true;
+          this.cdr.detectChanges();
         } else {
+          console.log('QR generated successfully (static import)');
           this.qrGenerationFailed = false;
+          this.cdr.detectChanges();
         }
       });
-    } catch (err) {
-      console.error('QR generation failed:', err);
+    } catch (err: any) {
+      console.error('QR generation exception (static import):', err);
       this.qrGenerationFailed = true;
-      // Fallback: try dynamic import as before
+      this.cdr.detectChanges();
+      
+      // Fallback to dynamic import
+      console.log('Attempting dynamic import fallback...');
       import('qrcode').then(QRCodeModule => {
-        QRCodeModule.toCanvas(canvas, this.totpSetup.qrUri, { width: 210, margin: 1 }, (error: any) => {
-          if (error) {
-            console.error('QR dynamic import error:', error);
-            this.qrGenerationFailed = true;
-          } else {
-            this.qrGenerationFailed = false;
-          }
-        });
-      }).catch(err => {
-        console.error('QR module not available:', err);
+        try {
+          QRCodeModule.toCanvas(canvas, this.totpSetup.qrUri, { width: 210, margin: 1 }, (error: any) => {
+            if (error) {
+              console.error('QR generation error (dynamic import):', error);
+              this.qrGenerationFailed = true;
+            } else {
+              console.log('QR generated successfully (dynamic import)');
+              this.qrGenerationFailed = false;
+            }
+            this.cdr.detectChanges();
+          });
+        } catch (dynamicErr) {
+          console.error('QR dynamic fallback exception:', dynamicErr);
+          this.qrGenerationFailed = true;
+          this.cdr.detectChanges();
+        }
+      }).catch(importErr => {
+        console.error('QR module import failed:', importErr);
         this.qrGenerationFailed = true;
+        this.cdr.detectChanges();
       });
     }
   }
@@ -213,7 +241,14 @@ export class ClienteRegisterComponent implements AfterViewInit {
   private iniciarPasoTotp(email: string, key: string, qrUri: string) {
     this.step = 'totp';
     this.totpSetup = { email, key, qrUri, codigo: '' };
+    this.qrGenerationFailed = false;
     this.toast.show('Registro creado. Escanea el QR y verifica tu código para activar 2FA.', 'success');
-    setTimeout(() => this.generarQR(), 120);
+    
+    // Wait for template rendering before trying to access canvas
+    // Use longer timeout and also retry with requestAnimationFrame
+    setTimeout(() => {
+      this.cdr.detectChanges();
+      requestAnimationFrame(() => this.generarQR());
+    }, 300);
   }
 }

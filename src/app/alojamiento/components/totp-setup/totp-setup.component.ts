@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
@@ -25,14 +25,20 @@ export class TotpSetupComponent implements OnInit, AfterViewInit {
   codigoTotp   = '';
   twoFaEnabled = false;
 
-  constructor(private auth: AuthService, private toast: ToastService) {}
+  constructor(
+    private auth: AuthService,
+    private toast: ToastService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.cargarEstado();
   }
 
   ngAfterViewInit(): void {
-    if (this.qrUri) this.generarQR();
+    if (this.qrUri) {
+      requestAnimationFrame(() => this.generarQR());
+    }
   }
 
   private cargarEstado() {
@@ -44,44 +50,73 @@ export class TotpSetupComponent implements OnInit, AfterViewInit {
         this.qrUri        = res.qrUri;
         this.twoFaEnabled = res.habilitado;
         this.step         = res.habilitado ? 'enabled' : 'setup';
-        setTimeout(() => this.generarQR(), 100);
+        this.cdr.detectChanges();
+        requestAnimationFrame(() => this.generarQR());
       },
-      error: () => {
+      error: (err: any) => {
         this.loading = false;
+        console.error('Error loading 2FA setup:', err);
         this.toast.error('No se pudo cargar la configuración de 2FA');
       }
     });
   }
 
   private generarQR() {
-    if (!this.qrUri || !this.qrCanvas?.nativeElement) return;
+    if (!this.qrUri) {
+      console.warn('QR URI not set');
+      return;
+    }
+
+    // Ensure canvas is available
+    if (!this.qrCanvas?.nativeElement) {
+      console.warn('Canvas not available yet, retrying...');
+      requestAnimationFrame(() => this.generarQR());
+      return;
+    }
+
     const canvas = this.qrCanvas.nativeElement;
     
     try {
+      // Use static import
       QRCodeLib.toCanvas(canvas, this.qrUri, { width: 200, margin: 1 }, (error: any) => {
         if (error) {
-          console.error('QR error:', error);
+          console.error('QR generation error (static import):', error);
           this.qrGenerationFailed = true;
+          this.cdr.detectChanges();
         } else {
+          console.log('QR generated successfully (static import)');
           this.qrGenerationFailed = false;
+          this.cdr.detectChanges();
         }
       });
-    } catch (err) {
-      console.error('QR generation failed:', err);
+    } catch (err: any) {
+      console.error('QR generation exception (static import):', err);
       this.qrGenerationFailed = true;
-      // Fallback: try dynamic import
+      this.cdr.detectChanges();
+
+      // Fallback to dynamic import
+      console.log('Attempting dynamic import fallback...');
       import('qrcode').then(QRCode => {
-        QRCode.toCanvas(canvas, this.qrUri, { width: 200, margin: 1 }, (error: any) => {
-          if (error) {
-            console.error('QR dynamic import error:', error);
-            this.qrGenerationFailed = true;
-          } else {
-            this.qrGenerationFailed = false;
-          }
-        });
-      }).catch(err => {
-        console.error('QR module not available:', err);
+        try {
+          QRCode.toCanvas(canvas, this.qrUri, { width: 200, margin: 1 }, (error: any) => {
+            if (error) {
+              console.error('QR generation error (dynamic import):', error);
+              this.qrGenerationFailed = true;
+            } else {
+              console.log('QR generated successfully (dynamic import)');
+              this.qrGenerationFailed = false;
+            }
+            this.cdr.detectChanges();
+          });
+        } catch (dynamicErr) {
+          console.error('QR dynamic fallback exception:', dynamicErr);
+          this.qrGenerationFailed = true;
+          this.cdr.detectChanges();
+        }
+      }).catch(importErr => {
+        console.error('QR module import failed:', importErr);
         this.qrGenerationFailed = true;
+        this.cdr.detectChanges();
       });
     }
   }

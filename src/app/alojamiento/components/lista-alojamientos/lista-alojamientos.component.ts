@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -6,9 +6,10 @@ import { FavoritesService, FavoriteAlojamiento } from '../../../shared/services/
 import { ToastService } from '../../../shared/services/toast.service';
 import { AlojamientoService, AlojamientoDto } from '../../services/alojamiento.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { PriceUpdateService } from '../../../core/services/price-update.service';
 import { first, catchError, map } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
-import { forkJoin, of } from 'rxjs';
+import { forkJoin, of, Subscription } from 'rxjs';
 
 interface Alojamiento {
   id: number;
@@ -27,19 +28,21 @@ interface Alojamiento {
   templateUrl: './lista-alojamientos.component.html',
   styleUrl: './lista-alojamientos.component.scss'
 })
-export class ListaAlojamientosComponent implements OnInit {
+export class ListaAlojamientosComponent implements OnInit, OnDestroy {
   search = '';
   sortMode: 'precio' | 'rating' | 'nombre' = 'precio';
   alojamientos: Alojamiento[] = [];
   loading = false;
   error: string | null = null;
   isPublic = false;
+  private priceUpdateSubscription?: Subscription;
 
   constructor(private favs: FavoritesService,
               private toast: ToastService,
               private alojamientosService: AlojamientoService,
               private api: ApiService,
               private auth: AuthService,
+              private priceUpdateService: PriceUpdateService,
               private router: Router,
               private route: ActivatedRoute) {}
 
@@ -47,6 +50,36 @@ export class ListaAlojamientosComponent implements OnInit {
     // Detectar si estamos en ruta pública
     this.isPublic = this.router.url.includes('/publica/');
     this.fetchAlojamientos();
+    
+    // Inicializar SignalR para recibir actualizaciones de precio
+    this.setupPriceUpdates();
+  }
+
+  ngOnDestroy(): void {
+    // Desuscribirse de actualizaciones de precio
+    this.priceUpdateSubscription?.unsubscribe();
+    // Detener polling
+    this.priceUpdateService.stopPolling();
+  }
+
+  private setupPriceUpdates(): void {
+    // Iniciar polling de precios
+    this.priceUpdateService.startPolling();
+
+    // Escuchar actualizaciones de precio
+    this.priceUpdateSubscription = this.priceUpdateService.onPriceUpdate()
+      .subscribe(update => {
+        if (!update) return;
+
+        // Actualizar el precio en la lista sin refrescar
+        const alojamiento = this.alojamientos.find(a => a.id === update.alojamientoId);
+        if (alojamiento) {
+          console.log(`Precio actualizado: ${alojamiento.nombre} de $${alojamiento.precioNoche} a $${update.precioNuevo}`);
+          alojamiento.precioNoche = update.precioNuevo;
+          // Toast en la esquina
+          this.toast.show(`Precio actualizado: ${alojamiento.nombre}`, 'info');
+        }
+      });
   }
 
   private fetchAlojamientos() {
@@ -86,10 +119,18 @@ export class ListaAlojamientosComponent implements OnInit {
               rating: byId.get(a.id)?.promedio || 0,
               totalResenas: byId.get(a.id)?.total || 0,
             }));
+            // Unirse a los grupos de SignalR para cada alojamiento
+            this.alojamientos.forEach(a => {
+              this.priceUpdateService.trackAlojamiento(a.id, a.precioNoche);
+            });
             this.loading = false;
           },
           error: () => {
             this.alojamientos = base;
+            // Unirse a los grupos de SignalR para cada alojamiento
+            this.alojamientos.forEach(a => {
+              this.priceUpdateService.trackAlojamiento(a.id, a.precioNoche);
+            });
             this.loading = false;
           }
         });
