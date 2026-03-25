@@ -44,28 +44,31 @@ import { ToastService } from '../../services/toast.service';
   styles: [`
     .toast-container {
       position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 9999;
+      top: max(1rem, env(safe-area-inset-top));
+      right: max(1rem, env(safe-area-inset-right));
+      z-index: 12000;
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
-      max-width: min(90vw, 420px);
+      width: min(92vw, 420px);
+      pointer-events: none;
     }
 
     .toast {
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      padding: 1rem 1.25rem;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
-      animation: slideIn 0.3s ease-out;
-      min-width: 300px;
+      padding: 0.9rem 1rem 0.95rem;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, #ffffff 100%);
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.16), 0 0 0 1px rgba(15, 23, 42, 0.07);
+      animation: slideIn 0.28s ease-out;
+      min-width: 0;
       position: relative;
       overflow: hidden;
-      flex-wrap: wrap;
+      width: 100%;
+      backdrop-filter: blur(8px);
+      pointer-events: auto;
     }
 
     @keyframes slideIn {
@@ -79,10 +82,21 @@ import { ToastService } from '../../services/toast.service';
       }
     }
 
+    @media (prefers-reduced-motion: reduce) {
+      .toast {
+        animation: none;
+      }
+    }
+
     .toast__icon {
       flex-shrink: 0;
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.05);
     }
 
     .toast__icon svg {
@@ -96,6 +110,7 @@ import { ToastService } from '../../services/toast.service';
 
     .toast.success .toast__icon {
       color: #10b981;
+      background: rgba(16, 185, 129, 0.12);
     }
 
     .toast.error {
@@ -104,6 +119,7 @@ import { ToastService } from '../../services/toast.service';
 
     .toast.error .toast__icon {
       color: #ef4444;
+      background: rgba(239, 68, 68, 0.12);
     }
 
     .toast.warning {
@@ -112,6 +128,7 @@ import { ToastService } from '../../services/toast.service';
 
     .toast.warning .toast__icon {
       color: #f59e0b;
+      background: rgba(245, 158, 11, 0.14);
     }
 
     .toast.info {
@@ -120,30 +137,33 @@ import { ToastService } from '../../services/toast.service';
 
     .toast.info .toast__icon {
       color: #3b82f6;
+      background: rgba(59, 130, 246, 0.12);
     }
 
     .toast__message {
       flex: 1;
       color: #1f2937;
-      font-size: 0.95rem;
-      font-weight: 500;
+      font-size: clamp(0.92rem, 1.8vw, 0.98rem);
+      font-weight: 600;
+      line-height: 1.35;
+      padding-right: 0.25rem;
     }
 
     .toast__close {
       flex-shrink: 0;
       background: transparent;
       border: none;
-      font-size: 1.5rem;
+      font-size: 1.45rem;
       line-height: 1;
       color: #9ca3af;
       cursor: pointer;
       padding: 0;
-      width: 24px;
-      height: 24px;
+      width: 32px;
+      height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 4px;
+      border-radius: 8px;
       transition: all 0.2s;
     }
 
@@ -156,9 +176,9 @@ import { ToastService } from '../../services/toast.service';
       position: absolute;
       bottom: 0;
       left: 0;
-      height: 3px;
+      height: 4px;
       width: 100%;
-      border-radius: 0 0 12px 12px;
+      border-radius: 0 0 14px 14px;
       animation: progressShrink linear forwards;
       transform-origin: left;
     }
@@ -175,19 +195,26 @@ import { ToastService } from '../../services/toast.service';
 
     @media (max-width: 768px) {
       .toast-container {
-        left: 1rem;
-        right: 1rem;
-        max-width: none;
+        top: max(0.75rem, env(safe-area-inset-top));
+        left: max(0.75rem, env(safe-area-inset-left));
+        right: max(0.75rem, env(safe-area-inset-right));
+        width: auto;
+        gap: 0.6rem;
       }
 
       .toast {
-        min-width: auto;
+        padding: 0.85rem 0.9rem 0.95rem;
+      }
+
+      .toast__close {
+        width: 36px;
+        height: 36px;
       }
     }
   `]
 })
 export class ToastContainerComponent {
-  private toastService = inject(ToastService);
+  private readonly toastService = inject(ToastService);
   toasts$ = this.toastService.toasts$;
 
   remove(id: string) {

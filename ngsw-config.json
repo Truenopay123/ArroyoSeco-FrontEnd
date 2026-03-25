@@ -13,6 +13,10 @@
           "/manifest.webmanifest",
           "/*.css",
           "/*.js"
+        ],
+        "urls": [
+          "https://fonts.googleapis.com/**",
+          "https://fonts.gstatic.com/**"
         ]
       }
     },
@@ -24,6 +28,39 @@
         "files": [
           "/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
         ]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "api-public-content",
+      "urls": [
+        "/api/alojamientos",
+        "/api/alojamientos/**",
+        "/api/Gastronomias",
+        "/api/Gastronomias/**",
+        "https://arroyoseco-api-production-fcae.up.railway.app/api/alojamientos",
+        "https://arroyoseco-api-production-fcae.up.railway.app/api/alojamientos/**",
+        "https://arroyoseco-api-production-fcae.up.railway.app/api/Gastronomias",
+        "https://arroyoseco-api-production-fcae.up.railway.app/api/Gastronomias/**"
+      ],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "maxSize": 80,
+        "maxAge": "1d",
+        "timeout": "5s"
+      }
+    },
+    {
+      "name": "api-public-media",
+      "urls": [
+        "/api/storage/public/**",
+        "https://arroyoseco-api-production-fcae.up.railway.app/api/storage/public/**"
+      ],
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 60,
+        "maxAge": "30d"
       }
     }
   ]

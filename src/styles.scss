@@ -28,6 +28,10 @@
 	--shadow-sm: 0 2px 8px rgba(31, 125, 77, 0.06);
 	--shadow-md: 0 4px 16px rgba(31, 125, 77, 0.10);
 	--shadow-lg: 0 12px 32px rgba(31, 125, 77, 0.12);
+	--bp-mobile-max: 767px;
+	--bp-tablet-min: 768px;
+	--bp-tablet-max: 1024px;
+	--bp-desktop-min: 1025px;
 }
 
 *, *::before, *::after {
@@ -147,4 +151,120 @@ html {
 .reservas-calendar-panel .mat-calendar-body-cell.mat-calendar-body-disabled.reserved-date > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical) {
 	color: #991b1b !important;
 	background-color: #fecaca !important;
+}
+
+/* ===== Base Responsive System ===== */
+img,
+picture,
+video,
+canvas,
+svg {
+	max-width: 100%;
+	height: auto;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.table-wrapper,
+.table-responsive,
+[class*='table-wrapper'] {
+	width: 100%;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	scrollbar-width: thin;
+}
+
+input,
+select,
+textarea,
+button,
+.btn,
+[role='button'],
+a.btn {
+	max-width: 100%;
+}
+
+/* Tamaño táctil mínimo recomendado */
+@media (max-width: 767px) {
+	button,
+	.btn,
+	[role='button'],
+	a.btn,
+	input[type='button'],
+	input[type='submit'],
+	input[type='reset'] {
+		min-height: 44px;
+		min-width: 44px;
+	}
+}
+
+/* Tipografía fluida global */
+h1 {
+	font-size: clamp(1.6rem, 4vw, 2.4rem);
+}
+
+h2 {
+	font-size: clamp(1.35rem, 3.2vw, 2rem);
+}
+
+h3 {
+	font-size: clamp(1.15rem, 2.6vw, 1.6rem);
+}
+
+p,
+label,
+li,
+input,
+textarea,
+select,
+button {
+	font-size: clamp(0.92rem, 1.8vw, 1rem);
+}
+
+/* Previene desbordes de texto largos */
+p,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+label,
+small,
+a,
+td,
+th {
+	overflow-wrap: anywhere;
+	word-break: break-word;
+}
+
+/* Contenedores comunes */
+main,
+section,
+article {
+	max-width: 100%;
+}
+
+/* Grids/flex más seguros en móvil */
+@media (max-width: 767px) {
+	[class*='grid'] {
+		grid-template-columns: 1fr !important;
+	}
+
+	[class*='cards'],
+	[class*='list'] {
+		grid-template-columns: 1fr !important;
+	}
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1024px) {
+	[class*='cards'],
+	[class*='grid'] {
+		gap: clamp(0.75rem, 1.6vw, 1.25rem);
+	}
 }

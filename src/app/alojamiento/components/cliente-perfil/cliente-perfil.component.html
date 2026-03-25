@@ -77,7 +77,55 @@
     <div class="security-card">
       <h4>Cambiar contraseña</h4>
       <p>Actualiza tu contraseña regularmente para mantener tu cuenta segura.</p>
-      <button type="button" class="btn-secondary">Cambiar contraseña</button>
+      <button type="button" class="btn-secondary" (click)="toggleCambioPassword()">
+        {{ mostrarCambioPassword ? 'Cancelar' : 'Cambiar contraseña' }}
+      </button>
+
+      <form *ngIf="mostrarCambioPassword" class="password-form" (ngSubmit)="cambiarPassword()">
+        <div class="form-group">
+          <label for="passwordActual">Contraseña actual</label>
+          <input
+            type="password"
+            id="passwordActual"
+            name="passwordActual"
+            [(ngModel)]="passwordActual"
+            autocomplete="current-password"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="passwordNueva">Nueva contraseña</label>
+          <input
+            type="password"
+            id="passwordNueva"
+            name="passwordNueva"
+            [(ngModel)]="passwordNueva"
+            autocomplete="new-password"
+            minlength="6"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="passwordConfirmacion">Confirmar nueva contraseña</label>
+          <input
+            type="password"
+            id="passwordConfirmacion"
+            name="passwordConfirmacion"
+            [(ngModel)]="passwordConfirmacion"
+            autocomplete="new-password"
+            minlength="6"
+            required
+          />
+        </div>
+
+        <div class="password-actions">
+          <button type="submit" class="btn-primary" [disabled]="submittingPassword">
+            {{ submittingPassword ? 'Guardando...' : 'Actualizar contraseña' }}
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </section>

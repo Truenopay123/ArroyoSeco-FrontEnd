@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../shared/services/toast.service';
 import { first } from 'rxjs/operators';
 
 interface LoginModel {
@@ -23,7 +24,7 @@ export class AdminLoginComponent {
     password: ''
   };
 
-  constructor(private readonly router: Router, private auth: AuthService) {}
+  constructor(private readonly router: Router, private readonly auth: AuthService, private readonly toast: ToastService) {}
 
   onSubmit(form: NgForm): void {
     if (form.invalid) {
@@ -41,7 +42,7 @@ export class AdminLoginComponent {
           this.router.navigate(['/cliente/home']);
         }
       },
-      error: () => alert('No se pudo iniciar sesión como administrador')
+      error: () => this.toast.error('No se pudo iniciar sesión como administrador')
     });
   }
 }

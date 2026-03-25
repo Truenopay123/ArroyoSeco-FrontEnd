@@ -1,3 +1,27 @@
 <router-outlet />
+
+<section class="pwa-banner-stack" *ngIf="isOffline || updateAvailable">
+	<div class="pwa-status pwa-status--offline" *ngIf="isOffline" role="status" aria-live="polite">
+		Sin conexion: puedes seguir navegando con contenido y recursos ya almacenados.
+	</div>
+
+	<div class="pwa-status pwa-status--update" *ngIf="updateAvailable" role="status" aria-live="polite">
+		<span>Hay una nueva version de la app lista para instalar.</span>
+		<button type="button" class="pwa-inline-btn" (click)="actualizarApp()">
+			Actualizar ahora
+		</button>
+	</div>
+</section>
+
+<button
+	*ngIf="canInstall"
+	type="button"
+	class="pwa-install-btn"
+	(click)="instalarApp()"
+	aria-label="Instalar aplicación"
+>
+	Instalar app
+</button>
+
 <app-toast-container />
 <app-confirm-modal />

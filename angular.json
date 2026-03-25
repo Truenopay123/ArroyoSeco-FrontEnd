@@ -20,6 +20,12 @@
             "outputPath": "dist/arroyo-seco",
             "index": "src/index.html",
             "browser": "src/main.ts",
+            "allowedCommonJsDependencies": [
+              "dijkstrajs",
+              "qrcode",
+              "leaflet",
+              "node-fetch"
+            ],
             "polyfills": [
               "zone.js"
             ],
@@ -48,8 +54,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2.5MB",
-                  "maximumError": "3MB"
+                  "maximumWarning": "2.7MB",
+                  "maximumError": "3.2MB"
                 },
                 {
                   "type": "anyComponentStyle",

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AlojamientoService, AlojamientoDto } from '../../services/alojamiento.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { first } from 'rxjs/operators';
 
 interface Hospedaje {
@@ -26,17 +27,56 @@ interface Hospedaje {
   styleUrl: './gestion-hospedajes.component.scss'
 })
 export class GestionHospedajesComponent implements OnInit {
-  private toastService = inject(ToastService);
-  private alojamientosService = inject(AlojamientoService);
+  private readonly toastService = inject(ToastService);
+  private readonly alojamientosService = inject(AlojamientoService);
+  private readonly authService = inject(AuthService);
 
   searchTerm = '';
+  nombreOferente = 'oferente';
 
   hospedajes: Hospedaje[] = [];
   loading = false;
   error: string | null = null;
 
   ngOnInit(): void {
+    this.cargarNombreOferente();
     this.cargarHospedajes();
+  }
+
+  private cargarNombreOferente() {
+    this.authService.me().pipe(first()).subscribe({
+      next: (user: any) => {
+        this.nombreOferente = this.extraerNombreVisible(user);
+      },
+      error: () => {
+        this.nombreOferente = 'oferente';
+      }
+    });
+  }
+
+  private extraerNombreVisible(user: any): string {
+    const candidate = [
+      user?.nombre,
+      user?.name,
+      user?.nombreCompleto,
+      user?.fullName,
+      user?.usuario?.nombre,
+      user?.usuario?.nombreCompleto,
+      user?.displayName
+    ].find((v) => typeof v === 'string' && v.trim().length > 0);
+
+    if (candidate) {
+      return String(candidate).trim();
+    }
+
+    const email = [user?.email, user?.correo, user?.mail]
+      .find((v) => typeof v === 'string' && v.trim().length > 0);
+
+    if (email) {
+      return String(email).split('@')[0].trim();
+    }
+
+    return 'oferente';
   }
 
   private cargarHospedajes() {

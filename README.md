@@ -57,3 +57,23 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## PWA
+
+La aplicacion incluye una implementacion PWA orientada a cubrir la rubrica de evaluacion:
+
+- Manifest completo en [public/manifest.webmanifest](public/manifest.webmanifest) con nombre, descripcion, theme color, screenshots, shortcuts e iconos any y maskable.
+- Service worker registrado desde [src/app/app.config.ts](src/app/app.config.ts) usando Angular Service Worker en produccion.
+- Cache de app shell, assets, fuentes externas y contenido publico en [ngsw-config.json](ngsw-config.json).
+- Funcionamiento parcial offline para pantallas y recursos previamente visitados, con aviso visual desde [src/app/app.component.ts](src/app/app.component.ts).
+- Posibilidad de instalacion mediante beforeinstallprompt, boton de instalacion y metadatos mobile web app en [src/index.html](src/index.html).
+- Deteccion de nuevas versiones del service worker con opcion para actualizar la app sin limpiar datos manualmente.
+
+### Como demostrarlo
+
+1. Ejecutar un build de produccion con ng build.
+2. Servir la carpeta dist/arroyo-seco/browser desde un servidor estatico.
+3. Abrir DevTools y verificar que exista manifest.webmanifest y ngsw-worker.js en Application.
+4. Navegar por alojamientos y gastronomia para precargar contenido publico.
+5. Desconectar la red y volver a abrir rutas visitadas para comprobar funcionamiento offline parcial.
+6. Aceptar el prompt o usar el boton Instalar app para validar instalacion.

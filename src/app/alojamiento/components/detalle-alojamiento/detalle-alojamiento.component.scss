@@ -51,7 +51,7 @@
 }
 
 .gallery-grid:hover img {
-  brightness: 0.92;
+  filter: brightness(0.92);
 }
 
 .gallery-show-all {
@@ -502,10 +502,49 @@
 }
 
 .booking mat-form-field { width: 100%; }
-.booking ::ng-deep .mat-mdc-text-field-wrapper { background: transparent; }
-.booking ::ng-deep .mat-date-range-input-container { display: flex; align-items: center; }
-.booking ::ng-deep .mat-date-range-input-separator { color: #6b7280; margin: 0 0.5rem; }
-.booking input[matStartDate], .booking input[matEndDate] { padding: 0.6rem 0.85rem; border-radius: 8px; }
+.booking ::ng-deep .mat-mdc-text-field-wrapper {
+  background: transparent;
+  border-radius: 10px;
+}
+
+.booking ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+.booking ::ng-deep .mat-mdc-form-field-infix {
+  min-height: 54px;
+  padding-top: 0.55rem !important;
+  padding-bottom: 0.35rem !important;
+}
+
+.booking ::ng-deep .mat-date-range-input-container {
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+}
+
+.booking ::ng-deep .mat-date-range-input-separator {
+  color: #6b7280;
+  margin: 0 0.5rem;
+}
+
+.booking input[matStartDate],
+.booking input[matEndDate] {
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  line-height: 1.35;
+  font-size: 1rem;
+}
+
+.booking ::ng-deep .mat-datepicker-toggle {
+  margin-right: 0.1rem;
+}
+
+.booking ::ng-deep .mat-datepicker-toggle .mat-mdc-icon-button {
+  width: 40px;
+  height: 40px;
+}
 
 .booking-warning {
   color: #b91c1c;
@@ -517,11 +556,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.75rem;
   padding: 0.75rem 1rem;
   border: 1px solid #d1d5db;
   border-radius: 10px;
 
-  label {
+  .guests-label {
     font-size: 0.8rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -750,5 +790,30 @@
 
   .title-row {
     flex-direction: column;
+  }
+
+  .booking-card {
+    padding: 1.1rem;
+    border-radius: 14px;
+  }
+
+  .booking-price-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  .booking-guests {
+    flex-wrap: wrap;
+  }
+
+  .guests-control {
+    margin-left: auto;
+  }
+
+  .booking-guests small {
+    width: 100%;
+    margin-top: 0.25rem;
+    color: #6b7280;
   }
 }

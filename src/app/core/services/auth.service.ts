@@ -36,6 +36,11 @@ export interface ResetPasswordPayload {
   passwordNueva: string;
 }
 
+export interface ChangePasswordPayload {
+  passwordActual: string;
+  passwordNueva: string;
+}
+
 type JwtPayload = Record<string, unknown>;
 
 @Injectable({ providedIn: 'root' })
@@ -211,6 +216,10 @@ export class AuthService {
 
   resetPassword(payload: ResetPasswordPayload): Observable<any> {
     return this.api.post<any>('/auth/reset-password', payload);
+  }
+
+  changePassword(payload: ChangePasswordPayload): Observable<any> {
+    return this.api.post<any>('/auth/cambiar-password', payload);
   }
 
   me(): Observable<any> {

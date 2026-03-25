@@ -43,6 +43,12 @@ export class ClientePerfilComponent implements OnInit {
     { value: 'Otro', label: 'Otro' }
   ];
 
+  mostrarCambioPassword = false;
+  passwordActual = '';
+  passwordNueva = '';
+  passwordConfirmacion = '';
+  submittingPassword = false;
+
   ngOnInit() {
     this.authService.me().subscribe({
       next: (me: any) => {
@@ -100,5 +106,62 @@ export class ClientePerfilComponent implements OnInit {
         this.toastService.error('No fue posible actualizar tu perfil');
       }
     });
+  }
+
+  toggleCambioPassword() {
+    this.mostrarCambioPassword = !this.mostrarCambioPassword;
+    if (!this.mostrarCambioPassword) {
+      this.resetPasswordForm();
+    }
+  }
+
+  cambiarPassword() {
+    if (this.submittingPassword) {
+      return;
+    }
+
+    if (!this.passwordActual || !this.passwordNueva || !this.passwordConfirmacion) {
+      this.toastService.error('Completa todos los campos de contraseña');
+      return;
+    }
+
+    if (this.passwordNueva !== this.passwordConfirmacion) {
+      this.toastService.error('La nueva contraseña y la confirmación no coinciden');
+      return;
+    }
+
+    if (this.passwordNueva.length < 6) {
+      this.toastService.error('La nueva contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
+    this.submittingPassword = true;
+
+    this.authService.changePassword({
+      passwordActual: this.passwordActual,
+      passwordNueva: this.passwordNueva
+    }).subscribe({
+      next: async () => {
+        this.submittingPassword = false;
+        this.resetPasswordForm();
+        this.mostrarCambioPassword = false;
+        await this.modalService.confirm({
+          title: 'Contraseña actualizada',
+          message: 'Tu contraseña se cambió correctamente.',
+          confirmText: 'Aceptar'
+        });
+      },
+      error: (err) => {
+        this.submittingPassword = false;
+        this.toastService.error(err?.error?.message || 'No se pudo cambiar la contraseña. Verifica la contraseña actual.');
+      }
+    });
+  }
+
+  private resetPasswordForm() {
+    this.passwordActual = '';
+    this.passwordNueva = '';
+    this.passwordConfirmacion = '';
+    this.submittingPassword = false;
   }
 }

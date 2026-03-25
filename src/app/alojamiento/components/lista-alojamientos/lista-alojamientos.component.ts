@@ -37,14 +37,14 @@ export class ListaAlojamientosComponent implements OnInit, OnDestroy {
   isPublic = false;
   private priceUpdateSubscription?: Subscription;
 
-  constructor(private favs: FavoritesService,
-              private toast: ToastService,
-              private alojamientosService: AlojamientoService,
-              private api: ApiService,
-              private auth: AuthService,
-              private priceUpdateService: PriceUpdateService,
-              private router: Router,
-              private route: ActivatedRoute) {}
+  constructor(private readonly favs: FavoritesService,
+              private readonly toast: ToastService,
+              private readonly alojamientosService: AlojamientoService,
+              private readonly api: ApiService,
+              private readonly auth: AuthService,
+              private readonly priceUpdateService: PriceUpdateService,
+              private readonly router: Router,
+              private readonly route: ActivatedRoute) {}
 
   ngOnInit(): void {
     // Detectar si estamos en ruta pública
@@ -172,7 +172,7 @@ export class ListaAlojamientosComponent implements OnInit, OnDestroy {
     ev.stopPropagation();
     const wasFav = this.isFavorite(a.id);
     this.favs.toggle(a as FavoriteAlojamiento);
-    this.toast.info(!wasFav ? 'Añadido a favoritos' : 'Eliminado de favoritos');
+    this.toast.info(wasFav ? 'Eliminado de favoritos' : 'Añadido a favoritos');
   }
 
   navigateToDetail(id: number) {
