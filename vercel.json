@@ -3,7 +3,31 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist/arroyo-seco/browser",
   "framework": "angular",
+  "headers": [
+    {
+      "source": "/manifest.webmanifest",
+      "headers": [
+        { "key": "Content-Type", "value": "application/manifest+json" }
+      ]
+    }
+  ],
   "rewrites": [
+    {
+      "source": "/icons/(.*)",
+      "destination": "/icons/$1"
+    },
+    {
+      "source": "/screenshots/(.*)",
+      "destination": "/screenshots/$1"
+    },
+    {
+      "source": "/assets/(.*)",
+      "destination": "/assets/$1"
+    },
+    {
+      "source": "/(.*\\.(js|css|png|jpg|jpeg|svg|ico|webp|woff|woff2|ttf|json|webmanifest))",
+      "destination": "/$1"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"

@@ -6,6 +6,7 @@ import { SwUpdate } from '@angular/service-worker';
 import { ToastContainerComponent } from './shared/components/toast-container/toast-container.component';
 import { ConfirmModalComponent } from './shared/components/confirm-modal/confirm-modal.component';
 import { ToastService } from './shared/services/toast.service';
+import { OfflineQueueService } from './core/services/offline-queue.service';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -23,6 +24,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private readonly toast = inject(ToastService);
   private readonly swUpdate = inject(SwUpdate);
   private readonly destroyRef = inject(DestroyRef);
+  readonly offlineQueue = inject(OfflineQueueService);
 
   isOffline = typeof navigator !== 'undefined' ? !navigator.onLine : false;
   canInstall = false;
@@ -45,6 +47,10 @@ export class AppComponent implements OnInit, OnDestroy {
   onOnline(): void {
     this.isOffline = false;
     this.toast.success('Conexión restablecida.');
+    // Sincronizar cola de peticiones pendientes
+    if (this.offlineQueue.pendingCount > 0) {
+      void this.offlineQueue.flush();
+    }
   }
 
   @HostListener('window:offline')

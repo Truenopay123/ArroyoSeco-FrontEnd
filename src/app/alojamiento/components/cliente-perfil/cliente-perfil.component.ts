@@ -130,8 +130,23 @@ export class ClientePerfilComponent implements OnInit {
       return;
     }
 
-    if (this.passwordNueva.length < 6) {
-      this.toastService.error('La nueva contraseña debe tener al menos 6 caracteres');
+    if (this.passwordNueva.length < 8) {
+      this.toastService.error('La contraseña debe tener al menos 8 caracteres');
+      return;
+    }
+
+    if (!/[A-Z]/.test(this.passwordNueva)) {
+      this.toastService.error('La contraseña debe incluir al menos una mayúscula');
+      return;
+    }
+
+    if (!/[0-9]/.test(this.passwordNueva)) {
+      this.toastService.error('La contraseña debe incluir al menos un número');
+      return;
+    }
+
+    if (!/[^a-zA-Z0-9]/.test(this.passwordNueva)) {
+      this.toastService.error('La contraseña debe incluir al menos un símbolo especial');
       return;
     }
 

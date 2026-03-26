@@ -46,8 +46,45 @@
       ],
       "cacheConfig": {
         "strategy": "freshness",
-        "maxSize": 80,
+        "maxSize": 100,
         "maxAge": "1d",
+        "timeout": "5s"
+      }
+    },
+    {
+      "name": "api-user-data",
+      "urls": [
+        "/api/resenas/**",
+        "/api/reservas/**",
+        "/api/Reservas/**",
+        "/api/notificaciones/**",
+        "/api/Oferentes/**",
+        "/api/auth/me",
+        "/api/auth/perfil",
+        "/api/admin/**",
+        "/api/solicitudesoferente**",
+        "/api/SolicitudesOferente**",
+        "/api/ReservasGastronomia/**",
+        "/api/estadisticas/**",
+        "/api/usuarios/**",
+        "https://arroyoseco-api-production-fcae.up.railway.app/api/resenas/**",
+        "https://arroyoseco-api-production-fcae.up.railway.app/api/reservas/**",
+        "https://arroyoseco-api-production-fcae.up.railway.app/api/Reservas/**",
+        "https://arroyoseco-api-production-fcae.up.railway.app/api/notificaciones/**",
+        "https://arroyoseco-api-production-fcae.up.railway.app/api/Oferentes/**",
+        "https://arroyoseco-api-production-fcae.up.railway.app/api/auth/me",
+        "https://arroyoseco-api-production-fcae.up.railway.app/api/auth/perfil",
+        "https://arroyoseco-api-production-fcae.up.railway.app/api/admin/**",
+        "https://arroyoseco-api-production-fcae.up.railway.app/api/solicitudesoferente**",
+        "https://arroyoseco-api-production-fcae.up.railway.app/api/SolicitudesOferente**",
+        "https://arroyoseco-api-production-fcae.up.railway.app/api/ReservasGastronomia/**",
+        "https://arroyoseco-api-production-fcae.up.railway.app/api/estadisticas/**",
+        "https://arroyoseco-api-production-fcae.up.railway.app/api/usuarios/**"
+      ],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "maxSize": 150,
+        "maxAge": "12h",
         "timeout": "5s"
       }
     },
@@ -59,7 +96,7 @@
       ],
       "cacheConfig": {
         "strategy": "performance",
-        "maxSize": 60,
+        "maxSize": 200,
         "maxAge": "30d"
       }
     }

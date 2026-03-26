@@ -36,8 +36,23 @@ export class CambiarPasswordForzadoComponent {
       return;
     }
 
-    if (this.passwordNueva.length < 6) {
-      this.toast.error('La contraseña debe tener al menos 6 caracteres');
+    if (this.passwordNueva.length < 8) {
+      this.toast.error('La contraseña debe tener al menos 8 caracteres');
+      return;
+    }
+
+    if (!/[A-Z]/.test(this.passwordNueva)) {
+      this.toast.error('La contraseña debe incluir al menos una mayúscula');
+      return;
+    }
+
+    if (!/[0-9]/.test(this.passwordNueva)) {
+      this.toast.error('La contraseña debe incluir al menos un número');
+      return;
+    }
+
+    if (!/[^a-zA-Z0-9]/.test(this.passwordNueva)) {
+      this.toast.error('La contraseña debe incluir al menos un símbolo especial');
       return;
     }
 

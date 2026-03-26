@@ -102,9 +102,10 @@
             name="passwordNueva"
             [(ngModel)]="passwordNueva"
             autocomplete="new-password"
-            minlength="6"
+            minlength="8"
             required
           />
+          <small class="password-hint">Mínimo 8 caracteres, una mayúscula, un número y un símbolo especial.</small>
         </div>
 
         <div class="form-group">
@@ -115,7 +116,7 @@
             name="passwordConfirmacion"
             [(ngModel)]="passwordConfirmacion"
             autocomplete="new-password"
-            minlength="6"
+            minlength="8"
             required
           />
         </div>

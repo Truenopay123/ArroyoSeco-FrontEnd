@@ -186,6 +186,14 @@ export class ListaAlojamientosComponent implements OnInit, OnDestroy {
     this.router.navigate([route, id]);
   }
 
+  onImgError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (!img.dataset['fallback']) {
+      img.dataset['fallback'] = '1';
+      img.src = 'assets/images/hero-oferentes.svg';
+    }
+  }
+
   retry() {
     this.fetchAlojamientos();
   }

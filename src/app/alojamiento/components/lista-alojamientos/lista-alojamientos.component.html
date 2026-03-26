@@ -56,7 +56,13 @@
     <div class="card" *ngFor="let a of filtered" (click)="navigateToDetail(a.id)">
       <!-- Card Image -->
       <div class="card-image-wrapper">
-        <div class="card-image" [style.background-image]="'url(' + a.imagen + ')'"></div>
+        <img
+          class="card-image"
+          [src]="a.imagen"
+          [alt]="a.nombre"
+          loading="lazy"
+          (error)="onImgError($event)"
+        />
         <button
           class="fav-btn"
           [class.active]="isFavorite(a.id)"

@@ -146,13 +146,22 @@
           </div>
           <form #b="ngForm" (ngSubmit)="abrirModalPago(b)" class="booking-form">
             <div class="booking-dates">
-              <mat-form-field appearance="outline" class="booking-date-field">
-                <mat-label>Fechas</mat-label>
+              <div class="booking-dates-grid">
+                <div class="booking-date-cell" (click)="picker.open()">
+                  <span class="booking-date-label">ENTRADA</span>
+                  <span class="booking-date-value">{{ booking.entrada ? (booking.entrada | date:'dd/MM/yyyy') : 'Seleccionar' }}</span>
+                </div>
+                <div class="booking-date-divider"></div>
+                <div class="booking-date-cell" (click)="picker.open()">
+                  <span class="booking-date-label">SALIDA</span>
+                  <span class="booking-date-value">{{ booking.salida ? (booking.salida | date:'dd/MM/yyyy') : 'Seleccionar' }}</span>
+                </div>
+              </div>
+              <mat-form-field appearance="outline" class="booking-date-field booking-date-hidden">
                 <mat-date-range-input [rangePicker]="picker" [dateFilter]="dateFilter">
                   <input matStartDate matInput name="entrada" placeholder="Entrada" [(ngModel)]="booking.entrada" (dateChange)="onEntradaChange($event)" required />
                   <input matEndDate matInput name="salida" placeholder="Salida" [(ngModel)]="booking.salida" (dateChange)="onSalidaChange($event)" required />
                 </mat-date-range-input>
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-date-range-picker #picker [dateClass]="dateClass" panelClass="reservas-calendar-panel"></mat-date-range-picker>
               </mat-form-field>
             </div>
