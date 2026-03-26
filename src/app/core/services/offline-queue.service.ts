@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, Subject, firstValueFrom } from 'rxjs';
 import { ToastService } from '../../shared/services/toast.service';
 import { AuthService } from './auth.service';
 import { environment } from '../../../environments/environment';
@@ -25,6 +25,10 @@ export class OfflineQueueService {
 
   private readonly _pending$ = new BehaviorSubject<number>(this.loadQueue().length);
   readonly pending$ = this._pending$.asObservable();
+
+  /** Emite cuando se sincronizan acciones exitosamente */
+  private readonly _synced$ = new Subject<number>();
+  readonly synced$ = this._synced$.asObservable();
 
   get pendingCount(): number {
     return this._pending$.value;
@@ -80,10 +84,16 @@ export class OfflineQueueService {
             break;
         }
         sent++;
-      } catch {
-        failed++;
-        // Si el error es 4xx (excepto 401/408/429) no reintentar porque es error de validación
-        remaining.push(entry);
+      } catch (err) {
+        const status = (err instanceof HttpErrorResponse) ? err.status : 0;
+        // No reintentar errores de cliente (4xx) excepto 401/408/429
+        if (status >= 400 && status < 500 && status !== 401 && status !== 408 && status !== 429) {
+          failed++;
+          // Descartar: error de validación/conflicto que no se resolverá reintentando
+        } else {
+          failed++;
+          remaining.push(entry);
+        }
       }
     }
 
@@ -92,6 +102,7 @@ export class OfflineQueueService {
 
     if (sent > 0) {
       this.toast.success(`Se sincronizaron ${sent} acción${sent > 1 ? 'es' : ''} pendiente${sent > 1 ? 's' : ''}.`);
+      this._synced$.next(sent);
     }
     if (failed > 0) {
       this.toast.warning(`${failed} acción${failed > 1 ? 'es' : ''} no se pudieron sincronizar y serán reintentadas.`);

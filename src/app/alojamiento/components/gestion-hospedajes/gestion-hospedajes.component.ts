@@ -1,10 +1,12 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AlojamientoService, AlojamientoDto } from '../../services/alojamiento.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { OfflineQueueService } from '../../../core/services/offline-queue.service';
 import { first } from 'rxjs/operators';
 
 interface Hospedaje {
@@ -30,6 +32,8 @@ export class GestionHospedajesComponent implements OnInit {
   private readonly toastService = inject(ToastService);
   private readonly alojamientosService = inject(AlojamientoService);
   private readonly authService = inject(AuthService);
+  private readonly offlineQueue = inject(OfflineQueueService);
+  private readonly destroyRef = inject(DestroyRef);
 
   searchTerm = '';
   nombreOferente = 'oferente';
@@ -41,6 +45,11 @@ export class GestionHospedajesComponent implements OnInit {
   ngOnInit(): void {
     this.cargarNombreOferente();
     this.cargarHospedajes();
+
+    // Recargar la lista cuando se sincronicen acciones pendientes (offline → online)
+    this.offlineQueue.synced$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.cargarHospedajes());
   }
 
   private cargarNombreOferente() {

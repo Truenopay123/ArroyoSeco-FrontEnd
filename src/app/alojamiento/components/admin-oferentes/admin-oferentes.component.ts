@@ -1,8 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AdminOferentesService, OferenteDto } from '../../services/admin-oferentes.service';
+import { OfflineQueueService } from '../../../core/services/offline-queue.service';
 import { first } from 'rxjs/operators';
 import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
 
@@ -33,6 +35,8 @@ export class AdminOferentesComponent {
   private toastService = inject(ToastService);
   private adminService = inject(AdminOferentesService);
   private confirmModal = inject(ConfirmModalService);
+  private offlineQueue = inject(OfflineQueueService);
+  private destroyRef = inject(DestroyRef);
 
   searchTerm = '';
 
@@ -65,6 +69,11 @@ export class AdminOferentesComponent {
 
   ngOnInit(): void {
     this.loadOferentes();
+
+    // Recargar la lista cuando se sincronicen acciones pendientes (offline → online)
+    this.offlineQueue.synced$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.loadOferentes());
   }
 
   private loadOferentes() {
@@ -95,7 +104,7 @@ export class AdminOferentesComponent {
 
   toggleEstado(o: Oferente) {
     const nuevoEstado = o.estado === 'Activo' ? 'Inactivo' : 'Activo';
-    
+
     this.adminService.cambiarEstado(o.id, nuevoEstado).pipe(first()).subscribe({
       next: () => {
         o.estado = nuevoEstado as any;
@@ -166,7 +175,7 @@ export class AdminOferentesComponent {
     const idx = this.oferentes.findIndex(x => x.id === this.editar!.id);
     if (idx > -1) {
       const id = this.editar!.id;
-      const payload = { 
+      const payload = {
         nombre: this.editar!.nombre,
         email: this.editar!.correo,
         telefono: this.editar!.telefono,
