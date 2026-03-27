@@ -17,15 +17,36 @@
 	</div>
 </section>
 
-<button
-	*ngIf="canInstall"
-	type="button"
-	class="pwa-install-btn"
-	(click)="instalarApp()"
-	aria-label="Instalar aplicación"
+<div
+	*ngIf="showInstallBanner"
+	class="pwa-install-banner"
+	role="alert"
 >
-	Instalar app
-</button>
+	<div class="pwa-install-banner__content">
+		<span class="pwa-install-banner__icon">📲</span>
+		<div class="pwa-install-banner__text">
+			<strong>Instala la app</strong>
+			<span>Accede más rápido desde tu pantalla de inicio</span>
+		</div>
+	</div>
+	<div class="pwa-install-banner__actions">
+		<button
+			type="button"
+			class="pwa-install-banner__btn pwa-install-banner__btn--install"
+			(click)="instalarApp()"
+		>
+			Instalar
+		</button>
+		<button
+			type="button"
+			class="pwa-install-banner__btn pwa-install-banner__btn--dismiss"
+			(click)="dismissInstallBanner()"
+			aria-label="Cerrar"
+		>
+			✕
+		</button>
+	</div>
+</div>
 
 <app-toast-container />
 <app-confirm-modal />

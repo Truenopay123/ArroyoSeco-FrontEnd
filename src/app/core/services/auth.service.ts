@@ -49,12 +49,45 @@ export class AuthService {
 
   private readonly tokenKey   = 'as_token';
   private readonly pending2fa = 'as_pending_2fa_email';
+  private readonly rememberKey = 'as_remember_me';
+  private readonly savedEmailKey = 'as_saved_email';
 
   constructor() { }
 
-  private saveToken(token: string) { localStorage.setItem(this.tokenKey, token); }
+  private get storage(): Storage {
+    return localStorage.getItem(this.rememberKey) === '1' ? localStorage : sessionStorage;
+  }
 
-  getToken(): string | null { return localStorage.getItem(this.tokenKey); }
+  setRememberMe(value: boolean) {
+    if (value) {
+      localStorage.setItem(this.rememberKey, '1');
+    } else {
+      localStorage.removeItem(this.rememberKey);
+      localStorage.removeItem(this.savedEmailKey);
+    }
+  }
+
+  getRememberMe(): boolean {
+    return localStorage.getItem(this.rememberKey) === '1';
+  }
+
+  saveEmail(email: string) {
+    if (this.getRememberMe()) {
+      localStorage.setItem(this.savedEmailKey, email);
+    }
+  }
+
+  getSavedEmail(): string {
+    return localStorage.getItem(this.savedEmailKey) || '';
+  }
+
+  private saveToken(token: string) {
+    this.storage.setItem(this.tokenKey, token);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(this.tokenKey) || sessionStorage.getItem(this.tokenKey);
+  }
 
   isAuthenticated(): boolean {
     const token = this.getToken();
@@ -74,6 +107,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem(this.tokenKey);
+    sessionStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.pending2fa);
   }
 

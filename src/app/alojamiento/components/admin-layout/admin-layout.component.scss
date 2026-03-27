@@ -48,3 +48,17 @@
   margin: 0 auto;
   padding: 2rem 1.5rem 3rem;
 }
+
+@media (max-width: 768px) {
+  .admin-hero {
+    min-height: 140px;
+  }
+
+  .hero-content {
+    padding: 2rem 0.75rem;
+  }
+
+  .admin-main {
+    padding: 1.25rem 0.75rem 2rem;
+  }
+}

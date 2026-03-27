@@ -27,15 +27,15 @@
       </thead>
       <tbody>
         <tr *ngFor="let notificacion of filteredNotificaciones">
-          <td>{{ notificacion.nombre }}</td>
-          <td>{{ notificacion.telefono }}</td>
-          <td>{{ notificacion.negocio }}</td>
-          <td>
+          <td data-label="Nombre">{{ notificacion.nombre }}</td>
+          <td data-label="Teléfono">{{ notificacion.telefono }}</td>
+          <td data-label="Negocio">{{ notificacion.negocio }}</td>
+          <td data-label="Estatus">
             <span class="pill">
               {{ notificacion.estatus }}
             </span>
           </td>
-          <td class="actions">
+          <td data-label="Acciones" class="actions">
             <button type="button" class="btn view">Vista</button>
             <button type="button" class="btn mark" [disabled]="notificacion.leida" (click)="marcarLeida(notificacion)">
               {{ notificacion.leida ? 'Leída' : 'Marcar como leída' }}

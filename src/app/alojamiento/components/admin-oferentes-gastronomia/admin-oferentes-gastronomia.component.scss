@@ -104,11 +104,13 @@
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  -webkit-overflow-scrolling: touch;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 thead {
@@ -117,19 +119,22 @@ thead {
 }
 
 th {
-  padding: 1rem;
+  padding: 0.85rem 1rem;
   text-align: left;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #374151;
   white-space: nowrap;
 }
 
 td {
-  padding: 1rem;
+  padding: 0.85rem 1rem;
   border-bottom: 1px solid #f3f4f6;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: #1f2937;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 tbody tr:hover {
@@ -146,8 +151,10 @@ tbody tr:last-child td {
 
 td.actions {
   display: flex;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.4rem;
   justify-content: flex-end;
+  align-items: center;
   border-bottom: none;
 }
 
@@ -229,4 +236,80 @@ input { border: 1px solid #d1d5db; border-radius: 10px; padding: .6rem .9rem; }
   }
 
   .form-grid { grid-template-columns: 1fr; }
+
+  /* Card layout on mobile */
+  .table-wrapper table,
+  .table-wrapper thead,
+  .table-wrapper tbody,
+  .table-wrapper th,
+  .table-wrapper td,
+  .table-wrapper tr {
+    display: block;
+  }
+
+  .table-wrapper thead {
+    display: none;
+  }
+
+  .table-wrapper tbody tr {
+    margin-bottom: 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1rem;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
+
+  .table-wrapper td {
+    border: none;
+    padding: 0.4rem 0;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    overflow: visible;
+
+    &::before {
+      content: attr(data-label);
+      font-weight: 600;
+      margin-right: 0.75rem;
+      color: #374151;
+      flex-shrink: 0;
+      font-size: 0.85rem;
+    }
+  }
+
+  td.actions {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    padding-top: 0.75rem;
+    margin-top: 0.5rem;
+    border-top: 1px solid #f3f4f6;
+    gap: 0.5rem;
+  }
+
+  .btn {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.82rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1100px) {
+  table {
+    table-layout: auto;
+  }
+
+  th, td {
+    padding: 0.7rem 0.6rem;
+    font-size: 0.82rem;
+  }
+
+  .btn {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.8rem;
+  }
+
+  td.actions {
+    gap: 0.3rem;
+  }
 }

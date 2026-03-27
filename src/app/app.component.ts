@@ -28,9 +28,15 @@ export class AppComponent implements OnInit, OnDestroy {
 
   isOffline = typeof navigator !== 'undefined' ? !navigator.onLine : false;
   canInstall = false;
+  showInstallBanner = false;
   updateAvailable = false;
   private deferredPrompt: BeforeInstallPromptEvent | null = null;
   private updateCheckIntervalId: number | null = null;
+  private installShowTimeoutId: number | null = null;
+  private installHideTimeoutId: number | null = null;
+  private readonly INSTALL_DISMISS_KEY = 'pwa-install-dismissed';
+  private readonly INSTALL_SHOW_DELAY = 30_000;  // 30s tras carga
+  private readonly INSTALL_VISIBLE_TIME = 15_000; // visible 15s
 
   ngOnInit(): void {
     this.isOffline = typeof navigator !== 'undefined' ? !navigator.onLine : false;
@@ -40,6 +46,12 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.updateCheckIntervalId !== null) {
       window.clearInterval(this.updateCheckIntervalId);
+    }
+    if (this.installShowTimeoutId !== null) {
+      window.clearTimeout(this.installShowTimeoutId);
+    }
+    if (this.installHideTimeoutId !== null) {
+      window.clearTimeout(this.installHideTimeoutId);
     }
   }
 
@@ -64,11 +76,13 @@ export class AppComponent implements OnInit, OnDestroy {
     event.preventDefault();
     this.deferredPrompt = event as BeforeInstallPromptEvent;
     this.canInstall = true;
+    this.scheduleInstallBanner();
   }
 
   @HostListener('window:appinstalled')
   onAppInstalled(): void {
     this.canInstall = false;
+    this.showInstallBanner = false;
     this.deferredPrompt = null;
     this.toast.success('App instalada correctamente.');
   }
@@ -94,10 +108,40 @@ export class AppComponent implements OnInit, OnDestroy {
     await this.deferredPrompt.prompt();
     const choice = await this.deferredPrompt.userChoice;
     this.canInstall = false;
+    this.showInstallBanner = false;
     this.deferredPrompt = null;
 
     if (choice.outcome === 'accepted') {
       this.toast.info('Instalación iniciada.');
+    } else {
+      this.markInstallDismissed();
+    }
+  }
+
+  dismissInstallBanner(): void {
+    this.showInstallBanner = false;
+    this.markInstallDismissed();
+  }
+
+  private scheduleInstallBanner(): void {
+    if (typeof sessionStorage !== 'undefined' && sessionStorage.getItem(this.INSTALL_DISMISS_KEY)) {
+      return;
+    }
+
+    this.installShowTimeoutId = window.setTimeout(() => {
+      if (this.canInstall) {
+        this.showInstallBanner = true;
+
+        this.installHideTimeoutId = window.setTimeout(() => {
+          this.showInstallBanner = false;
+        }, this.INSTALL_VISIBLE_TIME);
+      }
+    }, this.INSTALL_SHOW_DELAY);
+  }
+
+  private markInstallDismissed(): void {
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.setItem(this.INSTALL_DISMISS_KEY, '1');
     }
   }
 

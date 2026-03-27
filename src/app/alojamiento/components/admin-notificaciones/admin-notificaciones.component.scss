@@ -175,16 +175,25 @@ tbody tr:hover {
 
   .table-wrapper td {
     border: none;
-    padding: 0.35rem 0;
+    padding: 0.4rem 0;
     text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
     &::before {
       content: attr(data-label);
       font-weight: 600;
-      margin-right: 0.5rem;
+      margin-right: 0.75rem;
       color: #374151;
+      flex-shrink: 0;
+      font-size: 0.85rem;
     }
   }
 
-  .actions { text-align: left; }
+  .actions {
+    text-align: left;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
 }

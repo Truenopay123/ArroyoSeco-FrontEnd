@@ -32,16 +32,16 @@
       </thead>
       <tbody>
         <tr *ngFor="let oferente of filteredOferentes">
-          <td>{{ oferente.nombre }}</td>
-          <td>{{ oferente.correo }}</td>
-          <td>{{ oferente.telefono }}</td>
-          <td>{{ oferente.alojamientos }}</td>
-          <td>
+          <td data-label="Nombre">{{ oferente.nombre }}</td>
+          <td data-label="Correo">{{ oferente.correo }}</td>
+          <td data-label="Teléfono">{{ oferente.telefono }}</td>
+          <td data-label="Alojamientos">{{ oferente.alojamientos }}</td>
+          <td data-label="Estado">
             <span class="pill" [ngClass]="oferente.estado.toLowerCase()">
               {{ oferente.estado }}
             </span>
           </td>
-          <td class="actions">
+          <td data-label="Acciones" class="actions">
             <button type="button" class="btn ghost" (click)="abrirDetalles(oferente)">Ver detalles</button>
             <button type="button" class="btn" [class.warning]="oferente.estado === 'Activo'" [class.success]="oferente.estado !== 'Activo'" (click)="toggleEstado(oferente)">
               {{ oferente.estado === 'Activo' ? 'Desactivar' : 'Activar' }}

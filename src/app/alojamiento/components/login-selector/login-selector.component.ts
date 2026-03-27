@@ -44,6 +44,12 @@ export class LoginSelectorComponent implements OnInit, OnDestroy {
       this.redirectByRole();
     }
 
+    // Restore remember me state and saved email
+    this.rememberMe = this.auth.getRememberMe();
+    if (this.rememberMe) {
+      this.model.email = this.auth.getSavedEmail();
+    }
+
     // Resume pending 2FA if user refreshes
     const pending = this.auth.getPending2FAEmail();
     if (pending) {
@@ -61,6 +67,12 @@ export class LoginSelectorComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.showResendConfirmation = false;
     this.unconfirmedEmail = '';
+
+    // Apply remember me preference before login saves the token
+    this.auth.setRememberMe(this.rememberMe);
+    if (this.rememberMe) {
+      this.auth.saveEmail(this.model.email);
+    }
 
     this.auth.login({ email: this.model.email, password: this.model.password })
       .pipe(first())
