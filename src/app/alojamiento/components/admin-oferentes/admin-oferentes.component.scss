@@ -147,7 +147,7 @@ td:nth-child(3) { width: 14%; }
 td:nth-child(4) { width: 10%; text-align: center; }
 th:nth-child(4) { text-align: center; }
 td:nth-child(5) { width: 10%; }
-td:nth-child(6) { width: auto; white-space: nowrap; overflow: visible; }
+td:nth-child(6) { width: auto; max-width: none; white-space: nowrap; overflow: visible; }
 
 tbody tr {
   transition: background 0.15s;
