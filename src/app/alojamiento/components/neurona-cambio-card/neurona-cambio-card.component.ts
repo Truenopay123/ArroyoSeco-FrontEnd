@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize, first } from 'rxjs';
 import {
@@ -10,7 +10,7 @@ import {
 @Component({
   selector: 'app-neurona-cambio-card',
   standalone: true,
-  imports: [CommonModule, FormsModule, CurrencyPipe, DecimalPipe],
+  imports: [CommonModule, FormsModule],
   templateUrl: './neurona-cambio-card.component.html',
   styleUrl: './neurona-cambio-card.component.scss'
 })
