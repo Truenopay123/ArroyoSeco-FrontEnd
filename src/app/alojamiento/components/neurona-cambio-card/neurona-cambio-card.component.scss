@@ -1,0 +1,185 @@
+.neurona-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.neurona-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+
+  h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    color: #111827;
+  }
+
+  p {
+    margin: 0.35rem 0 0;
+    color: #6b7280;
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+}
+
+.neurona-card__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #0c4a6e;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.neurona-card__form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.85rem;
+}
+
+.neurona-card__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+
+  span {
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #4b5563;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  input {
+    border: 1.5px solid #d1d5db;
+    border-radius: 10px;
+    padding: 0.75rem 0.9rem;
+    font-size: 0.95rem;
+    color: #111827;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: var(--color-primary, #1f7d4d);
+      box-shadow: 0 0 0 3px rgba(31, 125, 77, 0.12);
+    }
+  }
+}
+
+.neurona-card__actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.7rem 1.15rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+
+  &:disabled {
+    cursor: wait;
+    opacity: 0.7;
+  }
+}
+
+.btn.primary {
+  background: var(--color-primary, #1f7d4d);
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background: #166534;
+    box-shadow: 0 10px 20px rgba(22, 101, 52, 0.18);
+    transform: translateY(-1px);
+  }
+}
+
+.neurona-card__error,
+.neurona-card__warning {
+  margin: 0;
+  border-radius: 10px;
+  padding: 0.8rem 0.9rem;
+  font-size: 0.9rem;
+}
+
+.neurona-card__error {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.neurona-card__warning {
+  background: #fff7ed;
+  color: #9a3412;
+}
+
+.neurona-card__results {
+  display: grid;
+  gap: 0.65rem;
+  padding-top: 0.25rem;
+}
+
+.neurona-card__result-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid #eef2f7;
+  border-radius: 10px;
+  background: #fff;
+  padding: 0.8rem 0.9rem;
+
+  span {
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+
+  strong {
+    color: #111827;
+    text-align: right;
+    font-size: 0.95rem;
+  }
+}
+
+.neurona-card__result-row--accent {
+  border-color: rgba(31, 125, 77, 0.18);
+  background: #f0fdf4;
+
+  strong {
+    color: var(--color-primary, #1f7d4d);
+  }
+}
+
+@media (max-width: 600px) {
+  .neurona-card__header,
+  .neurona-card__result-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .neurona-card__result-row strong {
+    text-align: left;
+  }
+
+  .neurona-card__actions .btn {
+    width: 100%;
+  }
+}
