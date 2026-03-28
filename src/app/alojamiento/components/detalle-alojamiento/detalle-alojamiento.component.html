@@ -201,6 +201,8 @@
                 <strong>${{ grandTotal | number }} MXN</strong>
               </div>
             </div>
+
+            <app-checkout-currency-conversion *ngIf="total > 0" [totalMxn]="grandTotal"></app-checkout-currency-conversion>
           </form>
         </div>
         <ng-template #irCliente>
