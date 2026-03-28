@@ -1,0 +1,38 @@
+<div class="currency-conversion">
+  <h4 class="currency-conversion__title">Equivalencia en dólares</h4>
+
+  <div class="currency-conversion__body">
+    <div class="currency-conversion__row">
+      <span class="currency-conversion__label">Total en pesos (MXN)</span>
+      <strong class="currency-conversion__amount">{{ totalMxn | currency:'MXN':'symbol':'1.2-2' }}</strong>
+    </div>
+
+    <div class="currency-conversion__divider"></div>
+
+    <div class="currency-conversion__row" *ngIf="!loading && equivalenteUsd">
+      <span class="currency-conversion__label">Equivalente en dólares (USD)</span>
+      <strong class="currency-conversion__amount currency-conversion__amount--usd">
+        {{ equivalenteUsdFinal | currency:'USD':'symbol':'1.2-2' }}
+      </strong>
+    </div>
+
+    <div class="currency-conversion__row" *ngIf="loading">
+      <span class="currency-conversion__label">Cargando conversión...</span>
+      <span class="currency-conversion__spinner"></span>
+    </div>
+
+    <div class="currency-conversion__row currency-conversion__row--rate" *ngIf="tipoCambio">
+      <span class="currency-conversion__label-small">Tipo de cambio actual</span>
+      <span class="currency-conversion__rate">1 USD = {{ tipoCambio | number:'1.2-6' }} MXN</span>
+    </div>
+
+    <div *ngIf="error" class="currency-conversion__error">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      {{ error }}
+    </div>
+  </div>
+</div>

@@ -1,19 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PagoService } from '../../services/pago.service';
 import { ToastService } from '../../../shared/services/toast.service';
+import { CheckoutCurrencyConversionComponent } from '../checkout-currency-conversion/checkout-currency-conversion.component';
 import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, CheckoutCurrencyConversionComponent],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.scss',
 })
-export class CheckoutComponent implements OnInit {
+export class CheckoutComponent implements OnInit, OnChanges {
   // Estado de pago real con Mercado Pago
   reservaId           = 0;
   isProcessingPayment = false;
@@ -53,6 +54,13 @@ export class CheckoutComponent implements OnInit {
     }
 
     this.totalAmount = params['total'] ? +params['total'] : this.pricePerNight * this.nights;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // Trigger recalculation if totalAmount changes
+    if (changes['totalAmount']) {
+      // The checkout-currency-conversion component will detect the change
+    }
   }
 
   get subtotal(): number { return this.pricePerNight * this.nights; }

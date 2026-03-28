@@ -68,6 +68,8 @@
         <span>{{ formatCurrency(total) }}</span>
       </div>
     </div>
+
+    <app-checkout-currency-conversion [totalMxn]="total"></app-checkout-currency-conversion>
   </div>
 
   <div class="card card--payment">
