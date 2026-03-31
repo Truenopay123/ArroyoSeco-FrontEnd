@@ -20,19 +20,19 @@ export class FaceAuthService {
   private modelsLoaded = false;
 
   // Umbral de distancia euclidiana para considerar coincidencia facial
-  private readonly MATCH_THRESHOLD = 0.6;
+  private readonly MATCH_THRESHOLD = 0.65;
 
   // ── Parámetros de liveness ───────────────────────────────────────────
   /** Umbral EAR para considerar que un ojo está cerrado */
-  private readonly EAR_BLINK_THRESHOLD = 0.21;
+  private readonly EAR_BLINK_THRESHOLD = 0.25;
   /** Mínimo de parpadeos requeridos */
   private readonly MIN_BLINKS = 1;
   /** Mínimo de movimiento de nariz (px) entre frames para considerar movimiento real */
-  private readonly MIN_MOVEMENT_PX = 3;
+  private readonly MIN_MOVEMENT_PX = 2;
   /** Duración total del análisis de liveness (ms) */
-  private readonly LIVENESS_DURATION_MS = 4000;
+  private readonly LIVENESS_DURATION_MS = 6000;
   /** Intervalo entre capturas de frames (ms) */
-  private readonly FRAME_INTERVAL_MS = 150;
+  private readonly FRAME_INTERVAL_MS = 100;
 
   /**
    * Carga los modelos de face-api.js desde /assets/face-models/.
@@ -72,6 +72,7 @@ export class FaceAuthService {
       Array.from(descriptorA),
       Array.from(descriptorB)
     );
+    console.log('[FaceAuth Comparación] distancia:', distance.toFixed(4), '| umbral:', this.MATCH_THRESHOLD, '| coincide:', distance < this.MATCH_THRESHOLD);
     return distance < this.MATCH_THRESHOLD;
   }
 
@@ -145,23 +146,34 @@ export class FaceAuthService {
     }
 
     // ── Evaluar resultados ──
+    const movement = this.computeTotalMovement(nosePositions);
+    const earStdDev = this.stdDev(earValues);
+
+    console.log('[FaceAuth Liveness]', {
+      framesWithFace,
+      totalFrames,
+      faceRatio: (framesWithFace / totalFrames).toFixed(2),
+      blinks,
+      movement: movement.toFixed(2),
+      earStdDev: earStdDev.toFixed(4),
+      earValues: earValues.map(v => v.toFixed(3)),
+    });
+
     if (framesWithFace < totalFrames * 0.4) {
       return { isLive: false, reason: 'No se detectó un rostro de forma continua. Mantén tu rostro frente a la cámara.' };
     }
 
     if (blinks < this.MIN_BLINKS) {
-      return { isLive: false, reason: 'No se detectó parpadeo. No se permiten fotos ni imágenes estáticas.' };
+      return { isLive: false, reason: 'No se detectó parpadeo. Parpadea lentamente mirando a la cámara.' };
     }
 
     // Verificar micro-movimiento natural
-    const movement = this.computeTotalMovement(nosePositions);
     if (movement < this.MIN_MOVEMENT_PX) {
-      return { isLive: false, reason: 'No se detectó movimiento natural. No se permiten fotos ni imágenes estáticas.' };
+      return { isLive: false, reason: 'No se detectó movimiento natural. Mueve ligeramente la cabeza.' };
     }
 
     // Verificar variación de EAR (una foto tiene EAR constante)
-    const earStdDev = this.stdDev(earValues);
-    if (earStdDev < 0.005) {
+    if (earStdDev < 0.003) {
       return { isLive: false, reason: 'Patrón ocular demasiado uniforme. Se requiere una persona real.' };
     }
 

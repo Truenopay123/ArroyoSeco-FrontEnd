@@ -134,6 +134,7 @@ export class FaceLoginComponent implements OnInit, OnDestroy {
     );
 
     if (!liveness.isLive) {
+      console.warn('[FaceLogin] Liveness FALLÓ:', liveness.reason);
       if (this.intentos >= this.maxIntentos) {
         this.estado = 'error';
         this.mensaje = 'Se agotaron los intentos. Redirigiendo al login…';
@@ -148,12 +149,14 @@ export class FaceLoginComponent implements OnInit, OnDestroy {
     }
 
     // ── Paso 2: Comparación facial ──
+    console.log('[FaceLogin] Liveness OK, capturando descriptor...');
     this.estado = 'comparando';
     this.mensaje = 'Persona real confirmada. Comparando rostro…';
 
     const descriptor = await this.faceAuth.getDescriptor(this.videoRef.nativeElement);
 
     if (!descriptor) {
+      console.warn('[FaceLogin] No se detectó rostro en paso de comparación');
       if (this.intentos >= this.maxIntentos) {
         this.estado = 'error';
         this.mensaje = 'Se agotaron los intentos. Redirigiendo al login…';
