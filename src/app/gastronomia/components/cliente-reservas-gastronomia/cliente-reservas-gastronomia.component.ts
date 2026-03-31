@@ -1,14 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ReservasGastronomiaService, ReservaGastronomiaDto } from '../../services/reservas-gastronomia.service';
+import { ResenasGastronomiaService } from '../../services/resenas-gastronomia.service';
 import { ToastService } from '../../../shared/services/toast.service';
+import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-cliente-reservas-gastronomia',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './cliente-reservas-gastronomia.component.html',
   styleUrl: './cliente-reservas-gastronomia.component.scss'
 })
@@ -18,19 +22,33 @@ export class ClienteReservasGastronomiaComponent implements OnInit {
   loading = false;
   activeTab: 'activas' | 'historial' = 'activas';
 
+  // Pendientes de reseña
+  pendientesDeResena: Set<number> = new Set();
+
+  // Modal de reseña
+  mostrarModalResena = false;
+  resenaReservaId: number | null = null;
+  resenaCalificacion = 5;
+  resenaComentario = '';
+  enviandoResena = false;
+
   constructor(
     private reservasService: ReservasGastronomiaService,
+    private resenasService: ResenasGastronomiaService,
     private toast: ToastService,
-    private auth: AuthService
+    private confirmModal: ConfirmModalService,
+    private auth: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.loadReservas();
+    this.loadPendientesDeResena();
   }
 
   private loadReservas() {
     this.loading = true;
-    
+
     // Cargar reservas activas
     this.reservasService.activas().pipe(first()).subscribe({
       next: (data) => {
@@ -54,8 +72,16 @@ export class ClienteReservasGastronomiaComponent implements OnInit {
     });
   }
 
-  cancelarReserva(reserva: ReservaGastronomiaDto) {
-    if (!reserva.id || !confirm('¿Estás seguro de cancelar esta reserva?')) return;
+  async cancelarReserva(reserva: ReservaGastronomiaDto) {
+    if (!reserva.id) return;
+    const confirmed = await this.confirmModal.confirm({
+      title: 'Cancelar reserva',
+      message: '¿Estás seguro de cancelar esta reserva?',
+      confirmText: 'Cancelar reserva',
+      cancelText: 'Volver',
+      isDangerous: true
+    });
+    if (!confirmed) return;
 
     this.reservasService.cancelar(reserva.id).pipe(first()).subscribe({
       next: () => {
@@ -73,7 +99,74 @@ export class ClienteReservasGastronomiaComponent implements OnInit {
       case 'confirmada': return 'estado-confirmada';
       case 'pendiente': return 'estado-pendiente';
       case 'cancelada': return 'estado-cancelada';
+      case 'completada': return 'estado-completada';
       default: return '';
     }
+  }
+
+  private loadPendientesDeResena() {
+    this.resenasService.getPendientesDeResena().pipe(first()).subscribe({
+      next: (data) => {
+        this.pendientesDeResena = new Set((data || []).map((r: any) => r.id || r.reservaGastronomiaId));
+      },
+      error: () => {}
+    });
+  }
+
+  irAPagar(reserva: ReservaGastronomiaDto) {
+    this.router.navigate(['/cliente/gastronomia/checkout'], {
+      queryParams: {
+        reservaId: reserva.id,
+        restaurantName: reserva.establecimientoNombre,
+        personas: reserva.numeroPersonas,
+        fecha: reserva.fecha,
+        total: reserva.total
+      }
+    });
+  }
+
+  puedeResenar(reserva: ReservaGastronomiaDto): boolean {
+    return this.pendientesDeResena.has(reserva.id!);
+  }
+
+  abrirModalResena(reservaId: number) {
+    this.resenaReservaId = reservaId;
+    this.resenaCalificacion = 5;
+    this.resenaComentario = '';
+    this.mostrarModalResena = true;
+  }
+
+  cerrarModalResena() {
+    this.mostrarModalResena = false;
+    this.resenaReservaId = null;
+  }
+
+  enviarResena() {
+    if (!this.resenaReservaId || this.resenaComentario.trim().length < 5) {
+      this.toast.error('El comentario debe tener al menos 5 caracteres.');
+      return;
+    }
+
+    this.enviandoResena = true;
+    this.resenasService.crear({
+      reservaGastronomiaId: this.resenaReservaId,
+      calificacion: this.resenaCalificacion,
+      comentario: this.resenaComentario.trim()
+    }).pipe(first()).subscribe({
+      next: () => {
+        this.toast.success('¡Reseña enviada! Gracias por tu opinión.');
+        this.cerrarModalResena();
+        this.loadPendientesDeResena();
+        this.enviandoResena = false;
+      },
+      error: (err: any) => {
+        this.toast.error(err?.error?.message || 'No se pudo enviar la reseña');
+        this.enviandoResena = false;
+      }
+    });
+  }
+
+  estrellasArr(n: number): number[] {
+    return Array(Math.max(0, n)).fill(0);
   }
 }

@@ -118,7 +118,9 @@
             </label>
             <label class="form-field">
               <span class="form-field__label">Teléfono <span class="required">*</span></span>
-              <input type="tel" name="telefono" [(ngModel)]="nuevo.telefono" placeholder="442-123-4567" required />
+              <input type="tel" name="telefono" [(ngModel)]="nuevo.telefono" placeholder="Ej: 442 123 4567" required maxlength="15" (blur)="validarTelefonoNuevo()" />
+              <small class="field-hint">10 dígitos sin código de país</small>
+              <small class="field-error" *ngIf="errorTelefono">{{ errorTelefono }}</small>
             </label>
           </div>
         </div>
@@ -188,7 +190,9 @@
         </label>
         <label>
           Teléfono
-          <input type="tel" name="telefono" [(ngModel)]="e.telefono" required />
+          <input type="tel" name="telefono" [(ngModel)]="e.telefono" required maxlength="15" (blur)="validarTelefonoEditar()" />
+          <small class="field-hint">10 dígitos sin código de país</small>
+          <small class="field-error" *ngIf="errorTelefonoEditar">{{ errorTelefonoEditar }}</small>
         </label>
         <label>
           Tipo de Oferente

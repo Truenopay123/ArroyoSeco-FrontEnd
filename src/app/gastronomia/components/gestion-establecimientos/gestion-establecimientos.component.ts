@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { GastronomiaService, EstablecimientoDto } from '../../services/gastronomia.service';
 import { ToastService } from '../../../shared/services/toast.service';
+import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
 import { first } from 'rxjs/operators';
 
 @Component({
@@ -18,7 +19,8 @@ export class GestionEstablecimientosComponent implements OnInit {
 
   constructor(
     private gastronomiaService: GastronomiaService,
-    private toast: ToastService
+    private toast: ToastService,
+    private confirmModal: ConfirmModalService
   ) {}
 
   ngOnInit(): void {
@@ -41,8 +43,16 @@ export class GestionEstablecimientosComponent implements OnInit {
     });
   }
 
-  eliminar(id?: number) {
-    if (!id || !confirm('¿Estás seguro de eliminar este establecimiento?')) return;
+  async eliminar(id?: number) {
+    if (!id) return;
+    const confirmed = await this.confirmModal.confirm({
+      title: 'Eliminar establecimiento',
+      message: '¿Estás seguro de eliminar este establecimiento?',
+      confirmText: 'Eliminar',
+      cancelText: 'Cancelar',
+      isDangerous: true
+    });
+    if (!confirmed) return;
 
     this.gastronomiaService.delete(id).pipe(first()).subscribe({
       next: () => {

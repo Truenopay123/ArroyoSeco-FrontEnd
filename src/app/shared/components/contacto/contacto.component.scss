@@ -78,3 +78,23 @@
     color: #1e293b;
   }
 }
+
+.field-hint {
+  display: block;
+  font-size: 0.78rem;
+  color: #6b7280;
+  font-weight: 400;
+  margin-top: 0.15rem;
+}
+
+.field-error {
+  display: block;
+  font-size: 0.8rem;
+  color: #dc2626;
+  font-weight: 500;
+  margin-top: 0.2rem;
+  padding: 0.25rem 0.5rem;
+  background: #fef2f2;
+  border-left: 3px solid #dc2626;
+  border-radius: 4px;
+}

@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AlojamientoService, AlojamientoDto } from '../../services/alojamiento.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
 import { OfflineQueueService } from '../../../core/services/offline-queue.service';
 import { first } from 'rxjs/operators';
 
@@ -32,6 +33,7 @@ export class GestionHospedajesComponent implements OnInit {
   private readonly toastService = inject(ToastService);
   private readonly alojamientosService = inject(AlojamientoService);
   private readonly authService = inject(AuthService);
+  private readonly confirmModal = inject(ConfirmModalService);
   private readonly offlineQueue = inject(OfflineQueueService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -124,9 +126,9 @@ export class GestionHospedajesComponent implements OnInit {
     );
   }
 
-  eliminar(hospedaje: Hospedaje) {
-    const confirmacion = confirm(`¿Estás seguro de eliminar "${hospedaje.nombre}"?`);
-    if (confirmacion) {
+  async eliminar(hospedaje: Hospedaje) {
+    const ok = await this.confirmModal.confirm({ title: 'Eliminar hospedaje', message: `¿Estás seguro de eliminar "${hospedaje.nombre}"?`, confirmText: 'Eliminar', cancelText: 'Cancelar', isDangerous: true });
+    if (ok) {
       // Backend delete
       this.alojamientosService.delete(Number(hospedaje.id)).pipe(first()).subscribe({
         next: () => {

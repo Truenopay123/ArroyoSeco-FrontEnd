@@ -27,7 +27,8 @@ export class AdminNavbarComponent implements OnInit {
     { label: 'Solicitudes',   route: '/admin/solicitudes' },
     { label: 'Reseñas',       route: '/admin/resenas' },
     { label: 'Estadísticas',  route: '/admin/estadisticas' },
-    { label: 'Notificaciones', route: '/admin/notificaciones' }
+    { label: 'Notificaciones', route: '/admin/notificaciones' },
+    { label: 'Configuración', route: '/admin/configuracion' }
   ];
 
   private readonly gastronomiaLinks: NavLink[] = [
@@ -42,7 +43,7 @@ export class AdminNavbarComponent implements OnInit {
 
   ngOnInit(): void {
     this.updateLinksBasedOnRoute(this.router.url);
-    
+
     // Escuchar cambios de ruta
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
@@ -55,7 +56,7 @@ export class AdminNavbarComponent implements OnInit {
     this.isGastronomia = url.includes('/admin/gastronomia');
     this.links = this.isGastronomia ? this.gastronomiaLinks : this.alojamientoLinks;
     this.homeRoute = this.isGastronomia ? '/admin/gastronomia/dashboard' : '/admin/dashboard';
-    
+
     console.log('🔍 Admin Navbar - URL actual:', url);
     console.log('🔍 Admin Navbar - Es gastronomía?', this.isGastronomia);
     console.log('🔍 Admin Navbar - Links actuales:', this.links);

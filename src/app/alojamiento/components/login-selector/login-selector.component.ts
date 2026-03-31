@@ -119,9 +119,17 @@ export class LoginSelectorComponent implements OnInit, OnDestroy {
         error: (err: any) => {
           const requiresConfirmation = !!err?.error?.requiresEmailConfirmation;
           const accountLocked        = !!err?.error?.accountLocked;
+          const remainingAttempts    = err?.error?.remainingAttempts;
 
           if (accountLocked) {
-            this.toast.show(err?.error?.message || 'Cuenta bloqueada temporalmente. Intenta en 15 minutos.', 'error');
+            this.toast.show('Cuenta bloqueada por demasiados intentos fallidos. Debes restablecer tu contraseña.', 'error');
+            setTimeout(() => {
+              this.router.navigate(['/forgot-password'], {
+                queryParams: { email: this.model.email }
+              });
+            }, 2000);
+          } else if (typeof remainingAttempts === 'number' && remainingAttempts <= 2 && remainingAttempts > 0) {
+            this.toast.show(`Credenciales inválidas. Te quedan ${remainingAttempts} intento${remainingAttempts === 1 ? '' : 's'} antes de que tu cuenta sea bloqueada.`, 'warning');
           } else if (requiresConfirmation && this.model.email) {
             this.unconfirmedEmail = this.model.email.trim();
             this.showResendConfirmation = this.unconfirmedEmail.length > 0;

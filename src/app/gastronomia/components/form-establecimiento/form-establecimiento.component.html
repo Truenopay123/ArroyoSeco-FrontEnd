@@ -4,10 +4,10 @@
   <form (ngSubmit)="submit()">
     <div class="form-group">
       <label for="nombre">Nombre *</label>
-      <input 
-        type="text" 
-        id="nombre" 
-        [(ngModel)]="establecimiento.nombre" 
+      <input
+        type="text"
+        id="nombre"
+        [(ngModel)]="establecimiento.nombre"
         name="nombre"
         required
         placeholder="Ej: La Trattoria" />
@@ -15,10 +15,10 @@
 
     <div class="form-group">
       <label for="ubicacion">Ubicación *</label>
-      <input 
-        type="text" 
-        id="ubicacion" 
-        [(ngModel)]="establecimiento.ubicacion" 
+      <input
+        type="text"
+        id="ubicacion"
+        [(ngModel)]="establecimiento.ubicacion"
         name="ubicacion"
         required
         placeholder="Ej: Centro Histórico" />
@@ -26,8 +26,8 @@
 
     <div class="form-group" style="grid-column: span 2;">
       <label>📍 Marcar en el mapa (opcional pero recomendado)</label>
-      <app-map-picker 
-        [latitud]="establecimiento.latitud ?? null" 
+      <app-map-picker
+        [latitud]="establecimiento.latitud ?? null"
         [longitud]="establecimiento.longitud ?? null"
         (locationSelected)="onLocationSelected($event)">
       </app-map-picker>
@@ -35,23 +35,29 @@
 
     <div class="form-group">
       <label for="descripcion">Descripción</label>
-      <textarea 
-        id="descripcion" 
-        [(ngModel)]="establecimiento.descripcion" 
+      <textarea
+        id="descripcion"
+        [(ngModel)]="establecimiento.descripcion"
         name="descripcion"
         rows="4"
         placeholder="Describe tu restaurante..."></textarea>
     </div>
 
     <div class="form-group">
-      <label for="foto">URL de Foto Principal</label>
-      <input 
-        type="text" 
-        id="foto" 
-        [(ngModel)]="establecimiento.fotoPrincipal" 
-        name="foto"
-        placeholder="/comprobantes/fotos/abc123.jpg" />
-      <small>Sube la imagen usando el endpoint /api/Storage/upload?folder=fotos</small>
+      <label>Fotos del establecimiento</label>
+      <div class="fotos-grid">
+        <div class="foto-item" *ngFor="let foto of fotos; let i = index">
+          <img [src]="foto" alt="Foto {{ i + 1 }}" />
+          <span class="foto-badge" *ngIf="i === 0">Principal</span>
+          <button type="button" class="foto-remove" (click)="eliminarFoto(i)">✕</button>
+        </div>
+        <label class="foto-add" [class.disabled]="subiendoFoto">
+          <input type="file" accept="image/*" (change)="onFotoSeleccionada($event)" hidden [disabled]="subiendoFoto" />
+          <span *ngIf="!subiendoFoto">+ Agregar foto</span>
+          <span *ngIf="subiendoFoto">Subiendo...</span>
+        </label>
+      </div>
+      <small>La primera foto será la imagen principal. Recomendado: al menos 3 fotos.</small>
     </div>
 
     <div class="form-actions">

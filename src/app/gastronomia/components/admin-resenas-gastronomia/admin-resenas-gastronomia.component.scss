@@ -1,0 +1,170 @@
+.admin-resenas {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1.25rem;
+  border-bottom: 2px solid #e5e7eb;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+
+  h2 {
+    margin: 0;
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    color: #1f2937;
+    font-weight: 700;
+  }
+}
+
+.btn-refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.82rem;
+  background: transparent;
+  color: var(--color-primary-admin, #E31B23);
+  border: 1.5px solid var(--color-primary-admin, #E31B23);
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover { background: #fef2f2; }
+}
+
+.resenas-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.resena-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  padding: 1rem 1.25rem;
+  transition: box-shadow 0.2s, transform 0.15s;
+  &:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+  }
+  &.reportada {
+    border-left: 4px solid #f59e0b;
+  }
+}
+
+.resena-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.establecimiento {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.badge-estado {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  &.reportada { background: #fef3c7; color: #92400e; }
+}
+
+.calificacion { white-space: nowrap; }
+.estrella { font-size: 1.05rem; }
+.estrella.filled { color: #f59e0b; }
+.estrella.empty { color: #d1d5db; }
+
+.comentario {
+  margin: 0.6rem 0;
+  color: #374151;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.motivo-reporte {
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin: 0.6rem 0;
+  strong { color: #92400e; font-size: 0.82rem; font-weight: 700; }
+  p { margin: 0.25rem 0 0; color: #78350f; font-size: 0.88rem; }
+}
+
+.resena-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  color: #6b7280;
+  font-size: 0.82rem;
+}
+
+.acciones {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.btn-dismiss {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.82rem;
+  background: transparent;
+  color: var(--color-primary-admin, #E31B23);
+  border: 1.5px solid var(--color-primary-admin, #E31B23);
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover { background: #fef2f2; }
+}
+
+.btn-delete {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.82rem;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover { background: #dc2626; }
+}
+
+.loading-state { text-align: center; padding: 2rem; color: #6b7280; }
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6b7280;
+  font-size: 1.05rem;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px dashed #e5e7eb;
+}

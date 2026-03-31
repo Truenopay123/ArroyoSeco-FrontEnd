@@ -15,6 +15,15 @@
       <div class="video-overlay" *ngIf="estado === 'comparando'">
         <mat-spinner diameter="48"></mat-spinner>
       </div>
+      <div class="video-overlay liveness-overlay" *ngIf="estado === 'verificando_vida'">
+        <div class="liveness-indicator">
+          <mat-icon>visibility</mat-icon>
+          <span>Parpadea naturalmente</span>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="progreso"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Icono de éxito -->
@@ -48,7 +57,7 @@
         mat-button
         class="btn-cancelar"
         (click)="cancelar()"
-        [disabled]="estado === 'comparando'">
+        [disabled]="estado === 'comparando' || estado === 'verificando_vida'">
         Volver al Login
       </button>
     </div>

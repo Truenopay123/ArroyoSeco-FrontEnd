@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { GastronomiaService, EstablecimientoDto, MenuDto } from '../../services/gastronomia.service';
 import { ReservasGastronomiaService } from '../../services/reservas-gastronomia.service';
+import { ResenasGastronomiaService } from '../../services/resenas-gastronomia.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { first } from 'rxjs/operators';
@@ -21,7 +22,17 @@ export class DetalleGastronomiaComponent implements OnInit {
   loading = false;
   error: string | null = null;
   isPublic = false;
-  
+
+  // Galería de fotos
+  gallery: string[] = [];
+  lightboxOpen = false;
+  lightboxIndex = 0;
+
+  // Reseñas
+  ratingPromedio = 0;
+  totalResenas = 0;
+  resenasPublicas: any[] = [];
+
   // Formulario de reserva
   showReservaForm = false;
   fecha = '';
@@ -34,6 +45,7 @@ export class DetalleGastronomiaComponent implements OnInit {
     private router: Router,
     private gastronomiaService: GastronomiaService,
     private reservasService: ReservasGastronomiaService,
+    private resenasService: ResenasGastronomiaService,
     private toast: ToastService,
     private auth: AuthService
   ) {}
@@ -51,10 +63,14 @@ export class DetalleGastronomiaComponent implements OnInit {
     this.loading = true;
     this.gastronomiaService.getById(id).pipe(first()).subscribe({
       next: (data) => {
-        console.log('Establecimiento cargado:', data);
-        console.log('Mesas disponibles:', data?.mesas);
         this.establecimiento = data;
+        // Build gallery
+        const fotos = (data as any).fotosUrls || [];
+        this.gallery = [data.fotoPrincipal, ...fotos]
+          .filter(Boolean)
+          .filter((url: string, idx: number, arr: string[]) => arr.indexOf(url) === idx);
         this.loading = false;
+        this.cargarResenas(id);
       },
       error: () => {
         this.error = 'Error al cargar el restaurante';
@@ -104,7 +120,7 @@ export class DetalleGastronomiaComponent implements OnInit {
       return;
     }
     if (!this.establecimiento?.id) return;
-    
+
     if (!this.fecha || !this.numeroPersonas) {
       this.toast.error('Completa todos los campos');
       return;
@@ -143,6 +159,57 @@ export class DetalleGastronomiaComponent implements OnInit {
     this.fecha = '';
     this.numeroPersonas = 2;
     this.mesaId = null;
+  }
+
+  get galleryImages(): string[] {
+    return this.gallery.length > 0 ? this.gallery : [];
+  }
+
+  get ratingLabel(): string {
+    return this.totalResenas > 0 ? this.ratingPromedio.toFixed(1) : 'Nuevo';
+  }
+
+  openLightbox(index: number) {
+    this.lightboxIndex = index;
+    this.lightboxOpen = true;
+  }
+
+  closeLightbox() {
+    this.lightboxOpen = false;
+  }
+
+  prevImage(ev: Event) {
+    ev.stopPropagation();
+    this.lightboxIndex = this.lightboxIndex > 0 ? this.lightboxIndex - 1 : this.gallery.length - 1;
+  }
+
+  nextImage(ev: Event) {
+    ev.stopPropagation();
+    this.lightboxIndex = this.lightboxIndex < this.gallery.length - 1 ? this.lightboxIndex + 1 : 0;
+  }
+
+  private cargarResenas(establecimientoId: number) {
+    this.resenasService.getByEstablecimiento(establecimientoId).pipe(first()).subscribe({
+      next: (resp: any) => {
+        const list = Array.isArray(resp) ? resp : (resp?.resenas || []);
+        this.resenasPublicas = list.map((r: any) => ({
+          id: r.id,
+          calificacion: Number(r.calificacion) || 0,
+          comentario: String(r.comentario || ''),
+          fechaCreacion: r.fechaCreacion
+        }));
+        this.totalResenas = this.resenasPublicas.length;
+        if (this.totalResenas > 0) {
+          const sum = this.resenasPublicas.reduce((a: number, b: any) => a + b.calificacion, 0);
+          this.ratingPromedio = sum / this.totalResenas;
+        }
+      },
+      error: () => {}
+    });
+  }
+
+  estrellasArr(n: number): number[] {
+    return Array(Math.max(0, Math.round(n))).fill(0);
   }
 
   abrirComoLlegar() {

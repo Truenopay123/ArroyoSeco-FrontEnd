@@ -17,13 +17,33 @@ export class ContactoComponent {
     mensaje: ''
   };
 
+  errorTelefono = '';
+
   readonly destino = 'alojamientosarroyoseco@gmail.com';
+
+  validarTelefono(): boolean {
+    this.errorTelefono = '';
+    const tel = this.model.telefono.trim();
+    if (!tel) return true; // es opcional
+    const soloDigitos = tel.replace(/[\s\-\(\)\+]/g, '');
+    if (!/^\d+$/.test(soloDigitos)) {
+      this.errorTelefono = 'El teléfono solo debe contener números';
+      return false;
+    }
+    if (soloDigitos.startsWith('52') && soloDigitos.length === 12) return true;
+    if (soloDigitos.length !== 10) {
+      this.errorTelefono = 'El teléfono debe tener exactamente 10 dígitos';
+      return false;
+    }
+    return true;
+  }
 
   volverAtras() {
     window.history.back();
   }
 
   enviarContacto() {
+    if (this.model.telefono.trim() && !this.validarTelefono()) return;
     const subject = `Contacto Arroyo Seco - ${this.model.nombre || 'Sin nombre'}`;
     const body = [
       `Nombre: ${this.model.nombre}`,

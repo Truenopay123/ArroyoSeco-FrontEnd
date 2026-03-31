@@ -4,18 +4,16 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { UsuarioService } from '../../../core/services/usuario.service';
-import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
 import { FaceAuthService } from '../../../core/services/face-auth.service';
 import { first } from 'rxjs/operators';
 
 interface Perfil {
   nombre: string;
   correo: string;
-  telefono: string;
 }
 
 @Component({
-  selector: 'app-oferente-configuracion',
+  selector: 'app-admin-configuracion',
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
@@ -26,7 +24,7 @@ interface Perfil {
         <div class="avatar">{{ initials }}</div>
         <div>
           <h2>{{ perfil.nombre || 'Mi Perfil' }}</h2>
-          <p class="role-badge">Oferente</p>
+          <p class="role-badge">Administrador</p>
         </div>
       </div>
 
@@ -36,54 +34,19 @@ interface Perfil {
           <span class="card-icon">👤</span>
           <div>
             <h3>Información personal</h3>
-            <p class="card-desc">Actualiza tu nombre, correo y teléfono de contacto.</p>
+            <p class="card-desc">Tu información como administrador del sistema.</p>
           </div>
         </div>
 
-        <form #f="ngForm" (ngSubmit)="guardar(f)" class="fields-grid">
+        <div class="fields-grid readonly-grid">
           <div class="field">
-            <label for="cfg-nombre">Nombre completo</label>
-            <input id="cfg-nombre" type="text" name="nombre" [(ngModel)]="perfil.nombre" required
-                   placeholder="Ej: Juan García" autocomplete="name" />
+            <label>Nombre</label>
+            <span class="field-value">{{ perfil.nombre || '—' }}</span>
           </div>
-
           <div class="field">
-            <label for="cfg-correo">Correo electrónico</label>
-            <input id="cfg-correo" type="email" name="correo" [(ngModel)]="perfil.correo" required
-                   placeholder="correo@ejemplo.com" autocomplete="email" />
-            <span class="field-hint">Las notificaciones se envían a este correo.</span>
+            <label>Correo electrónico</label>
+            <span class="field-value">{{ perfil.correo || '—' }}</span>
           </div>
-
-          <div class="field">
-            <label for="cfg-tel">Teléfono de contacto</label>
-            <input id="cfg-tel" type="tel" name="telefono" [(ngModel)]="perfil.telefono"
-                   placeholder="Ej: 442 123 4567" autocomplete="tel" maxlength="15"
-                   (blur)="validarTelefono()" />
-            <span class="field-hint">10 dígitos sin código de país. Ej: 442 123 4567</span>
-            <span class="field-error" *ngIf="errorTelefono">{{ errorTelefono }}</span>
-          </div>
-
-          <div class="card-footer">
-            <button class="btn primary" type="submit" [disabled]="f.invalid || guardando">
-              <span *ngIf="!guardando">💾 Guardar cambios</span>
-              <span *ngIf="guardando">Guardando...</span>
-            </button>
-          </div>
-        </form>
-      </section>
-
-      <!-- Info panel: notifications -->
-      <section class="config-card info-panel">
-        <div class="card-header">
-          <span class="card-icon">🔔</span>
-          <div>
-            <h3>Notificaciones</h3>
-            <p class="card-desc">Todas las notificaciones del sistema se envían automáticamente por correo electrónico.</p>
-          </div>
-        </div>
-        <div class="info-badge">
-          <span class="info-icon">✉️</span>
-          <span>Notificaciones activas por <strong>email</strong></span>
         </div>
       </section>
 
@@ -99,14 +62,14 @@ interface Perfil {
 
         <!-- Estado de carga -->
         <div class="face-status-row" *ngIf="faceLoading">
-          <span class="face-status-icon loading">⏳</span>
+          <span class="face-status-icon">⏳</span>
           <span class="face-status-text">Consultando estado facial…</span>
         </div>
 
         <!-- Rostro registrado -->
         <div *ngIf="!faceLoading && faceEnrolled && faceEstado === 'idle'">
           <div class="face-status-row enrolled">
-            <span class="face-status-icon ok">✅</span>
+            <span class="face-status-icon">✅</span>
             <span class="face-status-text">Rostro registrado correctamente.</span>
           </div>
           <div class="face-actions">
@@ -122,7 +85,7 @@ interface Perfil {
         <!-- Sin rostro registrado -->
         <div *ngIf="!faceLoading && !faceEnrolled && faceEstado === 'idle'">
           <div class="face-status-row not-enrolled">
-            <span class="face-status-icon warn">⚠️</span>
+            <span class="face-status-icon">⚠️</span>
             <span class="face-status-text">No tienes un rostro registrado.</span>
           </div>
           <div class="face-actions">
@@ -163,7 +126,6 @@ interface Perfil {
       max-width: 720px;
     }
 
-    /* Page header */
     .page-header {
       display: flex;
       align-items: center;
@@ -173,7 +135,7 @@ interface Perfil {
       width: 64px;
       height: 64px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #1F7D4D, #52b788);
+      background: linear-gradient(135deg, #1e3a5f, #2c5f8a);
       color: #fff;
       font-size: 1.4rem;
       font-weight: 700;
@@ -181,7 +143,7 @@ interface Perfil {
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(31,125,77,0.3);
+      box-shadow: 0 4px 12px rgba(30,58,95,0.3);
     }
     .page-header h2 {
       margin: 0;
@@ -192,16 +154,15 @@ interface Perfil {
     .role-badge {
       margin: 0.2rem 0 0;
       font-size: 0.8rem;
-      color: #1F7D4D;
+      color: #1e3a5f;
       font-weight: 600;
-      background: #e8f5e9;
-      border: 1px solid #b8dfcf;
+      background: #e0ecf8;
+      border: 1px solid #b3cde0;
       border-radius: 999px;
       display: inline-block;
       padding: 0.15rem 0.65rem;
     }
 
-    /* Cards */
     .config-card {
       background: #fff;
       border: 1px solid #e5e7eb;
@@ -221,8 +182,8 @@ interface Perfil {
       font-size: 1.5rem;
       width: 42px;
       height: 42px;
-      background: #f0fdf4;
-      border: 1px solid #d1fae5;
+      background: #f0f4f8;
+      border: 1px solid #d0dbe8;
       border-radius: 10px;
       display: flex;
       align-items: center;
@@ -240,13 +201,7 @@ interface Perfil {
       font-size: 0.85rem;
       color: #6b7280;
     }
-    .card-footer {
-      display: flex;
-      justify-content: flex-end;
-      padding-top: 0.5rem;
-    }
 
-    /* Fields */
     .fields-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -262,38 +217,15 @@ interface Perfil {
       font-weight: 600;
       color: #374151;
     }
-    .field input {
+    .field-value {
+      font-size: 0.9rem;
+      color: #1f2937;
+      padding: 0.7rem 0.9rem;
+      background: #f9fafb;
       border: 1.5px solid #e5e7eb;
       border-radius: 10px;
-      padding: 0.7rem 0.9rem;
-      font-size: 0.9rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      outline: none;
-      background: #fafafa;
-      &:focus {
-        border-color: #1F7D4D;
-        box-shadow: 0 0 0 3px rgba(31,125,77,0.1);
-        background: #fff;
-      }
     }
-    .field-hint {
-      font-size: 0.76rem;
-      color: #9ca3af;
-    }
-    .field-error {
-      display: block;
-      font-size: 0.8rem;
-      color: #dc2626;
-      font-weight: 500;
-      margin-top: 0.2rem;
-      padding: 0.25rem 0.5rem;
-      background: #fef2f2;
-      border-left: 3px solid #dc2626;
-      border-radius: 4px;
-    }
-    .card-footer { grid-column: span 2; }
 
-    /* Buttons */
     .btn {
       padding: 0.65rem 1.5rem;
       border-radius: 10px;
@@ -307,31 +239,25 @@ interface Perfil {
       gap: 0.4rem;
     }
     .btn.primary {
-      background: linear-gradient(135deg, #1F7D4D, #2d9a61);
+      background: linear-gradient(135deg, #1e3a5f, #2c5f8a);
       color: #fff;
-      box-shadow: 0 3px 10px rgba(31,125,77,0.25);
-      &:hover { transform: translateY(-1px); box-shadow: 0 5px 14px rgba(31,125,77,0.3); }
+      box-shadow: 0 3px 10px rgba(30,58,95,0.25);
+      &:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 5px 14px rgba(30,58,95,0.3); }
       &:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
     }
-
-    /* Info panel */
-    .info-panel .card-header { margin-bottom: 1rem; padding-bottom: 1rem; }
-    .info-badge {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      border-radius: 10px;
-      padding: 0.75rem 1rem;
-      font-size: 0.9rem;
-      color: #166534;
+    .btn.secondary {
+      background: #f3f4f6;
+      color: #374151;
+      border: 1.5px solid #e5e7eb;
+      &:hover:not(:disabled) { background: #e5e7eb; }
+      &:disabled { opacity: 0.6; cursor: not-allowed; }
     }
-    .info-icon { font-size: 1.1rem; }
-
-    @media (max-width: 640px) {
-      .fields-grid { grid-template-columns: 1fr; }
-      .card-footer { grid-column: auto; }
+    .btn.danger-outline {
+      background: transparent;
+      color: #dc2626;
+      border: 1.5px solid #fca5a5;
+      &:hover:not(:disabled) { background: #fef2f2; }
+      &:disabled { opacity: 0.6; cursor: not-allowed; }
     }
 
     /* Face management */
@@ -353,20 +279,6 @@ interface Perfil {
       margin-top: 1rem;
       flex-wrap: wrap;
     }
-    .btn.secondary {
-      background: #f3f4f6;
-      color: #374151;
-      border: 1.5px solid #e5e7eb;
-      &:hover:not(:disabled) { background: #e5e7eb; }
-      &:disabled { opacity: 0.6; cursor: not-allowed; }
-    }
-    .btn.danger-outline {
-      background: transparent;
-      color: #dc2626;
-      border: 1.5px solid #fca5a5;
-      &:hover:not(:disabled) { background: #fef2f2; }
-      &:disabled { opacity: 0.6; cursor: not-allowed; }
-    }
     .face-capture-area {
       display: flex;
       flex-direction: column;
@@ -385,7 +297,7 @@ interface Perfil {
       max-width: 320px;
       border-radius: 12px;
       overflow: hidden;
-      border: 2px solid #d1fae5;
+      border: 2px solid #d0dbe8;
     }
     .face-webcam-video {
       width: 100%;
@@ -414,19 +326,20 @@ interface Perfil {
       animation: spin 0.8s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 640px) {
+      .fields-grid { grid-template-columns: 1fr; }
+    }
   `]
 })
-export class OferenteConfiguracionComponent implements OnInit, OnDestroy {
+export class AdminConfiguracionComponent implements OnInit, OnDestroy {
   @ViewChild('faceVideo') faceVideoRef!: ElementRef<HTMLVideoElement>;
 
   private toastService = inject(ToastService);
   private authService = inject(AuthService);
-  private usuarioService = inject(UsuarioService);
-  private modalService = inject(ConfirmModalService);
   private faceAuth = inject(FaceAuthService);
 
-  guardando = false;
-  errorTelefono = '';
+  perfil: Perfil = { nombre: '', correo: '' };
 
   // Face management state
   faceLoading = true;
@@ -434,12 +347,6 @@ export class OferenteConfiguracionComponent implements OnInit, OnDestroy {
   faceEstado: 'idle' | 'camara' | 'capturando' = 'idle';
   faceProcessing = false;
   private faceStream: MediaStream | null = null;
-
-  perfil: Perfil = {
-    nombre: '',
-    correo: '',
-    telefono: '',
-  };
 
   get initials(): string {
     const parts = (this.perfil.nombre || '?').trim().split(' ');
@@ -468,44 +375,6 @@ export class OferenteConfiguracionComponent implements OnInit, OnDestroy {
     this.detenerCamaraFace();
   }
 
-  validarTelefono(): boolean {
-    this.errorTelefono = '';
-    const tel = (this.perfil.telefono || '').trim();
-    if (!tel) return true; // teléfono es opcional aquí
-    const soloDigitos = tel.replace(/[\s\-\(\)\+]/g, '');
-    if (!/^\d+$/.test(soloDigitos)) {
-      this.errorTelefono = 'El teléfono solo debe contener números';
-      return false;
-    }
-    if (soloDigitos.startsWith('52') && soloDigitos.length === 12) return true;
-    if (soloDigitos.length !== 10) {
-      this.errorTelefono = 'El teléfono debe tener exactamente 10 dígitos';
-      return false;
-    }
-    return true;
-  }
-
-  guardar(form: NgForm) {
-    if (form.invalid) return;
-    if (this.perfil.telefono?.trim() && !this.validarTelefono()) {
-      this.toastService.error(this.errorTelefono);
-      return;
-    }
-    this.guardando = true;
-    const { nombre, correo, telefono } = this.perfil;
-    this.usuarioService.updatePerfil({ nombre, email: correo, telefono }).subscribe({
-      next: () => {
-        this.guardando = false;
-        this.toastService.success('Cambios guardados correctamente');
-      },
-      error: (err) => {
-        this.guardando = false;
-        console.error('Error al guardar configuración:', err);
-        this.toastService.error('No fue posible guardar los cambios');
-      }
-    });
-  }
-
   // ── Face management ──────────────────────────────────────────────────
 
   private cargarEstadoFacial() {
@@ -524,7 +393,6 @@ export class OferenteConfiguracionComponent implements OnInit, OnDestroy {
   async iniciarCambioRostro() {
     this.faceProcessing = true;
 
-    // Si ya tiene rostro, primero desenrollar
     if (this.faceEnrolled) {
       try {
         await this.faceAuth.unenroll().pipe(first()).toPromise();
@@ -536,7 +404,6 @@ export class OferenteConfiguracionComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Cargar modelos
     try {
       await this.faceAuth.loadModels();
     } catch {
@@ -545,7 +412,6 @@ export class OferenteConfiguracionComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Abrir cámara
     try {
       this.faceStream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'user', width: 480, height: 360 }

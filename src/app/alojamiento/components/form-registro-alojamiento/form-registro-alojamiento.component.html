@@ -13,12 +13,35 @@
       <div class="form-grid">
         <label>
           Nombre del alojamiento
-          <input type="text" name="nombre" [(ngModel)]="formModel.nombre" required placeholder="Ej: Cabana La Montana" />
+          <input
+            type="text"
+            name="nombre"
+            [(ngModel)]="formModel.nombre"
+            required
+            minlength="3"
+            maxlength="100"
+            placeholder="Ej: Cabaña La Montaña, Hotel Rivera, Posada del Río"
+            (blur)="validarCampo('nombre')"
+          />
+          <small class="field-hint">Nombre descriptivo de 3 a 100 caracteres (letras, números y espacios)</small>
+          <small class="field-error" *ngIf="errores['nombre']">{{ errores['nombre'] }}</small>
         </label>
 
         <label>
           Precio por noche (MXN)
-          <input type="number" name="precio" min="0" [(ngModel)]="formModel.precio" required />
+          <input
+            type="number"
+            name="precio"
+            min="50"
+            max="50000"
+            step="0.01"
+            [(ngModel)]="formModel.precio"
+            required
+            placeholder="Ej: 850"
+            (blur)="validarCampo('precio')"
+          />
+          <small class="field-hint">Entre $50 y $50,000 MXN por noche</small>
+          <small class="field-error" *ngIf="errores['precio']">{{ errores['precio'] }}</small>
         </label>
 
         <label class="col-span-2">
@@ -27,9 +50,14 @@
             type="text"
             name="ubicacion"
             [(ngModel)]="formModel.ubicacion"
-            placeholder="Ej: Centro de Arroyo Seco, Queretaro"
+            placeholder="Ej: Centro de Arroyo Seco, Querétaro"
             required
+            minlength="5"
+            maxlength="200"
+            (blur)="validarCampo('ubicacion'); geocodificarUbicacion()"
           />
+          <small class="field-hint">Dirección o referencia clara del alojamiento (mínimo 5 caracteres). Al salir del campo, se buscará automáticamente en el mapa.</small>
+          <small class="field-error" *ngIf="errores['ubicacion']">{{ errores['ubicacion'] }}</small>
         </label>
       </div>
     </section>
@@ -39,17 +67,53 @@
       <div class="stats-grid">
         <label>
           Huespedes
-          <input type="number" name="huespedes" min="1" [(ngModel)]="formModel.huespedes" required />
+          <input
+            type="number"
+            name="huespedes"
+            min="1"
+            max="50"
+            step="1"
+            [(ngModel)]="formModel.huespedes"
+            required
+            placeholder="Ej: 4"
+            (blur)="validarCampo('huespedes')"
+          />
+          <small class="field-hint">De 1 a 50 huéspedes</small>
+          <small class="field-error" *ngIf="errores['huespedes']">{{ errores['huespedes'] }}</small>
         </label>
 
         <label>
           Habitaciones
-          <input type="number" name="habitaciones" min="1" [(ngModel)]="formModel.habitaciones" required />
+          <input
+            type="number"
+            name="habitaciones"
+            min="1"
+            max="30"
+            step="1"
+            [(ngModel)]="formModel.habitaciones"
+            required
+            placeholder="Ej: 2"
+            (blur)="validarCampo('habitaciones')"
+          />
+          <small class="field-hint">De 1 a 30 habitaciones</small>
+          <small class="field-error" *ngIf="errores['habitaciones']">{{ errores['habitaciones'] }}</small>
         </label>
 
         <label>
-          Banos
-          <input type="number" name="banos" min="1" [(ngModel)]="formModel.banos" required />
+          Baños
+          <input
+            type="number"
+            name="banos"
+            min="1"
+            max="20"
+            step="1"
+            [(ngModel)]="formModel.banos"
+            required
+            placeholder="Ej: 1"
+            (blur)="validarCampo('banos')"
+          />
+          <small class="field-hint">De 1 a 20 baños</small>
+          <small class="field-error" *ngIf="errores['banos']">{{ errores['banos'] }}</small>
         </label>
       </div>
     </section>
@@ -60,6 +124,7 @@
       <app-map-picker
         [latitud]="formModel.latitud"
         [longitud]="formModel.longitud"
+        [searchAddress]="addressToGeocode"
         (locationSelected)="onLocationSelected($event)">
       </app-map-picker>
     </section>
@@ -67,9 +132,10 @@
     <section class="form-block">
       <h3>Fotos del alojamiento</h3>
       <div class="upload-box">
-        <input type="file" accept="image/*" (change)="onFotoSeleccionada($event)" [disabled]="subiendoFoto" />
+        <input type="file" accept=".jpg,.jpeg,.png,.webp,.gif,.bmp" (change)="onFotoSeleccionada($event)" [disabled]="subiendoFoto" />
         <span *ngIf="subiendoFoto">Subiendo imagen...</span>
       </div>
+      <small class="field-hint">Formatos aceptados: JPG, PNG, WEBP, GIF, BMP. Tamaño máximo: 10 MB</small>
       <div class="galeria" *ngIf="formModel.fotos.length">
         <div class="thumb" *ngFor="let f of formModel.fotos; index as i">
           <img [src]="f" alt="foto alojamiento" />
@@ -100,11 +166,13 @@
           type="text"
           name="nuevaCondicion"
           [(ngModel)]="nuevaCondicion"
-          placeholder="Ej: Anticipacion de un 30% del hospedaje"
+          placeholder="Ej: Anticipo del 30% al reservar, No fumar, Check-in a las 15:00"
+          maxlength="200"
           (keyup.enter)="agregarCondicion()"
         />
         <button type="button" class="btn secondary" (click)="agregarCondicion()">Agregar</button>
       </div>
+      <small class="field-hint">Escribe condiciones claras para tus huéspedes (5 a 200 caracteres cada una)</small>
       <p class="hint info">Estas condiciones se mostraran al cliente antes de continuar con el pago.</p>
       <div class="condiciones-list" *ngIf="formModel.condicionesUso.length > 0">
         <div class="condicion-item" *ngFor="let c of formModel.condicionesUso; index as i">

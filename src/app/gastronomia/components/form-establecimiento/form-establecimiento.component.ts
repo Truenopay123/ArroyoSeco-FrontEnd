@@ -21,7 +21,9 @@ export class FormEstablecimientoComponent implements OnInit {
     descripcion: '',
     fotoPrincipal: ''
   };
-  
+
+  fotos: string[] = [];
+  subiendoFoto = false;
   isEdit = false;
   submitting = false;
 
@@ -45,12 +47,42 @@ export class FormEstablecimientoComponent implements OnInit {
     this.gastronomiaService.getById(id).pipe(first()).subscribe({
       next: (data) => {
         this.establecimiento = data;
+        this.fotos = [data.fotoPrincipal, ...((data as any).fotosUrls || [])].filter(Boolean) as string[];
       },
       error: () => {
         this.toast.error('Error al cargar establecimiento');
         this.router.navigate(['/oferente/gastronomia/establecimientos']);
       }
     });
+  }
+
+  onFotoSeleccionada(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file || this.subiendoFoto) return;
+
+    this.subiendoFoto = true;
+    this.gastronomiaService.uploadImage(file).pipe(first()).subscribe({
+      next: (res: any) => {
+        if (res?.url) {
+          this.fotos.push(res.url);
+          this.toast.success('Imagen subida correctamente');
+        } else {
+          this.toast.error('No se recibió URL de la imagen');
+        }
+        this.subiendoFoto = false;
+        input.value = '';
+      },
+      error: () => {
+        this.toast.error('No se pudo subir la imagen');
+        this.subiendoFoto = false;
+        input.value = '';
+      }
+    });
+  }
+
+  eliminarFoto(idx: number) {
+    this.fotos.splice(idx, 1);
   }
 
   submit() {
@@ -65,6 +97,10 @@ export class FormEstablecimientoComponent implements OnInit {
     }
 
     this.submitting = true;
+    // Map fotos array to fotoPrincipal + fotosUrls
+    this.establecimiento.fotoPrincipal = this.fotos[0] || '';
+    (this.establecimiento as any).fotosUrls = this.fotos.slice(1);
+
     const request = this.isEdit && this.establecimiento.id
       ? this.gastronomiaService.update(this.establecimiento.id, this.establecimiento)
       : this.gastronomiaService.create(this.establecimiento);

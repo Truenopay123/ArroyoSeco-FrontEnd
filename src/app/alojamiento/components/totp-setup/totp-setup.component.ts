@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../shared/services/toast.service';
+import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
 import { first } from 'rxjs/operators';
 import * as QRCodeLib from 'qrcode';
 
@@ -28,7 +29,8 @@ export class TotpSetupComponent implements OnInit, AfterViewInit {
   constructor(
     private auth: AuthService,
     private toast: ToastService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private confirmModal: ConfirmModalService
   ) {}
 
   ngOnInit(): void {
@@ -75,7 +77,7 @@ export class TotpSetupComponent implements OnInit, AfterViewInit {
     }
 
     const canvas = this.qrCanvas.nativeElement;
-    
+
     try {
       // Use static import
       QRCodeLib.toCanvas(canvas, this.qrUri, { width: 200, margin: 1 }, (error: any) => {
@@ -140,8 +142,9 @@ export class TotpSetupComponent implements OnInit, AfterViewInit {
     });
   }
 
-  deshabilitar() {
-    if (!confirm('¿Seguro que deseas deshabilitar la autenticación en dos pasos? Tu cuenta será menos segura.')) return;
+  async deshabilitar() {
+    const ok = await this.confirmModal.confirm({ title: 'Deshabilitar 2FA', message: '¿Seguro que deseas deshabilitar la autenticación en dos pasos? Tu cuenta será menos segura.', confirmText: 'Deshabilitar', cancelText: 'Cancelar', isDangerous: true });
+    if (!ok) return;
     this.verifying = true;
     this.auth.disable2FA().pipe(first()).subscribe({
       next: () => {

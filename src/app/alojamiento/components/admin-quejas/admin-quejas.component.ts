@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 import { ToastService } from '../../../shared/services/toast.service';
+import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
 
 @Component({
 	selector: 'app-admin-quejas',
@@ -15,6 +16,7 @@ import { ToastService } from '../../../shared/services/toast.service';
 export class AdminQuejasComponent implements OnInit {
 	private readonly api = inject(ApiService);
 	private readonly toast = inject(ToastService);
+	private readonly confirmModal = inject(ConfirmModalService);
 
 	loading = false;
 	resenas: any[] = [];
@@ -37,8 +39,9 @@ export class AdminQuejasComponent implements OnInit {
 		});
 	}
 
-	eliminar(id: number) {
-		if (!confirm('¿Eliminar esta reseña? Ya no será visible para nadie.')) return;
+	async eliminar(id: number) {
+		const ok = await this.confirmModal.confirm({ title: 'Eliminar reseña', message: '¿Eliminar esta reseña? Ya no será visible para nadie.', confirmText: 'Eliminar', cancelText: 'Cancelar', isDangerous: true });
+		if (!ok) return;
 		this.api.delete(`/resenas/${id}`).pipe(first()).subscribe({
 			next: () => {
 				this.toast.success('Reseña eliminada');
@@ -48,8 +51,9 @@ export class AdminQuejasComponent implements OnInit {
 		});
 	}
 
-	desestimar(id: number) {
-		if (!confirm('¿Desestimar el reporte? La reseña volverá a ser pública.')) return;
+	async desestimar(id: number) {
+		const ok = await this.confirmModal.confirm({ title: 'Desestimar reporte', message: '¿Desestimar el reporte? La reseña volverá a ser pública.', confirmText: 'Desestimar', cancelText: 'Cancelar' });
+		if (!ok) return;
 		this.api.patch(`/resenas/${id}/desestimar-reporte`, {}).pipe(first()).subscribe({
 			next: () => {
 				this.toast.success('Reporte desestimado. Reseña restaurada.');
