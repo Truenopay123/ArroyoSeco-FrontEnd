@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -7,6 +8,7 @@ import { ResenasGastronomiaService } from '../../services/resenas-gastronomia.se
 import { ToastService } from '../../../shared/services/toast.service';
 import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { OfflineQueueService } from '../../../core/services/offline-queue.service';
 import { first } from 'rxjs/operators';
 
 @Component({
@@ -21,6 +23,7 @@ export class ClienteReservasGastronomiaComponent implements OnInit {
   reservasHistorial: ReservaGastronomiaDto[] = [];
   loading = false;
   activeTab: 'activas' | 'historial' = 'activas';
+  isOffline = !navigator.onLine;
 
   // Pendientes de reseña
   pendientesDeResena: Set<number> = new Set();
@@ -31,6 +34,9 @@ export class ClienteReservasGastronomiaComponent implements OnInit {
   resenaCalificacion = 5;
   resenaComentario = '';
   enviandoResena = false;
+
+  private readonly offlineQueue = inject(OfflineQueueService);
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(
     private reservasService: ReservasGastronomiaService,
@@ -44,6 +50,22 @@ export class ClienteReservasGastronomiaComponent implements OnInit {
   ngOnInit(): void {
     this.loadReservas();
     this.loadPendientesDeResena();
+
+    // Recargar al sincronizar acciones pendientes (offline → online)
+    this.offlineQueue.synced$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.loadReservas();
+        this.loadPendientesDeResena();
+      });
+
+    window.addEventListener('online', () => {
+      this.isOffline = false;
+      this.loadReservas();
+    });
+    window.addEventListener('offline', () => {
+      this.isOffline = true;
+    });
   }
 
   private loadReservas() {
@@ -55,7 +77,11 @@ export class ClienteReservasGastronomiaComponent implements OnInit {
         this.reservasActivas = data || [];
       },
       error: () => {
-        this.toast.error('Error al cargar reservas activas');
+        if (!navigator.onLine) {
+          // Offline: los datos pueden venir del caché del SW
+        } else {
+          this.toast.error('Error al cargar reservas activas');
+        }
       }
     });
 
@@ -66,7 +92,11 @@ export class ClienteReservasGastronomiaComponent implements OnInit {
         this.loading = false;
       },
       error: () => {
-        this.toast.error('Error al cargar historial');
+        if (!navigator.onLine) {
+          // Offline: los datos pueden venir del caché del SW
+        } else {
+          this.toast.error('Error al cargar historial');
+        }
         this.loading = false;
       }
     });

@@ -29,6 +29,7 @@ export class ListaGastronomiaComponent implements OnInit {
   loading = false;
   error: string | null = null;
   isPublic = false;
+  isOffline = !navigator.onLine;
 
   constructor(
     private toast: ToastService,
@@ -41,6 +42,14 @@ export class ListaGastronomiaComponent implements OnInit {
     // Detectar si estamos en ruta pública
     this.isPublic = this.router.url.includes('/publica/');
     this.fetchEstablecimientos();
+
+    window.addEventListener('online', () => {
+      this.isOffline = false;
+      this.fetchEstablecimientos();
+    });
+    window.addEventListener('offline', () => {
+      this.isOffline = true;
+    });
   }
 
   private fetchEstablecimientos() {
@@ -154,7 +163,7 @@ export class ListaGastronomiaComponent implements OnInit {
       this.router.navigate(['/login']);
       return;
     }
-    
+
     const route = this.isPublic ? '/publica/gastronomia' : '/cliente/gastronomia';
     this.router.navigate([route, id]);
   }

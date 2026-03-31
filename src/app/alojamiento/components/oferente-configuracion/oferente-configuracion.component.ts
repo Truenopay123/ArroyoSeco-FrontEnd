@@ -161,6 +161,7 @@ interface Perfil {
       flex-direction: column;
       gap: 1.5rem;
       max-width: 720px;
+      margin: 0 auto;
     }
 
     /* Page header */

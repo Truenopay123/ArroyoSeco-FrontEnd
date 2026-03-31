@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { GastronomiaService, EstablecimientoDto } from '../../services/gastronomia.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
+import { OfflineQueueService } from '../../../core/services/offline-queue.service';
 import { first } from 'rxjs/operators';
 
 @Component({
@@ -16,6 +18,10 @@ import { first } from 'rxjs/operators';
 export class GestionEstablecimientosComponent implements OnInit {
   establecimientos: EstablecimientoDto[] = [];
   loading = false;
+  isOffline = !navigator.onLine;
+
+  private readonly offlineQueue = inject(OfflineQueueService);
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(
     private gastronomiaService: GastronomiaService,
@@ -25,6 +31,19 @@ export class GestionEstablecimientosComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadEstablecimientos();
+
+    // Recargar al sincronizar acciones pendientes (offline → online)
+    this.offlineQueue.synced$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.loadEstablecimientos());
+
+    window.addEventListener('online', () => {
+      this.isOffline = false;
+      this.loadEstablecimientos();
+    });
+    window.addEventListener('offline', () => {
+      this.isOffline = true;
+    });
   }
 
   private loadEstablecimientos() {
@@ -36,8 +55,13 @@ export class GestionEstablecimientosComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al cargar establecimientos:', err);
-        this.toast.error('Error al cargar establecimientos. Por favor verifica que el backend esté funcionando.');
-        this.establecimientos = [];
+        if (!navigator.onLine) {
+          // Offline: los datos pueden venir del caché del SW
+          this.establecimientos = [];
+        } else {
+          this.toast.error('Error al cargar establecimientos. Por favor verifica que el backend esté funcionando.');
+          this.establecimientos = [];
+        }
         this.loading = false;
       }
     });

@@ -1,3 +1,7 @@
+<div class="offline-banner" *ngIf="isOffline">
+  📡 Sin conexión: mostrando datos almacenados. Las acciones se sincronizarán al reconectarte.
+</div>
+
 <div class="tabs">
   <button
     [class.active]="activeTab === 'activas'"

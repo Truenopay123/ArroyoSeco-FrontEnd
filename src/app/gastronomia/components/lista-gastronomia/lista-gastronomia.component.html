@@ -1,3 +1,7 @@
+<div class="offline-banner" *ngIf="isOffline">
+  📡 Sin conexión: mostrando restaurantes almacenados en caché.
+</div>
+
 <div class="toolbar">
 	<input type="text" placeholder="Buscar por nombre o ubicación" [(ngModel)]="search" />
 	<select [(ngModel)]="sortMode">

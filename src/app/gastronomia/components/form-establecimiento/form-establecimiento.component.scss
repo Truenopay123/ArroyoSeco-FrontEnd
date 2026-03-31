@@ -26,7 +26,7 @@
     width: 100%;
     padding: 0.75rem;
     border: 1px solid #d1d5db;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 0.95rem;
     font-family: inherit;
 
@@ -41,6 +41,11 @@
     margin-top: 0.5rem;
     color: #6b7280;
     font-size: 0.85rem;
+
+    &.field-error {
+      color: #dc2626;
+      font-weight: 600;
+    }
   }
 }
 
@@ -53,7 +58,7 @@
     flex: 1;
     padding: 0.875rem 1.5rem;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     font-weight: 600;
     font-size: 1rem;
     cursor: pointer;

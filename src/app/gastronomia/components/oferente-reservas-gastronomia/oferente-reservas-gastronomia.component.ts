@@ -1,9 +1,11 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { ReservasGastronomiaService, ReservaGastronomiaDto } from '../../services/reservas-gastronomia.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { first } from 'rxjs/operators';
 import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
+import { OfflineQueueService } from '../../../core/services/offline-queue.service';
 
 @Component({
   selector: 'app-oferente-reservas-gastronomia',
@@ -16,13 +18,29 @@ export class OferenteReservasGastronomiaComponent implements OnInit {
   reservas: ReservaGastronomiaDto[] = [];
   loading = false;
   tab: 'pendientes' | 'confirmadas' | 'todas' = 'pendientes';
+  isOffline = !navigator.onLine;
 
   private reservasService = inject(ReservasGastronomiaService);
   private toast = inject(ToastService);
   private modal = inject(ConfirmModalService);
+  private offlineQueue = inject(OfflineQueueService);
+  private destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     this.loadReservas();
+
+    // Recargar al sincronizar acciones pendientes (offline → online)
+    this.offlineQueue.synced$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.loadReservas());
+
+    window.addEventListener('online', () => {
+      this.isOffline = false;
+      this.loadReservas();
+    });
+    window.addEventListener('offline', () => {
+      this.isOffline = true;
+    });
   }
 
   private loadReservas() {
@@ -33,7 +51,11 @@ export class OferenteReservasGastronomiaComponent implements OnInit {
         this.loading = false;
       },
       error: () => {
-        this.toast.error('Error al cargar reservas');
+        if (!navigator.onLine) {
+          // Offline: los datos pueden venir del caché del SW
+        } else {
+          this.toast.error('Error al cargar reservas');
+        }
         this.loading = false;
       }
     });

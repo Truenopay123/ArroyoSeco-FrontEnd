@@ -161,7 +161,7 @@
 
 .modal-content {
   background: #fff;
-  border-radius: 16px;
+  border-radius: 12px;
   width: min(92vw, 640px);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
   overflow: hidden;
@@ -236,12 +236,12 @@
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.82rem;
-  background: #ef4444;
+  background: var(--color-primary, #E31B23);
   color: #fff;
   border: none;
   cursor: pointer;
   transition: all 0.2s;
-  &:hover { background: #dc2626; }
+  &:hover { background: #c41019; }
   &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 

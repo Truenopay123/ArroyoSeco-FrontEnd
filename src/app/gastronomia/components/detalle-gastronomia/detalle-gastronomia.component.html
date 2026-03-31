@@ -1,3 +1,8 @@
+<!-- Offline banner -->
+<div class="offline-banner" *ngIf="isOffline">
+  📡 Sin conexión: mostrando datos almacenados. Las reservas se enviarán al reconectarte.
+</div>
+
 <!-- Loading -->
 <div *ngIf="loading" class="loading-state">
   <div class="loading-spinner"></div>
@@ -172,6 +177,8 @@
                 Fecha y hora
               </label>
               <input type="datetime-local" [(ngModel)]="fecha" required class="form-field__input" />
+              <small class="form-field__hint">La reserva debe ser futura (máximo 3 meses)</small>
+              <small class="form-field__error" *ngIf="erroresReserva['fecha']">{{ erroresReserva['fecha'] }}</small>
             </div>
 
             <div class="form-field">
@@ -180,6 +187,8 @@
                 Comensales
               </label>
               <input type="number" [(ngModel)]="numeroPersonas" min="1" max="20" required class="form-field__input" />
+              <small class="form-field__hint">De 1 a 20 comensales</small>
+              <small class="form-field__error" *ngIf="erroresReserva['personas']">{{ erroresReserva['personas'] }}</small>
             </div>
 
             <div class="form-field" *ngIf="establecimiento.mesas && establecimiento.mesas.length > 0">
@@ -193,6 +202,7 @@
                   Mesa {{ mesa.numero }} — {{ mesa.capacidad }} personas {{ !mesa.disponible ? '(Ocupada)' : '' }}
                 </option>
               </select>
+              <small class="form-field__error" *ngIf="erroresReserva['mesa']">{{ erroresReserva['mesa'] }}</small>
             </div>
 
             <div class="reserva-actions">

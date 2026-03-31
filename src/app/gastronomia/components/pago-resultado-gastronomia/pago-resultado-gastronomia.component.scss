@@ -8,8 +8,10 @@
 .resultado-icon.pendiente { color: #f59e0b; }
 .resultado-icon.rechazado { color: #ef4444; }
 .resultado-actions { display: flex; justify-content: center; gap: 0.6rem; margin-top: 1rem; flex-wrap: wrap; }
-.btn-primary, .btn-secondary { text-decoration: none; border-radius: 8px; padding: 0.5rem 0.8rem; border: 1px solid transparent; }
-.btn-primary { background: #1d4ed8; color: #fff; }
-.btn-secondary { background: #fff; color: #1d4ed8; border-color: #1d4ed8; }
+.btn-primary, .btn-secondary { text-decoration: none; border-radius: 10px; padding: 0.5rem 1rem; border: 1px solid transparent; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.btn-primary { background: var(--color-primary, #E31B23); color: #fff; }
+.btn-primary:hover { background: #c41019; }
+.btn-secondary { background: #fff; color: var(--color-primary, #E31B23); border-color: var(--color-primary, #E31B23); }
+.btn-secondary:hover { background: #fef2f2; }
 .detalle { margin-top: 0.5rem; }
 .label { color: #64748b; margin-right: 0.35rem; }

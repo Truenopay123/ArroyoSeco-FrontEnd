@@ -22,6 +22,7 @@ export class DetalleGastronomiaComponent implements OnInit {
   loading = false;
   error: string | null = null;
   isPublic = false;
+  isOffline = !navigator.onLine;
 
   // Galería de fotos
   gallery: string[] = [];
@@ -39,6 +40,7 @@ export class DetalleGastronomiaComponent implements OnInit {
   numeroPersonas = 2;
   mesaId: number | null = null;
   submitting = false;
+  erroresReserva: { [campo: string]: string } = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -57,6 +59,17 @@ export class DetalleGastronomiaComponent implements OnInit {
       this.loadEstablecimiento(id);
       this.loadMenus(id);
     }
+
+    window.addEventListener('online', () => {
+      this.isOffline = false;
+      if (id) {
+        this.loadEstablecimiento(id);
+        this.loadMenus(id);
+      }
+    });
+    window.addEventListener('offline', () => {
+      this.isOffline = true;
+    });
   }
 
   private loadEstablecimiento(id: number) {
@@ -73,7 +86,9 @@ export class DetalleGastronomiaComponent implements OnInit {
         this.cargarResenas(id);
       },
       error: () => {
-        this.error = 'Error al cargar el restaurante';
+        this.error = !navigator.onLine
+          ? 'Sin conexión: no se pudo cargar este restaurante desde el caché.'
+          : 'Error al cargar el restaurante';
         this.loading = false;
       }
     });
@@ -123,6 +138,58 @@ export class DetalleGastronomiaComponent implements OnInit {
 
     if (!this.fecha || !this.numeroPersonas) {
       this.toast.error('Completa todos los campos');
+      return;
+    }
+
+    this.erroresReserva = {};
+    let valido = true;
+
+    // Validar fecha
+    const fechaReserva = new Date(this.fecha);
+    const ahora = new Date();
+    if (isNaN(fechaReserva.getTime())) {
+      this.erroresReserva['fecha'] = 'Selecciona una fecha y hora válida';
+      valido = false;
+    } else if (fechaReserva <= ahora) {
+      this.erroresReserva['fecha'] = 'La fecha y hora debe ser posterior a la actual';
+      valido = false;
+    } else {
+      const maxFecha = new Date();
+      maxFecha.setMonth(maxFecha.getMonth() + 3);
+      if (fechaReserva > maxFecha) {
+        this.erroresReserva['fecha'] = 'Solo puedes reservar con hasta 3 meses de anticipación';
+        valido = false;
+      }
+    }
+
+    // Validar número de personas
+    if (!this.numeroPersonas || this.numeroPersonas < 1) {
+      this.erroresReserva['personas'] = 'Debe haber al menos 1 comensal';
+      valido = false;
+    } else if (!Number.isInteger(this.numeroPersonas)) {
+      this.erroresReserva['personas'] = 'El número de comensales debe ser entero';
+      valido = false;
+    } else if (this.numeroPersonas > 20) {
+      this.erroresReserva['personas'] = 'El máximo de comensales por reserva es 20';
+      valido = false;
+    }
+
+    // Validar mesa seleccionada si aplica
+    if (this.mesaId && this.establecimiento?.mesas) {
+      const mesa = this.establecimiento.mesas.find(m => m.id === this.mesaId);
+      if (mesa && !mesa.disponible) {
+        this.erroresReserva['mesa'] = 'La mesa seleccionada no está disponible';
+        valido = false;
+      }
+      if (mesa && this.numeroPersonas > mesa.capacidad) {
+        this.erroresReserva['mesa'] = `La mesa seleccionada tiene capacidad para ${mesa.capacidad} personas`;
+        valido = false;
+      }
+    }
+
+    if (!valido) {
+      const primerError = Object.values(this.erroresReserva)[0];
+      this.toast.error(primerError);
       return;
     }
 

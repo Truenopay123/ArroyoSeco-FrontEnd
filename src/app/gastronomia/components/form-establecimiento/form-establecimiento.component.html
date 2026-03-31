@@ -3,14 +3,19 @@
 
   <form (ngSubmit)="submit()">
     <div class="form-group">
-      <label for="nombre">Nombre *</label>
+      <label for="nombre">Nombre del establecimiento *</label>
       <input
         type="text"
         id="nombre"
         [(ngModel)]="establecimiento.nombre"
         name="nombre"
         required
-        placeholder="Ej: La Trattoria" />
+        minlength="3"
+        maxlength="100"
+        placeholder="Ej: La Trattoria, Tacos Don José"
+        (blur)="validarCampo('nombre')" />
+      <small>Nombre descriptivo de 3 a 100 caracteres (letras, números y espacios)</small>
+      <small class="field-error" *ngIf="errores['nombre']">{{ errores['nombre'] }}</small>
     </div>
 
     <div class="form-group">
@@ -21,7 +26,12 @@
         [(ngModel)]="establecimiento.ubicacion"
         name="ubicacion"
         required
-        placeholder="Ej: Centro Histórico" />
+        minlength="5"
+        maxlength="200"
+        placeholder="Ej: Centro de Arroyo Seco, Querétaro"
+        (blur)="validarCampo('ubicacion'); geocodificarUbicacion()" />
+      <small>Dirección o referencia clara (mínimo 5 caracteres). Al salir del campo, se buscará automáticamente en el mapa.</small>
+      <small class="field-error" *ngIf="errores['ubicacion']">{{ errores['ubicacion'] }}</small>
     </div>
 
     <div class="form-group" style="grid-column: span 2;">
@@ -29,6 +39,7 @@
       <app-map-picker
         [latitud]="establecimiento.latitud ?? null"
         [longitud]="establecimiento.longitud ?? null"
+        [searchAddress]="addressToGeocode"
         (locationSelected)="onLocationSelected($event)">
       </app-map-picker>
     </div>
@@ -40,7 +51,11 @@
         [(ngModel)]="establecimiento.descripcion"
         name="descripcion"
         rows="4"
-        placeholder="Describe tu restaurante..."></textarea>
+        maxlength="500"
+        placeholder="Describe tu restaurante: tipo de comida, ambiente, especialidades..."
+        (blur)="validarCampo('descripcion')"></textarea>
+      <small>Opcional. De 10 a 500 caracteres si se proporciona.</small>
+      <small class="field-error" *ngIf="errores['descripcion']">{{ errores['descripcion'] }}</small>
     </div>
 
     <div class="form-group">
@@ -52,12 +67,12 @@
           <button type="button" class="foto-remove" (click)="eliminarFoto(i)">✕</button>
         </div>
         <label class="foto-add" [class.disabled]="subiendoFoto">
-          <input type="file" accept="image/*" (change)="onFotoSeleccionada($event)" hidden [disabled]="subiendoFoto" />
+          <input type="file" accept=".jpg,.jpeg,.png,.webp,.gif,.bmp" (change)="onFotoSeleccionada($event)" hidden [disabled]="subiendoFoto" />
           <span *ngIf="!subiendoFoto">+ Agregar foto</span>
           <span *ngIf="subiendoFoto">Subiendo...</span>
         </label>
       </div>
-      <small>La primera foto será la imagen principal. Recomendado: al menos 3 fotos.</small>
+      <small>Formatos aceptados: JPG, PNG, WEBP, GIF, BMP. Tamaño máximo: 10 MB. La primera foto será la imagen principal.</small>
     </div>
 
     <div class="form-actions">

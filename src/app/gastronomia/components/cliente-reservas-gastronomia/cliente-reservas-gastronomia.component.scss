@@ -115,10 +115,10 @@
   background: #fee2e2;
   color: #dc2626;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
 
   &:hover {
     background: #fecaca;
@@ -127,16 +127,16 @@
 
 .btn-pagar {
   padding: 0.5rem 1rem;
-  background: #1d4ed8;
+  background: var(--color-primary, #E31B23);
   color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
 
   &:hover {
-    background: #1e40af;
+    background: var(--color-primary-dark, #c41019);
   }
 }
 
@@ -145,10 +145,10 @@
   background: #fef3c7;
   color: #92400e;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
 
   &:hover {
     background: #fde68a;
@@ -173,10 +173,11 @@
 
 .modal-content {
   background: #fff;
-  border-radius: 16px;
-  width: min(92vw, 560px);
+  border-radius: 12px;
+  width: min(92vw, 640px);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
   overflow: hidden;
+  z-index: 41;
 
   h3 {
     margin: 0;

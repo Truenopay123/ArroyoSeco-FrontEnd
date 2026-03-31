@@ -1,3 +1,7 @@
+<div class="offline-banner" *ngIf="isOffline">
+  📡 Sin conexión: mostrando datos almacenados. Las acciones se sincronizarán al reconectarte.
+</div>
+
 <div class="header">
   <h2>Mis Restaurantes</h2>
   <a routerLink="/oferente/gastronomia/establecimientos/agregar" class="btn-agregar">
