@@ -58,7 +58,7 @@
     <h2>Tus Restaurantes</h2>
     <div class="grid">
       <div class="establecimiento-card" *ngFor="let est of establecimientos">
-        <img [src]="est.fotoPrincipal || 'assets/images/hero-oferentes.svg'" [alt]="est.nombre" />
+        <img [src]="est.fotoPrincipal || (est.fotosUrls && est.fotosUrls.length > 0 ? est.fotosUrls[0] : 'assets/images/PuenteRio.jpeg')" [alt]="est.nombre" />
         <div class="info">
           <h3>{{ est.nombre }}</h3>
           <p>📍 {{ est.ubicacion }}</p>

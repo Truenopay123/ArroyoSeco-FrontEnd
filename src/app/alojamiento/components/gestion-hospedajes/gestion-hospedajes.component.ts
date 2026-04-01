@@ -103,7 +103,7 @@ export class GestionHospedajesComponent implements OnInit {
           banos: d.banos,
           precio: d.precioPorNoche,
           estado: 'Confirmado', // Suponemos estado generico, backend no provee
-          imagen: d.fotoPrincipal || 'assets/images/hero-oferentes.svg'
+          imagen: d.fotoPrincipal || (d.fotosUrls && d.fotosUrls.length > 0 ? d.fotosUrls[0] : '') || 'assets/images/PuenteRio.jpeg'
         }));
         this.loading = false;
       },

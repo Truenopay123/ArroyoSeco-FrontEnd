@@ -12,7 +12,7 @@
   </div>
 
   <div class="info-card">
-    <img [src]="establecimiento.fotoPrincipal || 'assets/images/hero-oferentes.svg'" [alt]="establecimiento.nombre" class="foto" />
+    <img [src]="establecimiento.fotoPrincipal || (establecimiento.fotosUrls && establecimiento.fotosUrls.length > 0 ? establecimiento.fotosUrls[0] : 'assets/images/PuenteRio.jpeg')" [alt]="establecimiento.nombre" class="foto" />
     <div class="detalles">
       <p><strong>📍 Ubicación:</strong> {{ establecimiento.ubicacion }}</p>
       <p><strong>📝 Descripción:</strong> {{ establecimiento.descripcion || 'Sin descripción' }}</p>

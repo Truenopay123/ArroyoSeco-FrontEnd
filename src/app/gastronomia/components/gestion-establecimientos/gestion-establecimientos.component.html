@@ -20,7 +20,7 @@
 
 <div class="grid" *ngIf="!loading && establecimientos.length > 0">
   <div class="card" *ngFor="let est of establecimientos">
-    <img [src]="est.fotoPrincipal || 'assets/images/hero-oferentes.svg'" [alt]="est.nombre" class="foto" />
+    <img [src]="est.fotoPrincipal || (est.fotosUrls && est.fotosUrls.length > 0 ? est.fotosUrls[0] : 'assets/images/PuenteRio.jpeg')" [alt]="est.nombre" class="foto" />
     <div class="info">
       <h3>{{ est.nombre }}</h3>
       <p class="ubicacion">📍 {{ est.ubicacion }}</p>

@@ -20,7 +20,7 @@
 
   <!-- Hero Section (single photo) -->
   <div class="hero" *ngIf="gallery.length <= 1">
-    <img [src]="establecimiento.fotoPrincipal || 'assets/images/hero-oferentes.svg'" [alt]="establecimiento.nombre" class="hero__image" />
+    <img [src]="establecimiento.fotoPrincipal || (establecimiento.fotosUrls && establecimiento.fotosUrls.length > 0 ? establecimiento.fotosUrls[0] : 'assets/images/PuenteRio.jpeg')" [alt]="establecimiento.nombre" class="hero__image" />
     <div class="hero__overlay"></div>
     <a routerLink="/cliente/gastronomia" class="hero__back">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
