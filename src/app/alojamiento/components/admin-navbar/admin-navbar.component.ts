@@ -37,7 +37,8 @@ export class AdminNavbarComponent implements OnInit {
     { label: 'Solicitudes', route: '/admin/gastronomia/solicitudes' },
     { label: 'Reseñas', route: '/admin/gastronomia/resenas' },
     { label: 'Reservas', route: '/admin/gastronomia/reservas' },
-    { label: 'Notificaciones', route: '/admin/gastronomia/notificaciones' }
+    { label: 'Notificaciones', route: '/admin/gastronomia/notificaciones' },
+    { label: 'Configuración', route: '/admin/gastronomia/configuracion' }
   ];
 
   constructor(private router: Router, private auth: AuthService) {}
