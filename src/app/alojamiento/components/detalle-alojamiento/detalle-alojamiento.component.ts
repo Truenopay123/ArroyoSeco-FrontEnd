@@ -5,10 +5,10 @@ import { ToastService } from '../../../shared/services/toast.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AlojamientoService, AlojamientoDto } from '../../services/alojamiento.service';
 import { ReservasService } from '../../services/reservas.service';
-import { PagoService } from '../../services/pago.service';
+import { PagoService, DatosBancariosResponse } from '../../services/pago.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { CheckoutCurrencyConversionComponent } from '../checkout-currency-conversion/checkout-currency-conversion.component';
-import { first, switchMap } from 'rxjs/operators';
+import { first } from 'rxjs/operators';
 import { MatDatepickerModule, MatDateRangePicker } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -62,6 +62,13 @@ export class DetalleAlojamientoComponent implements OnInit {
   creando = false;
   isPublic = false;
   aceptaCondiciones = false;
+
+  // Bank transfer
+  datosBancarios: DatosBancariosResponse | null = null;
+  archivoComprobante: File | null = null;
+  reservaCreada: number | null = null;
+  pasoModal: 'datos' | 'comprobante' | 'exito' = 'datos';
+  enviandoComprobante = false;
 
   // Lightbox
   lightboxOpen = false;
@@ -336,31 +343,56 @@ export class DetalleAlojamientoComponent implements OnInit {
       aceptaPoliticaDatos: true
     };
 
-    this.reservasService.crear(payload).pipe(
-      switchMap((r: any) => {
+    this.reservasService.crear(payload).pipe(first()).subscribe({
+      next: (r: any) => {
         const reservaId = Number(r.id || r.Id || 0);
         if (!reservaId) {
-          throw new Error('No se pudo crear la reserva.');
-        }
-        return this.pagoService.crearPreferencia(reservaId);
-      }),
-      first()
-    ).subscribe({
-      next: (pref: any) => {
-        const initPoint = pref?.initPoint || pref?.sandboxInitPoint;
-        if (!initPoint) {
-          this.toast.error('No se pudo obtener el enlace de pago.');
+          this.toast.error('No se pudo crear la reserva.');
           this.creando = false;
           return;
         }
-        window.location.href = initPoint;
-        this.creando = false;
+        this.reservaCreada = reservaId;
+        this.pagoService.getDatosBancarios(reservaId).pipe(first()).subscribe({
+          next: (datos) => {
+            this.datosBancarios = datos;
+            this.pasoModal = 'datos';
+            this.creando = false;
+          },
+          error: () => {
+            this.toast.error('No se pudieron obtener los datos bancarios del oferente.');
+            this.creando = false;
+          }
+        });
       },
       error: (err) => {
         console.error('Error al crear reserva:', err);
         const msg = typeof err?.error === 'string' ? err.error : (err?.error?.message || err?.message || 'Error desconocido');
-        this.toast.error(`No se pudo iniciar el pago: ${msg}`);
+        this.toast.error(`No se pudo crear la reserva: ${msg}`);
         this.creando = false;
+      }
+    });
+  }
+
+  onArchivoSeleccionado(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.archivoComprobante = input.files?.[0] || null;
+  }
+
+  enviarComprobante() {
+    if (!this.reservaCreada || !this.archivoComprobante) {
+      this.toast.error('Selecciona un comprobante de transferencia');
+      return;
+    }
+    this.enviandoComprobante = true;
+    this.pagoService.enviarComprobante(this.reservaCreada, this.grandTotal, this.archivoComprobante).pipe(first()).subscribe({
+      next: () => {
+        this.pasoModal = 'exito';
+        this.enviandoComprobante = false;
+      },
+      error: (err) => {
+        const msg = err?.error?.message || err?.error || 'No se pudo enviar el comprobante';
+        this.toast.error(msg);
+        this.enviandoComprobante = false;
       }
     });
   }

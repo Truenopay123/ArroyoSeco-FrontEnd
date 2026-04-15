@@ -61,6 +61,7 @@
           </div>
         </div>
         <div class="card-actions">
+          <button class="btn-pagar" (click)="abrirPago(r)">💳 Subir comprobante de pago</button>
           <span class="status-note">Solicitud no vista por el oferente todavía.</span>
         </div>
       </div>
@@ -198,6 +199,50 @@
       <button class="btn-secondary" (click)="closeCancelModal()">No, mantener</button>
       <button class="btn-danger" (click)="cancelReserva()">Sí, cancelar</button>
     </div>
+  </div>
+</div>
+
+<!-- Modal de pago por transferencia -->
+<div class="modal-overlay" *ngIf="showPagoModal" (click)="cerrarPago()">
+  <div class="modal modal--pago" (click)="$event.stopPropagation()">
+    <h3>Pago por Transferencia Bancaria</h3>
+
+    <ng-container *ngIf="cargandoDatos">
+      <p>Cargando datos bancarios...</p>
+    </ng-container>
+
+    <ng-container *ngIf="!cargandoDatos && datosBancarios && pasoModal === 'datos'">
+      <p>Realiza una transferencia con los siguientes datos:</p>
+      <ul class="bank-info">
+        <li><strong>Banco:</strong> {{ datosBancarios.banco }}</li>
+        <li><strong>Titular:</strong> {{ datosBancarios.titularCuenta }}</li>
+        <li><strong>Número de cuenta:</strong> {{ datosBancarios.numeroCuenta }}</li>
+        <li><strong>CLABE:</strong> {{ datosBancarios.clabe }}</li>
+        <li><strong>Monto:</strong> ${{ pagoTotal }} MXN</li>
+      </ul>
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="cerrarPago()">Cerrar</button>
+        <button class="btn-primary" (click)="pasoModal = 'comprobante'">Ya hice la transferencia</button>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="!cargandoDatos && datosBancarios && pasoModal === 'comprobante'">
+      <p>Sube tu comprobante de transferencia (imagen o PDF):</p>
+      <input type="file" accept="image/*,.pdf" (change)="onArchivoComprobante($event)" />
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="pasoModal = 'datos'">Volver</button>
+        <button class="btn-primary" (click)="enviarComprobante()" [disabled]="enviandoComprobante || !archivoComprobante">
+          {{ enviandoComprobante ? 'Enviando...' : 'Enviar comprobante' }}
+        </button>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="pasoModal === 'exito'">
+      <p class="success-msg">✓ Comprobante enviado correctamente. El oferente revisará tu pago.</p>
+      <div class="modal-actions">
+        <button class="btn-primary" (click)="cerrarPago()">Cerrar</button>
+      </div>
+    </ng-container>
   </div>
 </div>
 

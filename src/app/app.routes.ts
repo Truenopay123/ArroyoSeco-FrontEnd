@@ -41,7 +41,7 @@ import { OferenteReservasGastronomiaComponent } from './gastronomia/components/o
 import { AdminDashboardGastronomiaComponent } from './alojamiento/components/admin-dashboard-gastronomia/admin-dashboard-gastronomia.component';
 import { AdminOferentesGastronomiaComponent } from './alojamiento/components/admin-oferentes-gastronomia/admin-oferentes-gastronomia.component';
 import { AdminSolicitudesComponent } from './alojamiento/components/admin-solicitudes/admin-solicitudes.component';
-import { CheckoutComponent } from './alojamiento/components/checkout/checkout.component';
+// CheckoutComponent removed — replaced by bank transfer flow
 import { CambiarPasswordForzadoComponent } from './shared/components/cambiar-password-forzado/cambiar-password-forzado.component';
 import { ConfirmEmailComponent } from './shared/components/confirm-email/confirm-email.component';
 import { ForgotPasswordComponent } from './shared/components/forgot-password/forgot-password.component';
@@ -51,7 +51,7 @@ import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 import { ForbiddenComponent } from './shared/components/forbidden/forbidden.component';
 import { TotpSetupComponent } from './alojamiento/components/totp-setup/totp-setup.component';
-import { PagoResultadoComponent } from './alojamiento/components/pago-resultado/pago-resultado.component';
+// PagoResultadoComponent removed — replaced by bank transfer flow
 import { AdminResenasComponent } from './alojamiento/components/admin-resenas/admin-resenas.component';
 import { AdminEstadisticasComponent } from './alojamiento/components/admin-estadisticas/admin-estadisticas.component';
 import { OferenteResenasComponent } from './alojamiento/components/oferente-resenas/oferente-resenas.component';
@@ -59,8 +59,8 @@ import { FaceLoginComponent } from './alojamiento/components/face-login/face-log
 import { FaceEnrollComponent } from './alojamiento/components/face-enroll/face-enroll.component';
 import { ContactoComponent } from './shared/components/contacto/contacto.component';
 // Gastronomía: nuevos componentes
-import { CheckoutGastronomiaComponent } from './gastronomia/components/checkout-gastronomia/checkout-gastronomia.component';
-import { PagoResultadoGastronomiaComponent } from './gastronomia/components/pago-resultado-gastronomia/pago-resultado-gastronomia.component';
+// CheckoutGastronomiaComponent removed — replaced by bank transfer flow
+// PagoResultadoGastronomiaComponent removed — replaced by bank transfer flow
 import { OferenteResenasGastronomiaComponent } from './gastronomia/components/oferente-resenas-gastronomia/oferente-resenas-gastronomia.component';
 import { AdminResenasGastronomiaComponent } from './gastronomia/components/admin-resenas-gastronomia/admin-resenas-gastronomia.component';
 import { AdminConfiguracionComponent } from './alojamiento/components/admin-configuracion/admin-configuracion.component';
@@ -400,15 +400,7 @@ export const routes: Routes = [
               heroImage: 'assets/images/PuenteRio.jpeg'
             }
           },
-          {
-            path: 'checkout',
-            component: CheckoutComponent,
-            data: {
-              heroTitle: 'Completar Reserva',
-              heroSubtitle: 'Revisa y confirma tu reserva.',
-              heroImage: 'assets/images/PuenteRio2.jpeg'
-            }
-          },
+
           {
             path: 'reservas',
             component: ClienteReservasComponent,
@@ -454,15 +446,7 @@ export const routes: Routes = [
               heroImage: 'assets/images/RioAyutla.jpeg'
             }
           },
-          {
-            path: 'pagos/resultado',
-            component: PagoResultadoComponent,
-            data: {
-              heroTitle: 'Resultado del Pago',
-              heroSubtitle: 'Estado de tu pago con Mercado Pago.',
-              heroImage: 'assets/images/RioAyutla2.jpeg'
-            }
-          },
+
           { path: '', redirectTo: 'alojamientos', pathMatch: 'full' }
         ]
       },
@@ -509,24 +493,7 @@ export const routes: Routes = [
               heroImage: 'assets/images/RioAyutla5.jpeg'
             }
           },
-          {
-            path: 'checkout',
-            component: CheckoutGastronomiaComponent,
-            data: {
-              heroTitle: 'Completar Pago',
-              heroSubtitle: 'Confirma tu reserva de restaurante.',
-              heroImage: 'assets/images/RioAyutla7.jpeg'
-            }
-          },
-          {
-            path: 'pagos/resultado',
-            component: PagoResultadoGastronomiaComponent,
-            data: {
-              heroTitle: 'Resultado del Pago',
-              heroSubtitle: 'Estado de tu pago con Mercado Pago.',
-              heroImage: 'assets/images/RioAyutla2.jpeg'
-            }
-          },
+
           {
             path: ':id',
             component: DetalleGastronomiaComponent,

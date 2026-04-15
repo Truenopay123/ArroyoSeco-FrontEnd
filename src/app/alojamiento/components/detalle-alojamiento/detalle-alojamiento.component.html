@@ -216,35 +216,74 @@
   </div>
 </section>
 
-<!-- Modal Pago -->
+<!-- Modal Pago por Transferencia -->
 <div class="modal-backdrop" *ngIf="showPagoModal" (click)="cerrarModalPago()"></div>
 <div class="modal" *ngIf="showPagoModal" (click)="$event.stopPropagation()">
   <div class="modal__header">
-    <h3>Pagar con Mercado Pago</h3>
+    <h3>Pago por Transferencia Bancaria</h3>
     <button class="close" (click)="cerrarModalPago()">×</button>
   </div>
   <div class="modal__body">
-    <p>Te redirigiremos al checkout seguro de Mercado Pago para completar tu reserva.</p>
-    <div class="condiciones-modal" *ngIf="condicionesUso.length > 0">
-      <h4>Condiciones de uso del alojamiento</h4>
-      <ul>
-        <li *ngFor="let c of condicionesUso">{{ c }}</li>
+    <!-- Paso 1: Condiciones + confirmación -->
+    <ng-container *ngIf="!datosBancarios">
+      <div class="condiciones-modal" *ngIf="condicionesUso.length > 0">
+        <h4>Condiciones de uso del alojamiento</h4>
+        <ul>
+          <li *ngFor="let c of condicionesUso">{{ c }}</li>
+        </ul>
+        <label class="aceptar-condiciones">
+          <input type="checkbox" [(ngModel)]="aceptaCondiciones" />
+          Acepto las condiciones de uso para continuar.
+        </label>
+      </div>
+      <ul class="bank-data">
+        <li><strong>Alojamiento:</strong> {{ alojamiento?.nombre }}</li>
+        <li><strong>Total:</strong> {{ grandTotal | currency:'MXN':'symbol':'1.0-0' }}</li>
       </ul>
-      <label class="aceptar-condiciones">
-        <input type="checkbox" [(ngModel)]="aceptaCondiciones" />
-        Acepto las condiciones de uso para continuar con el pago.
-      </label>
-    </div>
-    <ul class="bank-data">
-      <li><strong>Alojamiento:</strong> {{ alojamiento?.nombre }}</li>
-      <li><strong>Total:</strong> {{ grandTotal | currency:'MXN':'symbol':'1.0-0' }}</li>
-      <li><strong>Métodos:</strong> Tarjeta de crédito, débito o saldo en cuenta</li>
-    </ul>
+    </ng-container>
+
+    <!-- Paso 2: Datos bancarios -->
+    <ng-container *ngIf="datosBancarios && pasoModal === 'datos'">
+      <p>Realiza una transferencia bancaria con los siguientes datos y luego sube tu comprobante:</p>
+      <ul class="bank-data">
+        <li><strong>Banco:</strong> {{ datosBancarios.banco }}</li>
+        <li><strong>Titular:</strong> {{ datosBancarios.titularCuenta }}</li>
+        <li><strong>Número de cuenta:</strong> {{ datosBancarios.numeroCuenta }}</li>
+        <li><strong>CLABE:</strong> {{ datosBancarios.clabe }}</li>
+        <li><strong>Monto a transferir:</strong> {{ grandTotal | currency:'MXN':'symbol':'1.0-0' }}</li>
+      </ul>
+    </ng-container>
+
+    <!-- Paso 3: Subir comprobante -->
+    <ng-container *ngIf="datosBancarios && pasoModal === 'comprobante'">
+      <p>Sube tu comprobante de transferencia (imagen o PDF):</p>
+      <input type="file" accept="image/*,.pdf" (change)="onArchivoSeleccionado($event)" />
+    </ng-container>
+
+    <!-- Paso 4: Éxito -->
+    <ng-container *ngIf="pasoModal === 'exito'">
+      <p class="success-msg">✓ Comprobante enviado correctamente. El oferente revisará tu pago y confirmará tu reserva.</p>
+    </ng-container>
   </div>
   <div class="modal__footer">
-    <button class="btn" (click)="cerrarModalPago()" [disabled]="creando">Cancelar</button>
-    <button class="btn primary" (click)="confirmarReservaYPagar()" [disabled]="creando">
-      {{ creando ? 'Redirigiendo...' : 'Continuar a Mercado Pago' }}
-    </button>
+    <ng-container *ngIf="!datosBancarios">
+      <button class="btn" (click)="cerrarModalPago()" [disabled]="creando">Cancelar</button>
+      <button class="btn primary" (click)="confirmarReservaYPagar()" [disabled]="creando || (condicionesUso.length > 0 && !aceptaCondiciones)">
+        {{ creando ? 'Creando reserva...' : 'Crear reserva y ver datos bancarios' }}
+      </button>
+    </ng-container>
+    <ng-container *ngIf="datosBancarios && pasoModal === 'datos'">
+      <button class="btn" (click)="cerrarModalPago()">Cerrar</button>
+      <button class="btn primary" (click)="pasoModal = 'comprobante'">Ya hice la transferencia</button>
+    </ng-container>
+    <ng-container *ngIf="datosBancarios && pasoModal === 'comprobante'">
+      <button class="btn" (click)="pasoModal = 'datos'">Volver</button>
+      <button class="btn primary" (click)="enviarComprobante()" [disabled]="enviandoComprobante || !archivoComprobante">
+        {{ enviandoComprobante ? 'Enviando...' : 'Enviar comprobante' }}
+      </button>
+    </ng-container>
+    <ng-container *ngIf="pasoModal === 'exito'">
+      <button class="btn primary" (click)="cerrarModalPago()">Cerrar</button>
+    </ng-container>
   </div>
 </div>

@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ReservasGastronomiaService, ReservaGastronomiaDto } from '../../services/reservas-gastronomia.service';
 import { ResenasGastronomiaService } from '../../services/resenas-gastronomia.service';
+import { PagosGastronomiaService, DatosBancariosGastronomiaResponse } from '../../services/pagos-gastronomia.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -35,6 +36,17 @@ export class ClienteReservasGastronomiaComponent implements OnInit {
   resenaComentario = '';
   enviandoResena = false;
 
+  // Transfer payment modal
+  showPagoModal = false;
+  pagoReservaId: number | null = null;
+  pagoTotal = 0;
+  datosBancarios: DatosBancariosGastronomiaResponse | null = null;
+  archivoComprobante: File | null = null;
+  pasoModal: 'datos' | 'comprobante' | 'exito' = 'datos';
+  enviandoComprobante = false;
+  cargandoDatos = false;
+
+  private readonly pagosService = inject(PagosGastronomiaService);
   private readonly offlineQueue = inject(OfflineQueueService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -144,13 +156,52 @@ export class ClienteReservasGastronomiaComponent implements OnInit {
   }
 
   irAPagar(reserva: ReservaGastronomiaDto) {
-    this.router.navigate(['/cliente/gastronomia/checkout'], {
-      queryParams: {
-        reservaId: reserva.id,
-        restaurantName: reserva.establecimientoNombre,
-        personas: reserva.numeroPersonas,
-        fecha: reserva.fecha,
-        total: reserva.total
+    this.pagoReservaId = reserva.id!;
+    this.pagoTotal = reserva.total || 0;
+    this.datosBancarios = null;
+    this.archivoComprobante = null;
+    this.pasoModal = 'datos';
+    this.showPagoModal = true;
+    this.cargandoDatos = true;
+    this.pagosService.getDatosBancarios(reserva.id!).pipe(first()).subscribe({
+      next: (datos) => {
+        this.datosBancarios = datos;
+        this.cargandoDatos = false;
+      },
+      error: () => {
+        this.toast.error('No se pudieron obtener los datos bancarios');
+        this.cargandoDatos = false;
+      }
+    });
+  }
+
+  cerrarPago() {
+    this.showPagoModal = false;
+    this.pagoReservaId = null;
+    this.datosBancarios = null;
+    this.archivoComprobante = null;
+  }
+
+  onArchivoComprobante(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.archivoComprobante = input.files?.[0] || null;
+  }
+
+  enviarComprobante() {
+    if (!this.pagoReservaId || !this.archivoComprobante) {
+      this.toast.error('Selecciona un comprobante');
+      return;
+    }
+    this.enviandoComprobante = true;
+    this.pagosService.enviarComprobante(this.pagoReservaId, this.pagoTotal, this.archivoComprobante).pipe(first()).subscribe({
+      next: () => {
+        this.pasoModal = 'exito';
+        this.enviandoComprobante = false;
+      },
+      error: (err: any) => {
+        const msg = err?.error?.message || err?.error || 'No se pudo enviar el comprobante';
+        this.toast.error(msg);
+        this.enviandoComprobante = false;
       }
     });
   }

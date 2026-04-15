@@ -7,6 +7,7 @@ import { forkJoin, of, first, switchMap, map, catchError } from 'rxjs';
 import { ToastService } from '../../../shared/services/toast.service';
 import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
 import { ReservasService, ReservaDto } from '../../services/reservas.service';
+import { PagoService } from '../../services/pago.service';
 import { AlojamientoService } from '../../services/alojamiento.service';
 import { UserService } from '../../../core/services/user.service';
 import { ApiService } from '../../../core/services/api.service';
@@ -37,6 +38,7 @@ export class GestionReservasComponent implements OnInit {
   private readonly toastService = inject(ToastService);
   private readonly modalService = inject(ConfirmModalService);
   private readonly reservasService = inject(ReservasService);
+  private readonly pagoService = inject(PagoService);
   private readonly alojamientosService = inject(AlojamientoService);
   private readonly userService = inject(UserService);
   private readonly api = inject(ApiService);
@@ -346,6 +348,28 @@ export class GestionReservasComponent implements OnInit {
   }
 
   confirmar(reserva: ReservaUI) {
+    if (reserva.estado === 'PagoEnRevision') {
+      // Confirm the payment via pagos endpoint
+      this.pagoService.getPagosReserva(reserva.id).pipe(first()).subscribe({
+        next: (pagos: any[]) => {
+          const pago = pagos.find((p: any) => (p.estado || '').toLowerCase().includes('pendiente'));
+          if (!pago) {
+            this.toastService.error('No se encontró pago pendiente de confirmar');
+            return;
+          }
+          this.pagoService.confirmarPago(pago.id).pipe(first()).subscribe({
+            next: () => {
+              this.toastService.success(`Pago de reserva ${reserva.folio || reserva.id} confirmado`);
+              this.actualizarEstadoLocal(reserva.id, 'Confirmada');
+              this.cerrarDetalle();
+            },
+            error: () => this.toastService.error('No se pudo confirmar el pago')
+          });
+        },
+        error: () => this.toastService.error('No se pudieron obtener los pagos de la reserva')
+      });
+      return;
+    }
     this.reservasService.aceptar(reserva.id).pipe(first()).subscribe({
       next: () => {
         this.toastService.success(`Reserva ${reserva.folio || reserva.id} confirmada exitosamente`);
@@ -366,9 +390,30 @@ export class GestionReservasComponent implements OnInit {
       isDangerous: true
     }).then(result => {
       if (result) {
+        if (reserva.estado === 'PagoEnRevision') {
+          // Reject the payment via pagos endpoint
+          this.pagoService.getPagosReserva(reserva.id).pipe(first()).subscribe({
+            next: (pagos: any[]) => {
+              const pago = pagos.find((p: any) => (p.estado || '').toLowerCase().includes('pendiente'));
+              if (!pago) {
+                this.toastService.error('No se encontró pago pendiente');
+                return;
+              }
+              this.pagoService.rechazarPago(pago.id).pipe(first()).subscribe({
+                next: () => {
+                  this.toastService.info(`Pago de reserva ${reserva.folio || reserva.id} rechazado.`);
+                  this.actualizarEstadoLocal(reserva.id, 'Pendiente');
+                  this.cerrarDetalle();
+                },
+                error: () => this.toastService.error('No se pudo rechazar el pago')
+              });
+            },
+            error: () => this.toastService.error('No se pudieron obtener los pagos de la reserva')
+          });
+          return;
+        }
         this.reservasService.rechazar(reserva.id).pipe(first()).subscribe({
           next: () => {
-            // Estado local: puede ser Rechazada o Cancelada según fallback
             const nuevoEstado = this.reservas.find(r => r.id === reserva.id)?.estado === 'Cancelada' ? 'Cancelada' : 'Rechazada';
             this.toastService.info(`Reserva ${reserva.folio || reserva.id} ${nuevoEstado.toLowerCase()}.`);
             this.modalService.confirm({ title: `Reserva ${nuevoEstado}`, message: `Se marcó la reserva ${reserva.folio || reserva.id} como ${nuevoEstado}.`, confirmText: 'Aceptar' });
