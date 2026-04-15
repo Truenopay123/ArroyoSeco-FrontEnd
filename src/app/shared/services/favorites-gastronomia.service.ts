@@ -1,28 +1,26 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-export interface FavoriteAlojamiento {
+export interface FavoriteEstablecimiento {
   id: number;
   nombre: string;
   ubicacion: string;
-  precioNoche: number;
-  rating: number;
+  descripcion: string;
   imagen: string;
 }
 
-const STORAGE_KEY = 'cliente_favoritos_v1';
+const STORAGE_KEY = 'cliente_favoritos_gastro_v1';
 
 @Injectable({ providedIn: 'root' })
-export class FavoritesService {
-  private favoritesSubject = new BehaviorSubject<FavoriteAlojamiento[]>(this.loadInitial());
+export class FavoritesGastronomiaService {
+  private favoritesSubject = new BehaviorSubject<FavoriteEstablecimiento[]>(this.loadInitial());
   favorites$ = this.favoritesSubject.asObservable();
-  count$ = this.favoritesSubject.asObservable();
 
-  private loadInitial(): FavoriteAlojamiento[] {
+  private loadInitial(): FavoriteEstablecimiento[] {
     try {
       const raw = typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
       if (!raw) return [];
-      return JSON.parse(raw) as FavoriteAlojamiento[];
+      return JSON.parse(raw) as FavoriteEstablecimiento[];
     } catch {
       return [];
     }
@@ -36,7 +34,7 @@ export class FavoritesService {
     } catch {}
   }
 
-  getAll(): FavoriteAlojamiento[] {
+  getAll(): FavoriteEstablecimiento[] {
     return this.favoritesSubject.value;
   }
 
@@ -44,9 +42,9 @@ export class FavoritesService {
     return this.favoritesSubject.value.some(f => f.id === id);
   }
 
-  add(alojamiento: FavoriteAlojamiento) {
-    if (this.isFavorite(alojamiento.id)) return;
-    const updated = [...this.favoritesSubject.value, alojamiento];
+  add(establecimiento: FavoriteEstablecimiento) {
+    if (this.isFavorite(establecimiento.id)) return;
+    const updated = [...this.favoritesSubject.value, establecimiento];
     this.favoritesSubject.next(updated);
     this.persist();
   }
@@ -57,11 +55,11 @@ export class FavoritesService {
     this.persist();
   }
 
-  toggle(alojamiento: FavoriteAlojamiento) {
-    if (this.isFavorite(alojamiento.id)) {
-      this.remove(alojamiento.id);
+  toggle(establecimiento: FavoriteEstablecimiento) {
+    if (this.isFavorite(establecimiento.id)) {
+      this.remove(establecimiento.id);
     } else {
-      this.add(alojamiento);
+      this.add(establecimiento);
     }
   }
 
@@ -70,7 +68,7 @@ export class FavoritesService {
     this.persist();
   }
 
-  updateAll(items: FavoriteAlojamiento[]) {
+  updateAll(items: FavoriteEstablecimiento[]) {
     this.favoritesSubject.next([...items]);
     this.persist();
   }

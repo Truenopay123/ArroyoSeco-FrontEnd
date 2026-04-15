@@ -13,6 +13,7 @@ export class HeroLandingComponent implements OnInit, OnDestroy {
   cursorX = 0;
   cursorY = 0;
   cursorVisible = false;
+  isGastronomia = false;
 
   sectionsVisible: Record<string, boolean> = {
     hero: false,
@@ -27,29 +28,64 @@ export class HeroLandingComponent implements OnInit, OnDestroy {
   readonly featuredCabanas = [
     {
       id: 1,
-      nombre: 'Cabaña El Encino',
+      nombre: 'Cabaña Higueron',
       descripcion: 'Cabaña rústica con vista al río, rodeada de vegetación nativa.',
-      capacidad: '2–4 huéspedes',
-      precio: '$1,200 / noche',
+      capacidad: '16 huéspedes',
+      precio: '$1,600 / noche',
       imagen: 'assets/images/CabañaAyutla.png'
     },
     {
       id: 2,
-      nombre: 'Cabaña Sierra Gorda',
+      nombre: 'Cabaña Conca',
       descripcion: 'Experiencia inmersiva en la sierra con terraza panorámica.',
-      capacidad: '2–6 huéspedes',
-      precio: '$1,850 / noche',
-      imagen: 'assets/images/CabañaAyutla2.png'
+      capacidad: '2 huéspedes',
+      precio: '$600 / noche',
+      imagen: 'assets/images/CabañaAyutla4.jpeg'
     },
     {
       id: 3,
-      nombre: 'Cabaña Río Escanela',
+      nombre: 'Hotel JASAR',
       descripcion: 'A orillas del río, ideal para desconectar y disfrutar la naturaleza.',
       capacidad: '2–4 huéspedes',
-      precio: '$2,200 / noche',
-      imagen: 'assets/images/CabañaAyutla3.png'
+      precio: '$1,200 / noche',
+      imagen: 'assets/images/JASAR1.jpg'
     }
   ];
+
+  readonly featuredRestaurantes = [
+    {
+      id: 1,
+      nombre: 'Restaurante El Mirador',
+      descripcion: 'Cocina tradicional queretana con vista panorámica al valle.',
+      capacidad: 'Especialidad en carnes',
+      precio: 'Comida regional',
+      imagen: 'assets/images/RioCalidad.jpeg'
+    },
+    {
+      id: 2,
+      nombre: 'Fonda Doña María',
+      descripcion: 'Comida casera de la Sierra Gorda. Famosa por sus gorditas y tamales.',
+      capacidad: 'Cocina casera',
+      precio: 'Antojitos serranos',
+      imagen: 'assets/images/PaisajeCalidad.jpeg'
+    },
+    {
+      id: 3,
+      nombre: 'La Trucha Feliz',
+      descripcion: 'Trucha fresca del río preparada al estilo serrano, junto al agua.',
+      capacidad: 'Ambiente rústico',
+      precio: 'Mariscos y trucha',
+      imagen: 'assets/images/RioAyutla.jpeg'
+    }
+  ];
+
+  get featuredItems() {
+    return this.isGastronomia ? this.featuredRestaurantes : this.featuredCabanas;
+  }
+
+  get featuredRoute() {
+    return this.isGastronomia ? '/publica/gastronomia/' : '/publica/alojamientos/';
+  }
 
   constructor(
     private readonly router: Router,
@@ -58,6 +94,7 @@ export class HeroLandingComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.isGastronomia = this.router.url.includes('/gastronomia');
     this.setupIntersectionObserver();
   }
 

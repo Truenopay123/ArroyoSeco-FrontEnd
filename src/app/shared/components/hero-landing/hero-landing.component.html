@@ -71,18 +71,20 @@
   </div>
 </section>
 
-<!-- SECCIÓN 4 — CABAÑAS / PROPIEDADES -->
+<!-- SECCIÓN 4 — CABAÑAS / PROPIEDADES / RESTAURANTES -->
 <section class="properties-section" id="properties">
   <div class="properties-header" [class.visible]="sectionsVisible['properties']">
-    <h2 class="section-title">Propiedades selectas</h2>
+    <h2 class="section-title">{{ isGastronomia ? 'Restaurantes destacados' : 'Propiedades selectas' }}</h2>
     <div class="gold-line gold-line--center"></div>
     <p class="section-paragraph section-paragraph--center">
-      Descubre alojamientos cuidadosamente seleccionados para una estadía inolvidable.
+      {{ isGastronomia
+        ? 'Saborea la cocina tradicional de la Sierra Gorda en los mejores restaurantes de Arroyo Seco.'
+        : 'Descubre alojamientos cuidadosamente seleccionados para una estadía inolvidable.' }}
     </p>
   </div>
 
   <div class="properties-grid" [class.visible]="sectionsVisible['properties']">
-    <div class="property-card" *ngFor="let c of featuredCabanas" (click)="navigateTo('/publica/alojamientos/' + c.id)">
+    <div class="property-card" *ngFor="let c of featuredItems" (click)="navigateTo(featuredRoute + c.id)">
       <div class="property-image">
         <img [src]="c.imagen" [alt]="c.nombre" loading="lazy" />
       </div>
@@ -93,7 +95,7 @@
           <span class="property-capacity">{{ c.capacidad }}</span>
           <span class="property-price">{{ c.precio }}</span>
         </div>
-        <button class="property-btn" (click)="$event.stopPropagation(); navigateTo('/publica/alojamientos/' + c.id)">
+        <button class="property-btn" (click)="$event.stopPropagation(); navigateTo(featuredRoute + c.id)">
           Ver más
         </button>
       </div>

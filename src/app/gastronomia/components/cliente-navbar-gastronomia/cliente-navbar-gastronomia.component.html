@@ -13,6 +13,10 @@
     <div class="nav-links" [class.active]="menuOpen">
       <a routerLink="/cliente/gastronomia" routerLinkActive="active" class="nav-link" (click)="closeMenu()">Restaurantes</a>
       <a routerLink="/cliente/gastronomia/reservas" routerLinkActive="active" class="nav-link" (click)="closeMenu()">Mis Reservas</a>
+      <a routerLink="/cliente/gastronomia/favoritos" routerLinkActive="active" class="nav-link" (click)="closeMenu()">
+        Favoritos
+        <span class="badge" *ngIf="favCount() > 0">{{ favCount() }}</span>
+      </a>
       <a routerLink="/cliente/gastronomia/notificaciones" routerLinkActive="active" class="nav-link" (click)="closeMenu()">Notificaciones</a>
       <a routerLink="/cliente/gastronomia/perfil" routerLinkActive="active" class="nav-link" (click)="closeMenu()">Mi Perfil</a>
       <a routerLink="/cliente/alojamientos" class="ir-alojamientos mobile-link" (click)="closeMenu()">

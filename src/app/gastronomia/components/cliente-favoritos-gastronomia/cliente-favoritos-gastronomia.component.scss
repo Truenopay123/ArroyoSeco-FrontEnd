@@ -11,10 +11,7 @@
 .info { padding:1.1rem; display:flex; flex-direction:column; gap:.45rem; height:100%; }
 .info h3 { margin:0; font-size:1.05rem; font-weight:600; color:#1f2937; }
 .meta { color:#6b7280; margin:0; font-size:.85rem; }
-.bottom { display:flex; justify-content:space-between; align-items:center; margin-top:.25rem; padding-top:.5rem; border-top:1px solid #f3f4f6; }
-.price { color:var(--color-primary-dark, #c41019); font-weight:700; font-size:1rem; }
-.price small { color:#6b7280; font-weight:500; font-size:.75rem; }
-.rating { background:var(--color-primary-light, #fee2e2); color:var(--color-primary-dark, #c41019); border:1px solid rgba(227,27,35,0.2); padding:.2rem .55rem; border-radius:999px; font-weight:700; font-size:.75rem; }
+.description { color:#4b5563; margin:0; font-size:.85rem; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 .actions { display:flex; gap:.5rem; margin-top:auto; padding-top:.75rem; }
 .btn-primary { flex:1; text-align:center; text-decoration:none; background:var(--color-primary, #E31B23); color:#fff; border:none; border-radius:8px; font-weight:600; font-size:.9rem; padding:.6rem .9rem; cursor:pointer; transition:all .2s; }
 .btn-primary:hover { background:var(--color-primary-dark, #c41019); }

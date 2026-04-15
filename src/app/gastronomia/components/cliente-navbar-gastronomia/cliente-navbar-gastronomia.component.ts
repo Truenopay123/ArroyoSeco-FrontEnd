@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
+import { FavoritesGastronomiaService } from '../../../shared/services/favorites-gastronomia.service';
 
 @Component({
   selector: 'app-cliente-navbar-gastronomia',
@@ -12,8 +13,9 @@ import { AuthService } from '../../../core/services/auth.service';
 })
 export class ClienteNavbarGastronomiaComponent {
   menuOpen = false;
+  favCount = computed(() => this.favs.getAll().length);
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private auth: AuthService, private router: Router, private favs: FavoritesGastronomiaService) {}
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;

@@ -50,7 +50,7 @@ export class ListaAlojamientosComponent implements OnInit, OnDestroy {
     // Detectar si estamos en ruta pública
     this.isPublic = this.router.url.includes('/publica/');
     this.fetchAlojamientos();
-    
+
     // Inicializar SignalR para recibir actualizaciones de precio
     this.setupPriceUpdates();
   }
@@ -170,6 +170,11 @@ export class ListaAlojamientosComponent implements OnInit, OnDestroy {
   toggleFavorite(a: Alojamiento, ev: Event) {
     ev.preventDefault();
     ev.stopPropagation();
+    if (!this.auth.isAuthenticated()) {
+      this.toast.error('Debes iniciar sesión o crear una cuenta para guardar favoritos');
+      this.router.navigate(['/login']);
+      return;
+    }
     const wasFav = this.isFavorite(a.id);
     this.favs.toggle(a as FavoriteAlojamiento);
     this.toast.info(wasFav ? 'Eliminado de favoritos' : 'Añadido a favoritos');
@@ -181,7 +186,7 @@ export class ListaAlojamientosComponent implements OnInit, OnDestroy {
       this.router.navigate(['/login']);
       return;
     }
-    
+
     const route = this.isPublic ? '/publica/alojamientos' : '/cliente/alojamientos';
     this.router.navigate([route, id]);
   }

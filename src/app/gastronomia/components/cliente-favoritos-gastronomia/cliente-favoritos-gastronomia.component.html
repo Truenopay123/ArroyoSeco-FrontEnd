@@ -1,0 +1,27 @@
+<section class="favoritos">
+  <div class="header">
+    <h2>Mis Restaurantes Favoritos</h2>
+    <button class="btn-clear" (click)="clearAll()" [disabled]="favoritos().length === 0">Vaciar lista</button>
+  </div>
+
+  <div class="grid" *ngIf="favoritos().length > 0; else empty">
+    <div class="card" *ngFor="let e of favoritos()">
+      <div class="thumb">
+        <img [src]="e.imagen" [alt]="e.nombre" (error)="onImgError($event)" loading="lazy" />
+      </div>
+      <div class="info">
+        <h3>{{ e.nombre }}</h3>
+        <p class="meta">📍 {{ e.ubicacion }}</p>
+        <p class="description">{{ e.descripcion }}</p>
+        <div class="actions">
+          <a class="btn-primary" [routerLink]="['/cliente/gastronomia', e.id]">Ver detalle</a>
+          <button class="btn-outline" (click)="remove(e.id)">Quitar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #empty>
+    <p class="empty">Aún no tienes restaurantes favoritos. Explora <a routerLink="/cliente/gastronomia">restaurantes</a> y agrega algunos.</p>
+  </ng-template>
+</section>

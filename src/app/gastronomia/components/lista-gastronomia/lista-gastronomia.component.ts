@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../../shared/services/toast.service';
 import { GastronomiaService, EstablecimientoDto } from '../../services/gastronomia.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { FavoritesGastronomiaService, FavoriteEstablecimiento } from '../../../shared/services/favorites-gastronomia.service';
 import { first } from 'rxjs/operators';
 
 interface Establecimiento {
@@ -35,6 +36,7 @@ export class ListaGastronomiaComponent implements OnInit {
     private toast: ToastService,
     private gastronomiaService: GastronomiaService,
     private auth: AuthService,
+    private favs: FavoritesGastronomiaService,
     private router: Router
   ) {}
 
@@ -174,5 +176,22 @@ export class ListaGastronomiaComponent implements OnInit {
       img.dataset['fallback'] = '1';
       img.src = 'assets/images/PuenteRio.jpeg';
     }
+  }
+
+  isFavorite(id: number): boolean {
+    return this.favs.isFavorite(id);
+  }
+
+  toggleFavorite(e: Establecimiento, ev: Event) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    if (!this.auth.isAuthenticated()) {
+      this.toast.error('Debes iniciar sesión o crear una cuenta para guardar favoritos');
+      this.router.navigate(['/login']);
+      return;
+    }
+    const wasFav = this.isFavorite(e.id);
+    this.favs.toggle(e as FavoriteEstablecimiento);
+    this.toast.info(wasFav ? 'Eliminado de favoritos' : 'Añadido a favoritos');
   }
 }

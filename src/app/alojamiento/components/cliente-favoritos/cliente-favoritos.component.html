@@ -6,7 +6,9 @@
 
   <div class="grid" *ngIf="favoritos().length > 0; else empty">
     <div class="card" *ngFor="let a of favoritos()">
-      <div class="thumb" [style.background-image]="'url(' + a.imagen + ')'"> </div>
+      <div class="thumb">
+        <img [src]="a.imagen" [alt]="a.nombre" (error)="onImgError($event)" loading="lazy" />
+      </div>
       <div class="info">
         <h3>{{ a.nombre }}</h3>
         <p class="meta">{{ a.ubicacion }}</p>

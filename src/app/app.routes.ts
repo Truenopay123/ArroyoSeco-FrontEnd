@@ -64,6 +64,7 @@ import { ContactoComponent } from './shared/components/contacto/contacto.compone
 import { OferenteResenasGastronomiaComponent } from './gastronomia/components/oferente-resenas-gastronomia/oferente-resenas-gastronomia.component';
 import { AdminResenasGastronomiaComponent } from './gastronomia/components/admin-resenas-gastronomia/admin-resenas-gastronomia.component';
 import { AdminConfiguracionComponent } from './alojamiento/components/admin-configuracion/admin-configuracion.component';
+import { ClienteFavoritosGastronomiaComponent } from './gastronomia/components/cliente-favoritos-gastronomia/cliente-favoritos-gastronomia.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginSelectorComponent },
@@ -473,6 +474,15 @@ export const routes: Routes = [
               heroTitle: 'Mis Reservas de Restaurantes',
               heroSubtitle: 'Consulta tus mesas apartadas, próximas visitas y experiencias gastronómicas guardadas.',
               heroImage: 'assets/images/RioAyutla7.jpeg'
+            }
+          },
+          {
+            path: 'favoritos',
+            component: ClienteFavoritosGastronomiaComponent,
+            data: {
+              heroTitle: 'Mis Restaurantes Favoritos',
+              heroSubtitle: 'Los restaurantes que más te gustaron, guardados para tu próxima visita.',
+              heroImage: 'assets/images/RioAyutla3.jpeg'
             }
           },
           {

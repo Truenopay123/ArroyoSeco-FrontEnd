@@ -1,41 +1,39 @@
 import { Component, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { FavoritesService } from '../../../shared/services/favorites.service';
+import { FavoritesGastronomiaService } from '../../../shared/services/favorites-gastronomia.service';
 import { ToastService } from '../../../shared/services/toast.service';
-import { AlojamientoService } from '../../services/alojamiento.service';
+import { GastronomiaService } from '../../services/gastronomia.service';
 
 @Component({
-  selector: 'app-cliente-favoritos',
+  selector: 'app-cliente-favoritos-gastronomia',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './cliente-favoritos.component.html',
-  styleUrls: ['./cliente-favoritos.component.scss']
+  templateUrl: './cliente-favoritos-gastronomia.component.html',
+  styleUrls: ['./cliente-favoritos-gastronomia.component.scss']
 })
-export class ClienteFavoritosComponent implements OnInit {
+export class ClienteFavoritosGastronomiaComponent implements OnInit {
   favoritos = computed(() => this.favs.getAll());
 
   constructor(
-    private favs: FavoritesService,
+    private favs: FavoritesGastronomiaService,
     private toast: ToastService,
-    private alojamientoService: AlojamientoService
+    private gastronomiaService: GastronomiaService
   ) {}
 
   ngOnInit(): void {
     this.refreshImages();
   }
 
-  /** Refresca las imágenes de favoritos desde la API para evitar URLs obsoletas */
   private refreshImages(): void {
     const favs = this.favs.getAll();
     if (favs.length === 0) return;
 
-    const ids = new Set(favs.map(f => f.id));
-    this.alojamientoService.listAll().subscribe({
-      next: alojamientos => {
+    this.gastronomiaService.listAll().subscribe({
+      next: establecimientos => {
         let updated = false;
         for (const fav of favs) {
-          const fresh = alojamientos.find(a => a.id === fav.id);
+          const fresh = establecimientos.find(e => e.id === fav.id);
           if (fresh) {
             const newImg = fresh.fotoPrincipal || (fresh.fotosUrls?.length ? fresh.fotosUrls[0] : '') || 'assets/images/PuenteRio.jpeg';
             if (newImg !== fav.imagen) {
@@ -48,7 +46,7 @@ export class ClienteFavoritosComponent implements OnInit {
           this.favs.updateAll(favs);
         }
       },
-      error: () => { /* offline o error — se usan las imágenes cacheadas */ }
+      error: () => {}
     });
   }
 
