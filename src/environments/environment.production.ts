@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
   apiUrl: 'https://arroyoseco-api-production-fcae.up.railway.app/api',
-  mercadoPagoPublicKey: 'TEST-c4e8fec7-4dc4-4c52-a300-5fa8385f85cf'
+  mercadoPagoPublicKey: 'APP_USR-b7aa332a-5933-422b-8705-3c02f4a8baa8ñ'
 };
