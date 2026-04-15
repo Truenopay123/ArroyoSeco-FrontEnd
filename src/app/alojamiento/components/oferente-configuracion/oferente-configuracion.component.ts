@@ -6,6 +6,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
 import { FaceAuthService } from '../../../core/services/face-auth.service';
+import { ApiService } from '../../../core/services/api.service';
 import { first } from 'rxjs/operators';
 
 interface Perfil {
@@ -85,6 +86,52 @@ interface Perfil {
           <span class="info-icon">✉️</span>
           <span>Notificaciones activas por <strong>email</strong></span>
         </div>
+      </section>
+
+      <!-- Card: Datos Bancarios -->
+      <section class="config-card">
+        <div class="card-header">
+          <span class="card-icon">🏦</span>
+          <div>
+            <h3>Datos Bancarios</h3>
+            <p class="card-desc">Configura tu cuenta bancaria para recibir pagos por transferencia de tus clientes.</p>
+          </div>
+        </div>
+
+        <form #bankForm="ngForm" (ngSubmit)="guardarBanco(bankForm)" class="fields-grid">
+          <div class="field">
+            <label for="cfg-banco">Banco</label>
+            <input id="cfg-banco" type="text" name="banco" [(ngModel)]="banco.banco" required
+                   placeholder="Ej: BBVA, Banorte, Santander" />
+          </div>
+
+          <div class="field">
+            <label for="cfg-titular">Titular de la cuenta</label>
+            <input id="cfg-titular" type="text" name="titularCuenta" [(ngModel)]="banco.titularCuenta" required
+                   placeholder="Nombre del titular" />
+          </div>
+
+          <div class="field">
+            <label for="cfg-cuenta">Número de cuenta</label>
+            <input id="cfg-cuenta" type="text" name="numeroCuenta" [(ngModel)]="banco.numeroCuenta" required
+                   placeholder="Ej: 1234567890" maxlength="20" />
+          </div>
+
+          <div class="field">
+            <label for="cfg-clabe">CLABE interbancaria</label>
+            <input id="cfg-clabe" type="text" name="clabe" [(ngModel)]="banco.clabe" required
+                   placeholder="18 dígitos" maxlength="18" />
+            <span class="field-hint">La CLABE tiene 18 dígitos. Los clientes la usarán para transferirte.</span>
+          </div>
+
+          <div class="card-footer">
+            <span class="bank-status" *ngIf="bancoGuardado">✅ Datos bancarios configurados</span>
+            <button class="btn primary" type="submit" [disabled]="bankForm.invalid || guardandoBanco">
+              <span *ngIf="!guardandoBanco">💾 Guardar datos bancarios</span>
+              <span *ngIf="guardandoBanco">Guardando...</span>
+            </button>
+          </div>
+        </form>
       </section>
 
       <!-- Card: Gestión de rostro -->
@@ -415,6 +462,14 @@ interface Perfil {
       animation: spin 0.8s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+    .bank-status {
+      font-size: 0.85rem;
+      color: #166534;
+      font-weight: 500;
+      margin-right: auto;
+      display: flex;
+      align-items: center;
+    }
   `]
 })
 export class OferenteConfiguracionComponent implements OnInit, OnDestroy {
@@ -425,9 +480,19 @@ export class OferenteConfiguracionComponent implements OnInit, OnDestroy {
   private usuarioService = inject(UsuarioService);
   private modalService = inject(ConfirmModalService);
   private faceAuth = inject(FaceAuthService);
+  private api = inject(ApiService);
 
   guardando = false;
+  guardandoBanco = false;
+  bancoGuardado = false;
   errorTelefono = '';
+
+  banco = {
+    banco: '',
+    numeroCuenta: '',
+    clabe: '',
+    titularCuenta: ''
+  };
 
   // Face management state
   faceLoading = true;
@@ -503,6 +568,38 @@ export class OferenteConfiguracionComponent implements OnInit, OnDestroy {
         this.guardando = false;
         console.error('Error al guardar configuración:', err);
         this.toastService.error('No fue posible guardar los cambios');
+      }
+    });
+  }
+
+  // ── Bank data ────────────────────────────────────────────────────────
+
+  private cargarDatosBancarios() {
+    this.api.get<any>('/oferentes/perfil').pipe(first()).subscribe({
+      next: (perfil) => {
+        if (perfil?.banco) this.banco.banco = perfil.banco;
+        if (perfil?.numeroCuenta) this.banco.numeroCuenta = perfil.numeroCuenta;
+        if (perfil?.clabe) this.banco.clabe = perfil.clabe;
+        if (perfil?.titularCuenta) this.banco.titularCuenta = perfil.titularCuenta;
+        this.bancoGuardado = !!(perfil?.banco && perfil?.clabe);
+      },
+      error: () => {}
+    });
+  }
+
+  guardarBanco(form: NgForm) {
+    if (form.invalid) return;
+    this.guardandoBanco = true;
+    this.api.put<any>('/oferentes/datos-bancarios', this.banco).pipe(first()).subscribe({
+      next: () => {
+        this.guardandoBanco = false;
+        this.bancoGuardado = true;
+        this.toastService.success('Datos bancarios guardados correctamente');
+      },
+      error: (err) => {
+        this.guardandoBanco = false;
+        const msg = err?.error?.message || err?.error || 'No se pudieron guardar los datos bancarios';
+        this.toastService.error(msg);
       }
     });
   }
