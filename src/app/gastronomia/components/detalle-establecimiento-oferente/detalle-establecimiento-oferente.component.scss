@@ -542,6 +542,21 @@
         font-family: inherit;
         min-height: 80px;
       }
+
+      small {
+        display: block;
+        margin-top: 0.3rem;
+        font-size: 0.8rem;
+        font-weight: 400;
+
+        &.field-hint {
+          color: #6b7280;
+        }
+        &.field-error {
+          color: #dc2626;
+          font-weight: 600;
+        }
+      }
     }
   }
 

@@ -3,15 +3,14 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { forkJoin, of, first, switchMap, map, catchError } from 'rxjs';
 import { ToastService } from '../../../shared/services/toast.service';
 import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
 import { ReservasService, ReservaDto } from '../../services/reservas.service';
-import { first } from 'rxjs/operators';
 import { AlojamientoService } from '../../services/alojamiento.service';
-import { forkJoin, of } from 'rxjs';
-import { switchMap, map, catchError } from 'rxjs/operators';
 import { UserService } from '../../../core/services/user.service';
 import { ApiService } from '../../../core/services/api.service';
+import { NeuronaCambioCardComponent } from '../neurona-cambio-card/neurona-cambio-card.component';
 
 interface ReservaUI {
   id: number;
@@ -29,19 +28,19 @@ interface ReservaUI {
 @Component({
   selector: 'app-gestion-reservas',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NeuronaCambioCardComponent],
   templateUrl: './gestion-reservas.component.html',
   styleUrl: './gestion-reservas.component.scss'
 })
 export class GestionReservasComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private toastService = inject(ToastService);
-  private modalService = inject(ConfirmModalService);
-  private reservasService = inject(ReservasService);
-  private alojamientosService = inject(AlojamientoService);
-  private userService = inject(UserService);
-  private api = inject(ApiService);
-  private sanitizer = inject(DomSanitizer);
+  private readonly route = inject(ActivatedRoute);
+  private readonly toastService = inject(ToastService);
+  private readonly modalService = inject(ConfirmModalService);
+  private readonly reservasService = inject(ReservasService);
+  private readonly alojamientosService = inject(AlojamientoService);
+  private readonly userService = inject(UserService);
+  private readonly api = inject(ApiService);
+  private readonly sanitizer = inject(DomSanitizer);
 
   searchTerm = '';
   hospedajeFiltro: string | null = null;
@@ -72,7 +71,7 @@ export class GestionReservasComponent implements OnInit {
   private cargar() {
     this.loading = true;
     this.error = null;
-    const alojamientoId = this.hospedajeFiltro ? parseInt(this.hospedajeFiltro, 10) : undefined;
+    const alojamientoId = this.hospedajeFiltro ? Number.parseInt(this.hospedajeFiltro, 10) : undefined;
     if (alojamientoId) {
       this.reservasService.listByAlojamiento(alojamientoId).pipe(first()).subscribe({
         next: (items: ReservaDto[]) => {
@@ -130,26 +129,21 @@ export class GestionReservasComponent implements OnInit {
     });
   }
 
-  private mapDtoToUI = (r: ReservaDto): ReservaUI => {
-    const id = (typeof r.id === 'string') ? parseInt(r.id as string, 10) : (r.id as number) || 0;
+  private readonly mapDtoToUI = (r: ReservaDto): ReservaUI => {
+    const id = this.parseReservaId(r.id);
     const hospedaje = (r.hospedaje || r.alojamientoNombre || r['alojamiento'] || '');
     const huesped = (r.huesped || r.clienteNombre || r.usuarioEmail || '');
     const total = (typeof r.total === 'number') ? r.total : Number(r['montoTotal'] || 0);
-    const estadoRaw = (r.estado || '').toLowerCase();
-    // Normaliza estados más comunes provenientes del backend, incluyendo PagoEnRevision
-    const estado: ReservaUI['estado'] = estadoRaw.includes('pago') ? 'PagoEnRevision'
-      : estadoRaw.includes('pend') ? 'Pendiente'
-      : estadoRaw.includes('confirm') || estadoRaw.includes('acept') ? 'Confirmada'
-      : estadoRaw.includes('rechaz') ? 'Rechazada'
-      : 'Cancelada';
-    let comprobanteUrl = (r as any).comprobanteUrl || (r as any).ComprobanteUrl || (r as any).comprobante || (r as any).Comprobante || (r as any).comprobantePath || (r as any).rutaComprobante || '';
-    // Si el backend devuelve una ruta relativa como "/comprobantes/xxx",
-    // convertirla a una URL absoluta usando la raíz del API (quitando '/api').
-    if (comprobanteUrl && !/^https?:\/\//i.test(comprobanteUrl)) {
-      if (!comprobanteUrl.startsWith('/')) comprobanteUrl = '/' + comprobanteUrl;
-      const apiRoot = this.api.baseUrl.replace(/\/api$/i, '');
-      comprobanteUrl = `${apiRoot}${comprobanteUrl}`;
-    }
+    const estado = this.normalizarEstado(r.estado);
+    const comprobanteUrl = this.normalizarComprobanteUrl(
+      (r as any).comprobanteUrl ||
+      (r as any).ComprobanteUrl ||
+      (r as any).comprobante ||
+      (r as any).Comprobante ||
+      (r as any).comprobantePath ||
+      (r as any).rutaComprobante || ''
+    );
+
     return {
       id,
       folio: r.folio,
@@ -162,6 +156,46 @@ export class GestionReservasComponent implements OnInit {
       alojamientoId: r.alojamientoId,
       comprobanteUrl: comprobanteUrl || undefined
     };
+  };
+
+  private parseReservaId(id: ReservaDto['id']): number {
+    return typeof id === 'string' ? Number.parseInt(id, 10) : Number(id) || 0;
+  }
+
+  private normalizarEstado(estado?: string): ReservaUI['estado'] {
+    const estadoRaw = (estado || '').toLowerCase();
+
+    if (estadoRaw.includes('pago')) {
+      return 'PagoEnRevision';
+    }
+
+    if (estadoRaw.includes('pend')) {
+      return 'Pendiente';
+    }
+
+    if (estadoRaw.includes('confirm') || estadoRaw.includes('acept')) {
+      return 'Confirmada';
+    }
+
+    if (estadoRaw.includes('rechaz')) {
+      return 'Rechazada';
+    }
+
+    return 'Cancelada';
+  }
+
+  private normalizarComprobanteUrl(comprobanteUrl: string): string {
+    if (!comprobanteUrl) {
+      return '';
+    }
+
+    if (/^https?:\/\//i.test(comprobanteUrl)) {
+      return comprobanteUrl;
+    }
+
+    const normalizedPath = comprobanteUrl.startsWith('/') ? comprobanteUrl : `/${comprobanteUrl}`;
+    const apiRoot = this.api.baseUrl.replace(/\/api$/i, '');
+    return `${apiRoot}${normalizedPath}`;
   }
 
   comprobanteVerUrl(reserva: ReservaUI): string {
@@ -221,7 +255,7 @@ export class GestionReservasComponent implements OnInit {
         a.download = nombre;
         document.body.appendChild(a);
         a.click();
-        document.body.removeChild(a);
+        a.remove();
         URL.revokeObjectURL(url);
       },
       error: (err) => {
@@ -242,7 +276,7 @@ export class GestionReservasComponent implements OnInit {
     let list = this.reservas;
 
     if (this.hospedajeFiltro) {
-      const id = parseInt(this.hospedajeFiltro, 10);
+      const id = Number.parseInt(this.hospedajeFiltro, 10);
       list = list.filter(r => r.alojamientoId === id || `${r.hospedaje}` === this.hospedajeFiltro);
     }
 

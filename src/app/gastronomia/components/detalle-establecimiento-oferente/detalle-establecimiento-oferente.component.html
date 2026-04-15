@@ -1,3 +1,7 @@
+<div class="offline-banner" *ngIf="isOffline">
+  📡 Sin conexión: mostrando datos almacenados. Las acciones se sincronizarán al reconectarte.
+</div>
+
 <div class="container" *ngIf="!loading && establecimiento">
   <div class="header">
     <button class="btn-back" (click)="volver()">← Volver</button>
@@ -8,7 +12,7 @@
   </div>
 
   <div class="info-card">
-    <img [src]="establecimiento.fotoPrincipal || 'assets/images/hero-oferentes.svg'" [alt]="establecimiento.nombre" class="foto" />
+    <img [src]="establecimiento.fotoPrincipal || (establecimiento.fotosUrls && establecimiento.fotosUrls.length > 0 ? establecimiento.fotosUrls[0] : 'assets/images/PuenteRio.jpeg')" [alt]="establecimiento.nombre" class="foto" />
     <div class="detalles">
       <p><strong>📍 Ubicación:</strong> {{ establecimiento.ubicacion }}</p>
       <p><strong>📝 Descripción:</strong> {{ establecimiento.descripcion || 'Sin descripción' }}</p>
@@ -32,7 +36,7 @@
           <h4>{{ menu.nombre }}</h4>
           <button class="btn-add-small" (click)="abrirModalItem(menu)">+ Agregar Item</button>
         </div>
-        
+
         <div *ngIf="!menu.items || menu.items.length === 0" class="empty-small">
           Sin items
         </div>
@@ -89,8 +93,10 @@
   </div>
   <div class="modal-body">
     <label>
-      Nombre del Menú
-      <input type="text" [(ngModel)]="nuevoMenu.nombre" placeholder="Ej: Menú Principal, Postres, Bebidas" />
+      Nombre del Menú *
+      <input type="text" [(ngModel)]="nuevoMenu.nombre" placeholder="Ej: Menú Principal, Postres, Bebidas" maxlength="50" />
+      <small class="field-hint">De 3 a 50 caracteres</small>
+      <small class="field-error" *ngIf="erroresMenu['nombre']">{{ erroresMenu['nombre'] }}</small>
     </label>
   </div>
   <div class="modal-footer">
@@ -108,16 +114,22 @@
   </div>
   <div class="modal-body">
     <label>
-      Nombre del Platillo
-      <input type="text" [(ngModel)]="nuevoItem.nombre" placeholder="Ej: Tacos de Bistec" />
+      Nombre del Platillo *
+      <input type="text" [(ngModel)]="nuevoItem.nombre" placeholder="Ej: Tacos de Bistec" maxlength="100" />
+      <small class="field-hint">De 3 a 100 caracteres</small>
+      <small class="field-error" *ngIf="erroresItem['nombre']">{{ erroresItem['nombre'] }}</small>
     </label>
     <label>
       Descripción
-      <textarea [(ngModel)]="nuevoItem.descripcion" rows="3" placeholder="Ej: 3 tacos con cebolla y cilantro"></textarea>
+      <textarea [(ngModel)]="nuevoItem.descripcion" rows="3" placeholder="Ej: 3 tacos con cebolla y cilantro" maxlength="200"></textarea>
+      <small class="field-hint">Opcional. Máximo 200 caracteres</small>
+      <small class="field-error" *ngIf="erroresItem['descripcion']">{{ erroresItem['descripcion'] }}</small>
     </label>
     <label>
-      Precio
-      <input type="number" [(ngModel)]="nuevoItem.precio" min="0" step="0.01" placeholder="0.00" />
+      Precio (MXN) *
+      <input type="number" [(ngModel)]="nuevoItem.precio" min="5" max="50000" step="0.01" placeholder="0.00" />
+      <small class="field-hint">Entre $5 y $50,000 MXN</small>
+      <small class="field-error" *ngIf="erroresItem['precio']">{{ erroresItem['precio'] }}</small>
     </label>
   </div>
   <div class="modal-footer">
@@ -135,12 +147,16 @@
   </div>
   <div class="modal-body">
     <label>
-      Número de Mesa
-      <input type="number" [(ngModel)]="nuevaMesa.numero" min="1" />
+      Número de Mesa *
+      <input type="number" [(ngModel)]="nuevaMesa.numero" min="1" max="200" />
+      <small class="field-hint">Número único de identificación (1 a 200)</small>
+      <small class="field-error" *ngIf="erroresMesa['numero']">{{ erroresMesa['numero'] }}</small>
     </label>
     <label>
-      Capacidad (personas)
-      <input type="number" [(ngModel)]="nuevaMesa.capacidad" min="1" max="20" />
+      Capacidad (personas) *
+      <input type="number" [(ngModel)]="nuevaMesa.capacidad" min="1" max="30" />
+      <small class="field-hint">De 1 a 30 personas por mesa</small>
+      <small class="field-error" *ngIf="erroresMesa['capacidad']">{{ erroresMesa['capacidad'] }}</small>
     </label>
     <label class="checkbox">
       <input type="checkbox" [(ngModel)]="nuevaMesa.disponible" />

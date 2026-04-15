@@ -49,6 +49,8 @@ export class AdminOferentesComponent {
 
   nuevo: Partial<Oferente> = { nombre: '', correo: '', telefono: '', alojamientos: 0, estado: 'Pendiente' };
   editar: Partial<Oferente> | null = null;
+  errorTelefono = '';
+  errorTelefonoEditar = '';
 
   get filteredOferentes(): Oferente[] {
     const term = this.searchTerm.trim().toLowerCase();
@@ -133,6 +135,10 @@ export class AdminOferentesComponent {
 
   registrar(form: NgForm) {
     if (form.invalid) return;
+    if (!this.validarTelefonoNuevo()) {
+      this.toastService.error(this.errorTelefono);
+      return;
+    }
     const payload = {
       email: this.nuevo.correo!,
       nombre: this.nuevo.nombre!,
@@ -172,6 +178,10 @@ export class AdminOferentesComponent {
 
   guardarEditar(form: NgForm) {
     if (form.invalid || !this.editar?.id) return;
+    if (!this.validarTelefonoEditar()) {
+      this.toastService.error(this.errorTelefonoEditar);
+      return;
+    }
     const idx = this.oferentes.findIndex(x => x.id === this.editar!.id);
     if (idx > -1) {
       const id = this.editar!.id;
@@ -214,5 +224,45 @@ export class AdminOferentesComponent {
       },
       error: () => this.toastService.error('Error al eliminar oferente')
     });
+  }
+
+  validarTelefonoNuevo(): boolean {
+    this.errorTelefono = '';
+    const tel = (this.nuevo.telefono || '').trim();
+    if (!tel) {
+      this.errorTelefono = 'El teléfono es obligatorio';
+      return false;
+    }
+    const soloDigitos = tel.replace(/[\s\-\(\)\+]/g, '');
+    if (!/^\d+$/.test(soloDigitos)) {
+      this.errorTelefono = 'El teléfono solo debe contener números';
+      return false;
+    }
+    if (soloDigitos.startsWith('52') && soloDigitos.length === 12) return true;
+    if (soloDigitos.length !== 10) {
+      this.errorTelefono = 'El teléfono debe tener exactamente 10 dígitos';
+      return false;
+    }
+    return true;
+  }
+
+  validarTelefonoEditar(): boolean {
+    this.errorTelefonoEditar = '';
+    const tel = (this.editar?.telefono || '').trim();
+    if (!tel) {
+      this.errorTelefonoEditar = 'El teléfono es obligatorio';
+      return false;
+    }
+    const soloDigitos = tel.replace(/[\s\-\(\)\+]/g, '');
+    if (!/^\d+$/.test(soloDigitos)) {
+      this.errorTelefonoEditar = 'El teléfono solo debe contener números';
+      return false;
+    }
+    if (soloDigitos.startsWith('52') && soloDigitos.length === 12) return true;
+    if (soloDigitos.length !== 10) {
+      this.errorTelefonoEditar = 'El teléfono debe tener exactamente 10 dígitos';
+      return false;
+    }
+    return true;
   }
 }

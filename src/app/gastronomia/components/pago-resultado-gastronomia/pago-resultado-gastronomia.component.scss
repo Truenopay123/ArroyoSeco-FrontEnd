@@ -1,0 +1,17 @@
+.pago-resultado { display: grid; place-items: center; padding: 1rem; min-height: 60vh; }
+.resultado-card { width: min(700px, 100%); border: 1px solid #e5e7eb; border-radius: 12px; background: #fff; padding: 1rem; text-align: center; }
+.resultado-card.aprobado { border-color: #86efac; }
+.resultado-card.rechazado { border-color: #fca5a5; }
+.resultado-card.pendiente { border-color: #fdba74; }
+.resultado-icon { margin-bottom: 0.5rem; }
+.resultado-icon.aprobado { color: #22c55e; }
+.resultado-icon.pendiente { color: #f59e0b; }
+.resultado-icon.rechazado { color: #ef4444; }
+.resultado-actions { display: flex; justify-content: center; gap: 0.6rem; margin-top: 1rem; flex-wrap: wrap; }
+.btn-primary, .btn-secondary { text-decoration: none; border-radius: 10px; padding: 0.5rem 1rem; border: 1px solid transparent; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.btn-primary { background: var(--color-primary, #E31B23); color: #fff; }
+.btn-primary:hover { background: #c41019; }
+.btn-secondary { background: #fff; color: var(--color-primary, #E31B23); border-color: var(--color-primary, #E31B23); }
+.btn-secondary:hover { background: #fef2f2; }
+.detalle { margin-top: 0.5rem; }
+.label { color: #64748b; margin-right: 0.35rem; }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../../core/services/api.service';
 import { ToastService } from '../../../shared/services/toast.service';
+import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
 import { first } from 'rxjs/operators';
 
 @Component({
@@ -15,7 +16,7 @@ export class AdminResenasComponent implements OnInit {
   resenas: any[] = [];
   loading = false;
 
-  constructor(private api: ApiService, private toast: ToastService) {}
+  constructor(private api: ApiService, private toast: ToastService, private confirmModal: ConfirmModalService) {}
 
   ngOnInit(): void { this.cargar(); }
 
@@ -27,16 +28,18 @@ export class AdminResenasComponent implements OnInit {
     });
   }
 
-  eliminar(id: number) {
-    if (!confirm('¿Eliminar esta reseña? Ya no será visible para nadie.')) return;
+  async eliminar(id: number) {
+    const ok = await this.confirmModal.confirm({ title: 'Eliminar reseña', message: '¿Eliminar esta reseña? Ya no será visible para nadie.', confirmText: 'Eliminar', cancelText: 'Cancelar', isDangerous: true });
+    if (!ok) return;
     this.api.delete<any>(`/resenas/${id}`).pipe(first()).subscribe({
       next: () => { this.toast.success('Reseña eliminada correctamente'); this.cargar(); },
       error: () => this.toast.error('No se pudo eliminar la reseña')
     });
   }
 
-  desestimar(id: number) {
-    if (!confirm('¿Desestimar el reporte? La reseña volverá a ser pública.')) return;
+  async desestimar(id: number) {
+    const ok = await this.confirmModal.confirm({ title: 'Desestimar reporte', message: '¿Desestimar el reporte? La reseña volverá a ser pública.', confirmText: 'Desestimar', cancelText: 'Cancelar' });
+    if (!ok) return;
     this.api.patch<any>(`/resenas/${id}/desestimar-reporte`, {}).pipe(first()).subscribe({
       next: () => { this.toast.success('Reporte desestimado. Reseña restaurada.'); this.cargar(); },
       error: () => this.toast.error('No se pudo desestimar el reporte')

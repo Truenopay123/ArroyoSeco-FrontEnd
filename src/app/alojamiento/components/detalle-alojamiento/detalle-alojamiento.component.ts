@@ -7,6 +7,7 @@ import { AlojamientoService, AlojamientoDto } from '../../services/alojamiento.s
 import { ReservasService } from '../../services/reservas.service';
 import { PagoService } from '../../services/pago.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { CheckoutCurrencyConversionComponent } from '../checkout-currency-conversion/checkout-currency-conversion.component';
 import { first, switchMap } from 'rxjs/operators';
 import { MatDatepickerModule, MatDateRangePicker } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -17,7 +18,7 @@ import { ApiService } from '../../../core/services/api.service';
 @Component({
   selector: 'app-detalle-alojamiento',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, MatDatepickerModule, MatNativeDateModule, MatFormFieldModule, MatInputModule],
+  imports: [CommonModule, FormsModule, RouterLink, MatDatepickerModule, MatNativeDateModule, MatFormFieldModule, MatInputModule, CheckoutCurrencyConversionComponent],
   templateUrl: './detalle-alojamiento.component.html',
   styleUrl: './detalle-alojamiento.component.scss'
 })

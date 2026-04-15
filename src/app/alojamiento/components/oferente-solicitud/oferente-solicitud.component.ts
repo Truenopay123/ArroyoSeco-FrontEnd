@@ -31,13 +31,38 @@ export class OferenteSolicitudComponent {
   };
 
   isSubmitting = false;
+  errorTelefono = '';
 
   private toast = inject(ToastService);
   private adminService = inject(AdminOferentesService);
   private router = inject(Router);
 
+  validarTelefono(): boolean {
+    this.errorTelefono = '';
+    const tel = (this.model.telefono || '').trim();
+    if (!tel) {
+      this.errorTelefono = 'El teléfono es obligatorio';
+      return false;
+    }
+    const soloDigitos = tel.replace(/[\s\-\(\)\+]/g, '');
+    if (!/^\d+$/.test(soloDigitos)) {
+      this.errorTelefono = 'El teléfono solo debe contener números';
+      return false;
+    }
+    if (soloDigitos.startsWith('52') && soloDigitos.length === 12) return true;
+    if (soloDigitos.length !== 10) {
+      this.errorTelefono = 'El teléfono debe tener exactamente 10 dígitos';
+      return false;
+    }
+    return true;
+  }
+
   submit(form: NgForm) {
     if (form.invalid || this.isSubmitting) return;
+    if (!this.validarTelefono()) {
+      this.toast.error(this.errorTelefono);
+      return;
+    }
     this.isSubmitting = true;
 
     const payload = {

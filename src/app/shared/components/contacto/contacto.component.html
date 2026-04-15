@@ -30,8 +30,13 @@
         name="telefono"
         type="tel"
         [(ngModel)]="model.telefono"
-        placeholder="442 000 0000"
+        placeholder="Ej: 442 123 4567"
+        maxlength="15"
+        (blur)="validarTelefono()"
+        #telefonoInput="ngModel"
       />
+      <small class="field-hint">10 dígitos sin código de país. Ej: 442 123 4567</small>
+      <small class="field-error" *ngIf="errorTelefono">{{ errorTelefono }}</small>
 
       <label for="mensaje">Mensaje</label>
       <textarea

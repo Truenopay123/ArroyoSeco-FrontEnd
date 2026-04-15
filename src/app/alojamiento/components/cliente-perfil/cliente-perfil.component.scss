@@ -191,3 +191,21 @@ form {
     width: 100%;
   }
 }
+
+.field-hint {
+  display: block;
+  font-size: 0.78rem;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.field-error {
+  display: block;
+  font-size: 0.8rem;
+  color: #dc2626;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  background: #fef2f2;
+  border-left: 3px solid #dc2626;
+  border-radius: 4px;
+}

@@ -140,14 +140,14 @@ td {
   max-width: 0;
 }
 
-td:nth-child(1) { width: 15%; }
-td:nth-child(2) { width: 20%; }
-td:nth-child(3) { width: 12%; }
-td:nth-child(4) { width: 10%; text-align: center; }
+td:nth-child(1) { width: 13%; }
+td:nth-child(2) { width: 18%; }
+td:nth-child(3) { width: 11%; }
+td:nth-child(4) { width: 6%; text-align: center; }
 th:nth-child(4) { text-align: center; }
 td:nth-child(5) { width: 10%; }
-td:nth-child(6) { width: 9%; }
-td:nth-child(7) { width: auto; white-space: nowrap; overflow: visible; }
+td:nth-child(6) { width: 8%; max-width: none; overflow: visible; }
+td:nth-child(7) { width: auto; max-width: none; white-space: nowrap; overflow: visible; }
 
 tbody tr {
   transition: background 0.15s;
@@ -300,12 +300,14 @@ td.actions {
 .modal__header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border-bottom: 1px solid #eee; }
 .modal__body { padding: 1.25rem; }
 .modal__footer { padding: 1rem 1.25rem; display: flex; justify-content: flex-end; gap: .5rem; border-top: 1px solid #eee; }
-.modal .close { background: transparent; border: none; font-size: 1.5rem; cursor: pointer; }
+.modal .close { background: transparent; border: none; font-size: 1.5rem; cursor: pointer; color: #6b7280; transition: color .2s; }
+.modal .close:hover { color: var(--color-primary, #E31B23); }
 .detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .75rem 1rem; }
 
 .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem 1rem; }
 label { display: grid; gap: .5rem; font-weight: 600; color: #374151; }
-input { border: 1px solid #d1d5db; border-radius: 10px; padding: .6rem .9rem; }
+input, select { border: 1px solid #d1d5db; border-radius: 10px; padding: .6rem .9rem; font-size: .95rem; transition: border-color .2s, box-shadow .2s; }
+input:focus, select:focus { outline: none; border-color: var(--color-primary, #E31B23); box-shadow: 0 0 0 3px rgba(227, 27, 35, 0.08); }
 
 @media (max-width: 768px) {
   .toolbar {
@@ -400,4 +402,24 @@ input { border: 1px solid #d1d5db; border-radius: 10px; padding: .6rem .9rem; }
   td.actions {
     gap: 0.25rem;
   }
+}
+
+.field-hint {
+  display: block;
+  font-size: 0.78rem;
+  color: #6b7280;
+  font-weight: 400;
+  margin-top: 0.15rem;
+}
+
+.field-error {
+  display: block;
+  font-size: 0.8rem;
+  color: #dc2626;
+  font-weight: 500;
+  margin-top: 0.2rem;
+  padding: 0.25rem 0.5rem;
+  background: #fef2f2;
+  border-left: 3px solid #dc2626;
+  border-radius: 4px;
 }

@@ -1,3 +1,8 @@
+<!-- Offline banner -->
+<div class="offline-banner" *ngIf="isOffline">
+  📡 Sin conexión: mostrando datos almacenados. Las reservas se enviarán al reconectarte.
+</div>
+
 <!-- Loading -->
 <div *ngIf="loading" class="loading-state">
   <div class="loading-spinner"></div>
@@ -13,9 +18,9 @@
 
 <div *ngIf="!loading && !error && establecimiento" class="detalle-page">
 
-  <!-- Hero Section -->
-  <div class="hero">
-    <img [src]="establecimiento.fotoPrincipal || 'assets/images/hero-oferentes.svg'" [alt]="establecimiento.nombre" class="hero__image" />
+  <!-- Hero Section (single photo) -->
+  <div class="hero" *ngIf="gallery.length <= 1">
+    <img [src]="establecimiento.fotoPrincipal || (establecimiento.fotosUrls && establecimiento.fotosUrls.length > 0 ? establecimiento.fotosUrls[0] : 'assets/images/PuenteRio.jpeg')" [alt]="establecimiento.nombre" class="hero__image" />
     <div class="hero__overlay"></div>
     <a routerLink="/cliente/gastronomia" class="hero__back">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
@@ -31,6 +36,35 @@
         {{ establecimiento.ubicacion }}
       </p>
     </div>
+  </div>
+
+  <!-- Gallery Grid (multiple photos) -->
+  <div class="gallery-grid" *ngIf="gallery.length > 1">
+    <a routerLink="/cliente/gastronomia" class="hero__back hero__back--gallery">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </a>
+    <div class="gallery-grid__main" (click)="openLightbox(0)">
+      <img [src]="gallery[0]" [alt]="establecimiento.nombre" />
+    </div>
+    <div class="gallery-grid__thumbs">
+      <div class="gallery-grid__thumb" *ngFor="let img of gallery | slice:1:5; let i = index" (click)="openLightbox(i + 1)">
+        <img [src]="img" [alt]="establecimiento.nombre" />
+        <div class="gallery-grid__more" *ngIf="i === 3 && gallery.length > 5">+{{ gallery.length - 5 }}</div>
+      </div>
+    </div>
+    <div class="gallery-grid__info">
+      <h1>{{ establecimiento.nombre }}</h1>
+      <p>{{ establecimiento.ubicacion }}</p>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" *ngIf="lightboxOpen" (click)="closeLightbox()">
+    <button class="lightbox__close" (click)="closeLightbox()">✕</button>
+    <button class="lightbox__prev" (click)="prevImage($event)">‹</button>
+    <img [src]="gallery[lightboxIndex]" class="lightbox__img" (click)="$event.stopPropagation()" />
+    <button class="lightbox__next" (click)="nextImage($event)">›</button>
+    <span class="lightbox__counter">{{ lightboxIndex + 1 }} / {{ gallery.length }}</span>
   </div>
 
   <!-- Main Content Grid -->
@@ -76,6 +110,33 @@
           </div>
         </div>
       </section>
+
+      <!-- Valoraciones -->
+      <section class="section-card">
+        <h2 class="section-card__title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E31B23" stroke-width="2"><path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+          Valoraciones
+        </h2>
+        <div class="rating-summary" *ngIf="totalResenas > 0">
+          <span class="rating-summary__stars">⭐ {{ ratingLabel }} de 5</span>
+          <span class="rating-summary__count">· {{ totalResenas }} reseña{{ totalResenas > 1 ? 's' : '' }}</span>
+        </div>
+
+        <div class="resenas-grid" *ngIf="resenasPublicas.length > 0">
+          <article class="resena-pub" *ngFor="let r of resenasPublicas | slice:0:6">
+            <div class="resena-pub__stars">
+              <span class="estrella filled" *ngFor="let s of estrellasArr(r.calificacion)">★</span>
+              <span class="estrella empty" *ngFor="let s of estrellasArr(5 - r.calificacion)">☆</span>
+              <span class="resena-pub__date">{{ r.fechaCreacion | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <p class="resena-pub__text">{{ r.comentario }}</p>
+          </article>
+        </div>
+
+        <p class="section-card__text" *ngIf="resenasPublicas.length === 0">
+          Este restaurante aún no tiene reseñas públicas.
+        </p>
+      </section>
     </div>
 
     <!-- Right Column: Reservation Sidebar -->
@@ -116,6 +177,8 @@
                 Fecha y hora
               </label>
               <input type="datetime-local" [(ngModel)]="fecha" required class="form-field__input" />
+              <small class="form-field__hint">La reserva debe ser futura (máximo 3 meses)</small>
+              <small class="form-field__error" *ngIf="erroresReserva['fecha']">{{ erroresReserva['fecha'] }}</small>
             </div>
 
             <div class="form-field">
@@ -124,6 +187,8 @@
                 Comensales
               </label>
               <input type="number" [(ngModel)]="numeroPersonas" min="1" max="20" required class="form-field__input" />
+              <small class="form-field__hint">De 1 a 20 comensales</small>
+              <small class="form-field__error" *ngIf="erroresReserva['personas']">{{ erroresReserva['personas'] }}</small>
             </div>
 
             <div class="form-field" *ngIf="establecimiento.mesas && establecimiento.mesas.length > 0">
@@ -137,6 +202,7 @@
                   Mesa {{ mesa.numero }} — {{ mesa.capacidad }} personas {{ !mesa.disponible ? '(Ocupada)' : '' }}
                 </option>
               </select>
+              <small class="form-field__error" *ngIf="erroresReserva['mesa']">{{ erroresReserva['mesa'] }}</small>
             </div>
 
             <div class="reserva-actions">

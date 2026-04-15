@@ -36,7 +36,8 @@ export class MobileBottomNavComponent {
         return [
           { path: '/admin/gastronomia/dashboard', label: 'Inicio', icon: 'home' },
           { path: '/admin/gastronomia/solicitudes', label: 'Solicitudes', icon: 'assignment' },
-          { path: '/admin/gastronomia/notificaciones', label: 'Notif.', icon: 'notifications' }
+          { path: '/admin/gastronomia/notificaciones', label: 'Notif.', icon: 'notifications' },
+          { path: '/admin/gastronomia/configuracion', label: 'Config.', icon: 'settings' }
         ];
       }
       return [

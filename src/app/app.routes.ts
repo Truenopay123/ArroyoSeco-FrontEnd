@@ -58,6 +58,12 @@ import { OferenteResenasComponent } from './alojamiento/components/oferente-rese
 import { FaceLoginComponent } from './alojamiento/components/face-login/face-login.component';
 import { FaceEnrollComponent } from './alojamiento/components/face-enroll/face-enroll.component';
 import { ContactoComponent } from './shared/components/contacto/contacto.component';
+// Gastronomía: nuevos componentes
+import { CheckoutGastronomiaComponent } from './gastronomia/components/checkout-gastronomia/checkout-gastronomia.component';
+import { PagoResultadoGastronomiaComponent } from './gastronomia/components/pago-resultado-gastronomia/pago-resultado-gastronomia.component';
+import { OferenteResenasGastronomiaComponent } from './gastronomia/components/oferente-resenas-gastronomia/oferente-resenas-gastronomia.component';
+import { AdminResenasGastronomiaComponent } from './gastronomia/components/admin-resenas-gastronomia/admin-resenas-gastronomia.component';
+import { AdminConfiguracionComponent } from './alojamiento/components/admin-configuracion/admin-configuracion.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginSelectorComponent },
@@ -183,6 +189,15 @@ export const routes: Routes = [
               heroImage: 'assets/images/PuenteRio2.jpeg'
             }
           },
+          {
+            path: 'configuracion',
+            component: AdminConfiguracionComponent,
+            data: {
+              heroTitle: 'Configuración',
+              heroSubtitle: 'Administra tu perfil y verificación facial.',
+              heroImage: 'assets/images/PuenteRio2.jpeg'
+            }
+          },
           { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
       },
@@ -240,6 +255,23 @@ export const routes: Routes = [
             data: {
               heroTitle: 'Notificaciones - Gastronomía',
               heroSubtitle: 'Gestiona notificaciones del módulo de gastronomía',
+              heroImage: 'assets/images/PuenteRio.jpeg'
+            }
+          },
+          {
+            path: 'resenas',
+            component: AdminResenasGastronomiaComponent,
+            data: {
+              heroTitle: 'Reseñas Reportadas - Gastronomía',
+              heroSubtitle: 'Revisa y gestiona reseñas reportadas de restaurantes.',
+              heroImage: 'assets/images/PuenteRio.jpeg'
+            }
+          },
+          {
+            path: 'configuracion',
+            component: AdminConfiguracionComponent,
+            data: {
+              heroTitle: 'Configuración',
               heroImage: 'assets/images/PuenteRio.jpeg'
             }
           },
@@ -478,6 +510,24 @@ export const routes: Routes = [
             }
           },
           {
+            path: 'checkout',
+            component: CheckoutGastronomiaComponent,
+            data: {
+              heroTitle: 'Completar Pago',
+              heroSubtitle: 'Confirma tu reserva de restaurante.',
+              heroImage: 'assets/images/RioAyutla7.jpeg'
+            }
+          },
+          {
+            path: 'pagos/resultado',
+            component: PagoResultadoGastronomiaComponent,
+            data: {
+              heroTitle: 'Resultado del Pago',
+              heroSubtitle: 'Estado de tu pago con Mercado Pago.',
+              heroImage: 'assets/images/RioAyutla2.jpeg'
+            }
+          },
+          {
             path: ':id',
             component: DetalleGastronomiaComponent,
             data: {
@@ -502,7 +552,7 @@ export const routes: Routes = [
         data: {
           heroTitle: '¡Bienvenido Oferente de Gastronomía!',
           heroSubtitle: 'Gestiona tus restaurantes y reservas.',
-          heroImage: 'assets/images/hero-dashboard.svg'
+          heroImage: 'assets/images/Adjuntas.jpeg'
         }
       },
       {
@@ -510,7 +560,7 @@ export const routes: Routes = [
         component: GestionEstablecimientosComponent,
         data: {
           heroTitle: 'Gestión de Restaurantes',
-          heroImage: 'assets/images/hero-oferentes.svg'
+          heroImage: 'assets/images/ConcaLetras.jpeg'
         }
       },
       {
@@ -518,7 +568,7 @@ export const routes: Routes = [
         component: FormEstablecimientoComponent,
         data: {
           heroTitle: 'Nuevo Restaurante',
-          heroImage: 'assets/images/hero-oferentes.svg'
+          heroImage: 'assets/images/IglesiaConca.jpeg'
         }
       },
       {
@@ -526,7 +576,7 @@ export const routes: Routes = [
         component: FormEstablecimientoComponent,
         data: {
           heroTitle: 'Editar Restaurante',
-          heroImage: 'assets/images/hero-oferentes.svg'
+          heroImage: 'assets/images/PuenteRio.jpeg'
         }
       },
       {
@@ -534,7 +584,7 @@ export const routes: Routes = [
         component: DetalleEstablecimientoOferenteComponent,
         data: {
           heroTitle: 'Detalle de Restaurante',
-          heroImage: 'assets/images/hero-oferentes.svg'
+          heroImage: 'assets/images/PuenteRio2.jpeg'
         }
       },
       {
@@ -542,7 +592,7 @@ export const routes: Routes = [
         component: OferenteReservasGastronomiaComponent,
         data: {
           heroTitle: 'Gestión de Reservas',
-          heroImage: 'assets/images/hero-notificaciones.svg'
+          heroImage: 'assets/images/RioAyutla.jpeg'
         }
       },
       {
@@ -550,7 +600,7 @@ export const routes: Routes = [
         component: OferenteNotificacionesComponent,
         data: {
           heroTitle: 'Notificaciones',
-          heroImage: 'assets/images/hero-notificaciones.svg'
+          heroImage: 'assets/images/RioAyutla2.jpeg'
         }
       },
       {
@@ -558,7 +608,16 @@ export const routes: Routes = [
         component: OferenteConfiguracionComponent,
         data: {
           heroTitle: 'Configuración',
-          heroImage: 'assets/images/hero-dashboard.svg'
+          heroImage: 'assets/images/RioAyutla3.jpeg'
+        }
+      },
+      {
+        path: 'resenas',
+        component: OferenteResenasGastronomiaComponent,
+        data: {
+          heroTitle: 'Reseñas de mis restaurantes',
+          heroSubtitle: 'Consulta y reporta reseñas injustas.',
+          heroImage: 'assets/images/RioCalidad.jpeg'
         }
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }

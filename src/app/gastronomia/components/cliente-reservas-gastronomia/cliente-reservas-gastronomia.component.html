@@ -1,11 +1,15 @@
+<div class="offline-banner" *ngIf="isOffline">
+  📡 Sin conexión: mostrando datos almacenados. Las acciones se sincronizarán al reconectarte.
+</div>
+
 <div class="tabs">
-  <button 
-    [class.active]="activeTab === 'activas'" 
+  <button
+    [class.active]="activeTab === 'activas'"
     (click)="activeTab = 'activas'">
     Activas ({{ reservasActivas.length }})
   </button>
-  <button 
-    [class.active]="activeTab === 'historial'" 
+  <button
+    [class.active]="activeTab === 'historial'"
     (click)="activeTab = 'historial'">
     Historial ({{ reservasHistorial.length }})
   </button>
@@ -18,7 +22,7 @@
   <div *ngIf="reservasActivas.length === 0" class="empty">
     No tienes reservas activas.
   </div>
-  
+
   <div class="reservas-grid" *ngIf="reservasActivas.length > 0">
     <div class="reserva-card" *ngFor="let reserva of reservasActivas">
       <div class="reserva-header">
@@ -28,15 +32,22 @@
         </span>
       </div>
       <div class="reserva-body">
+        <p *ngIf="reserva.folio"><strong>Folio:</strong> {{ reserva.folio }}</p>
         <p><strong>Fecha:</strong> {{ reserva.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
         <p><strong>Personas:</strong> {{ reserva.numeroPersonas }}</p>
         <p *ngIf="reserva.mesaNumero"><strong>Mesa:</strong> {{ reserva.mesaNumero }}</p>
         <p *ngIf="reserva.total"><strong>Total:</strong> ${{ reserva.total }}</p>
       </div>
       <div class="reserva-actions">
-        <button 
-          *ngIf="reserva.estado !== 'Cancelada'" 
-          class="btn-cancelar" 
+        <button
+          *ngIf="reserva.total && reserva.estado !== 'Cancelada'"
+          class="btn-pagar"
+          (click)="irAPagar(reserva)">
+          Pagar con MercadoPago
+        </button>
+        <button
+          *ngIf="reserva.estado !== 'Cancelada'"
+          class="btn-cancelar"
           (click)="cancelarReserva(reserva)">
           Cancelar
         </button>
@@ -50,7 +61,7 @@
   <div *ngIf="reservasHistorial.length === 0" class="empty">
     No hay reservas en el historial.
   </div>
-  
+
   <div class="reservas-grid" *ngIf="reservasHistorial.length > 0">
     <div class="reserva-card" *ngFor="let reserva of reservasHistorial">
       <div class="reserva-header">
@@ -60,11 +71,48 @@
         </span>
       </div>
       <div class="reserva-body">
+        <p *ngIf="reserva.folio"><strong>Folio:</strong> {{ reserva.folio }}</p>
         <p><strong>Fecha:</strong> {{ reserva.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
         <p><strong>Personas:</strong> {{ reserva.numeroPersonas }}</p>
         <p *ngIf="reserva.mesaNumero"><strong>Mesa:</strong> {{ reserva.mesaNumero }}</p>
         <p *ngIf="reserva.total"><strong>Total:</strong> ${{ reserva.total }}</p>
       </div>
+      <div class="reserva-actions" *ngIf="puedeResenar(reserva)">
+        <button class="btn-resena" (click)="abrirModalResena(reserva.id!)">
+          ★ Escribir reseña
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de reseña -->
+<div class="modal-overlay" *ngIf="mostrarModalResena" (click)="cerrarModalResena()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h3>Escribir reseña</h3>
+    <p class="modal-desc">Comparte tu experiencia con este restaurante.</p>
+
+    <div class="rating-input">
+      <label>Calificación</label>
+      <div class="stars-input">
+        <span *ngFor="let s of [1,2,3,4,5]"
+              class="star-btn"
+              [class.filled]="s <= resenaCalificacion"
+              (click)="resenaCalificacion = s">★</span>
+      </div>
+    </div>
+
+    <textarea [(ngModel)]="resenaComentario" rows="4"
+              placeholder="¿Cómo fue tu experiencia? (mínimo 5 caracteres)"
+              maxlength="500"></textarea>
+    <div class="char-count">{{ resenaComentario.length }}/500</div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel-modal" (click)="cerrarModalResena()">Cancelar</button>
+      <button class="btn-submit-modal" (click)="enviarResena()"
+              [disabled]="enviandoResena || resenaComentario.trim().length < 5">
+        {{ enviandoResena ? 'Enviando...' : 'Enviar reseña' }}
+      </button>
     </div>
   </div>
 </div>

@@ -94,7 +94,7 @@ export class ListaAlojamientosComponent implements OnInit, OnDestroy {
             precioNoche: d.precioPorNoche,
             rating: 0,
             totalResenas: 0,
-            imagen: d.fotoPrincipal || 'assets/images/hero-oferentes.svg'
+            imagen: d.fotoPrincipal || (d.fotosUrls && d.fotosUrls.length > 0 ? d.fotosUrls[0] : '') || 'assets/images/PuenteRio.jpeg'
         }));
 
         if (!base.length) {
@@ -190,7 +190,7 @@ export class ListaAlojamientosComponent implements OnInit, OnDestroy {
     const img = event.target as HTMLImageElement;
     if (!img.dataset['fallback']) {
       img.dataset['fallback'] = '1';
-      img.src = 'assets/images/hero-oferentes.svg';
+      img.src = 'assets/images/PuenteRio.jpeg';
     }
   }
 

@@ -1,3 +1,7 @@
+<div class="offline-banner" *ngIf="isOffline">
+  📡 Sin conexión: mostrando restaurantes almacenados en caché.
+</div>
+
 <div class="toolbar">
 	<input type="text" placeholder="Buscar por nombre o ubicación" [(ngModel)]="search" />
 	<select [(ngModel)]="sortMode">
@@ -11,7 +15,9 @@
 
 <section class="grid" *ngIf="!loading && !error">
 	<a class="card" *ngFor="let e of filtered" (click)="navigateToDetail(e.id)" style="cursor: pointer;">
-		<div class="thumb" [style.background-image]="'url(' + e.imagen + ')'"></div>
+		<div class="thumb">
+			<img [src]="e.imagen" [alt]="e.nombre" (error)="onImgError($event)" />
+		</div>
 		<div class="info">
 			<h3>{{ e.nombre }}</h3>
 			<p class="meta">📍 {{ e.ubicacion }}</p>

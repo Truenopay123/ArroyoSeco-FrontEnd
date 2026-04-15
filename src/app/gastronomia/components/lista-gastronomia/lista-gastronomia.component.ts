@@ -29,6 +29,7 @@ export class ListaGastronomiaComponent implements OnInit {
   loading = false;
   error: string | null = null;
   isPublic = false;
+  isOffline = !navigator.onLine;
 
   constructor(
     private toast: ToastService,
@@ -41,6 +42,14 @@ export class ListaGastronomiaComponent implements OnInit {
     // Detectar si estamos en ruta pública
     this.isPublic = this.router.url.includes('/publica/');
     this.fetchEstablecimientos();
+
+    window.addEventListener('online', () => {
+      this.isOffline = false;
+      this.fetchEstablecimientos();
+    });
+    window.addEventListener('offline', () => {
+      this.isOffline = true;
+    });
   }
 
   private fetchEstablecimientos() {
@@ -53,7 +62,7 @@ export class ListaGastronomiaComponent implements OnInit {
           nombre: d.nombre,
           ubicacion: d.ubicacion,
           descripcion: d.descripcion,
-          imagen: d.fotoPrincipal || 'assets/images/hero-oferentes.svg'
+          imagen: d.fotoPrincipal || (d.fotosUrls && d.fotosUrls.length > 0 ? d.fotosUrls[0] : '') || 'assets/images/PuenteRio.jpeg'
         }));
         // Si no hay datos del backend, usar datos estáticos de demostración
         if (this.establecimientos.length === 0) {
@@ -154,8 +163,16 @@ export class ListaGastronomiaComponent implements OnInit {
       this.router.navigate(['/login']);
       return;
     }
-    
+
     const route = this.isPublic ? '/publica/gastronomia' : '/cliente/gastronomia';
     this.router.navigate([route, id]);
+  }
+
+  onImgError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (!img.dataset['fallback']) {
+      img.dataset['fallback'] = '1';
+      img.src = 'assets/images/PuenteRio.jpeg';
+    }
   }
 }

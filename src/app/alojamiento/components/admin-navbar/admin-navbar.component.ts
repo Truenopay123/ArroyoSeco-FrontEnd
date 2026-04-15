@@ -27,22 +27,25 @@ export class AdminNavbarComponent implements OnInit {
     { label: 'Solicitudes',   route: '/admin/solicitudes' },
     { label: 'Reseñas',       route: '/admin/resenas' },
     { label: 'Estadísticas',  route: '/admin/estadisticas' },
-    { label: 'Notificaciones', route: '/admin/notificaciones' }
+    { label: 'Notificaciones', route: '/admin/notificaciones' },
+    { label: 'Configuración', route: '/admin/configuracion' }
   ];
 
   private readonly gastronomiaLinks: NavLink[] = [
     { label: 'Dashboard', route: '/admin/gastronomia/dashboard' },
     { label: 'Oferentes', route: '/admin/gastronomia/oferentes' },
     { label: 'Solicitudes', route: '/admin/gastronomia/solicitudes' },
+    { label: 'Reseñas', route: '/admin/gastronomia/resenas' },
     { label: 'Reservas', route: '/admin/gastronomia/reservas' },
-    { label: 'Notificaciones', route: '/admin/gastronomia/notificaciones' }
+    { label: 'Notificaciones', route: '/admin/gastronomia/notificaciones' },
+    { label: 'Configuración', route: '/admin/gastronomia/configuracion' }
   ];
 
   constructor(private router: Router, private auth: AuthService) {}
 
   ngOnInit(): void {
     this.updateLinksBasedOnRoute(this.router.url);
-    
+
     // Escuchar cambios de ruta
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
@@ -55,7 +58,7 @@ export class AdminNavbarComponent implements OnInit {
     this.isGastronomia = url.includes('/admin/gastronomia');
     this.links = this.isGastronomia ? this.gastronomiaLinks : this.alojamientoLinks;
     this.homeRoute = this.isGastronomia ? '/admin/gastronomia/dashboard' : '/admin/dashboard';
-    
+
     console.log('🔍 Admin Navbar - URL actual:', url);
     console.log('🔍 Admin Navbar - Es gastronomía?', this.isGastronomia);
     console.log('🔍 Admin Navbar - Links actuales:', this.links);

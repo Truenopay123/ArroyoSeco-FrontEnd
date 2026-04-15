@@ -41,6 +41,11 @@
         <h3>Ver Reservas</h3>
         <p>Administra las reservas</p>
       </a>
+      <a routerLink="/oferente/gastronomia/resenas" class="action-card">
+        <div class="action-icon">⭐</div>
+        <h3>Reseñas</h3>
+        <p>Gestiona las reseñas de tus restaurantes</p>
+      </a>
       <a routerLink="/oferente/gastronomia/configuracion" class="action-card">
         <div class="action-icon">⚙️</div>
         <h3>Configuración</h3>
@@ -53,7 +58,7 @@
     <h2>Tus Restaurantes</h2>
     <div class="grid">
       <div class="establecimiento-card" *ngFor="let est of establecimientos">
-        <img [src]="est.fotoPrincipal || 'assets/images/hero-oferentes.svg'" [alt]="est.nombre" />
+        <img [src]="est.fotoPrincipal || (est.fotosUrls && est.fotosUrls.length > 0 ? est.fotosUrls[0] : 'assets/images/PuenteRio.jpeg')" [alt]="est.nombre" />
         <div class="info">
           <h3>{{ est.nombre }}</h3>
           <p>📍 {{ est.ubicacion }}</p>

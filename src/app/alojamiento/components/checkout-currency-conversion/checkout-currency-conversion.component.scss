@@ -1,0 +1,97 @@
+.currency-conversion {
+  background-color: #f9fafb;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 0;
+
+  &__title {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+
+    &--rate {
+      padding-top: 8px;
+      border-top: 1px solid #e5e7eb;
+    }
+  }
+
+  &__label {
+    font-size: 13px;
+    color: #6b7280;
+    font-weight: 500;
+  }
+
+  &__label-small {
+    font-size: 11px;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  &__amount {
+    font-size: 16px;
+    color: #1f2937;
+    font-weight: 600;
+
+    &--usd {
+      color: #059669;
+      font-size: 18px;
+    }
+  }
+
+  &__rate {
+    font-size: 13px;
+    color: #059669;
+    font-weight: 500;
+  }
+
+  &__divider {
+    height: 1px;
+    background-color: #e5e7eb;
+    margin: 4px 0;
+  }
+
+  &__spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #e5e7eb;
+    border-top-color: #059669;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+
+  &__error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #dc2626;
+    padding: 8px;
+    background-color: rgba(220, 38, 38, 0.05);
+    border-radius: 4px;
+    margin-top: 4px;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

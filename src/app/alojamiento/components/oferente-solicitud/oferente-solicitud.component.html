@@ -76,7 +76,9 @@
             </div>
             <label class="form-field">
               <span class="field-label">Teléfono <span class="req">*</span></span>
-              <input type="tel" name="telefono" [(ngModel)]="model.telefono" placeholder="442-334-5590" required />
+              <input type="tel" name="telefono" [(ngModel)]="model.telefono" placeholder="Ej: 442 334 5590" required maxlength="15" (blur)="validarTelefono()" />
+              <small class="field-hint">10 dígitos sin código de país. Ej: 442 334 5590</small>
+              <small class="field-error" *ngIf="errorTelefono">{{ errorTelefono }}</small>
             </label>
           </div>
 

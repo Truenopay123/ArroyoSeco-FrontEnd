@@ -1,0 +1,67 @@
+<section class="neurona-card">
+  <div class="neurona-card__header">
+    <div>
+      <h3>Calculadora de cambio</h3>
+      <p>Convierte el pago del cliente en USD a MXN usando el modelo entrenado con el tipo de cambio actual.</p>
+    </div>
+    <span class="neurona-card__badge">TensorFlow</span>
+  </div>
+
+  <div class="neurona-card__form">
+    <label class="neurona-card__field">
+      <span>Precio del producto (MXN)</span>
+      <input
+        type="number"
+        min="0"
+        step="0.01"
+        [(ngModel)]="precioPesosMxn"
+        placeholder="800.00"
+      />
+    </label>
+
+    <label class="neurona-card__field">
+      <span>Pago del cliente (USD)</span>
+      <input
+        type="number"
+        min="0"
+        step="0.01"
+        [(ngModel)]="pagoDolares"
+        placeholder="50.00"
+      />
+    </label>
+  </div>
+
+  <div class="neurona-card__actions">
+    <button type="button" class="btn primary" (click)="calcularCambio()" [disabled]="loading">
+      <span *ngIf="!loading">Calcular cambio</span>
+      <span *ngIf="loading">Calculando...</span>
+    </button>
+  </div>
+
+  <div *ngIf="error" class="neurona-card__error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="resultado as r" class="neurona-card__results">
+    <div class="neurona-card__result-row">
+      <span>Pago Convertido en MXN</span>
+      <strong>{{ r.pagoConvertidoMxn | currency:'MXN':'symbol':'1.2-2' }}</strong>
+    </div>
+    <div class="neurona-card__result-row">
+      <span>Valor real</span>
+      <strong>{{ r.valorRealApiMxn | currency:'MXN':'symbol':'1.2-2' }}</strong>
+    </div>
+    <div class="neurona-card__result-row neurona-card__result-row--accent">
+      <span>Cambio a devolver</span>
+      <strong>{{ r.cambioMxn | currency:'MXN':'symbol':'1.2-2' }}</strong>
+    </div>
+    <div class="neurona-card__result-row">
+      <span>Tipo de cambio actual</span>
+      <strong>1 USD = {{ r.tipoCambio | number:'1.2-6' }} MXN</strong>
+    </div>
+
+    <p *ngIf="r.cambioMxn < 0" class="neurona-card__warning">
+      El pago es insuficiente. Faltan {{ faltanteMxn | currency:'MXN':'symbol':'1.2-2' }}.
+    </p>
+  </div>
+</section>

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, NavigationEnd } from '@angular/router';
 import { AdminOferentesService } from '../../services/admin-oferentes.service';
 import { ToastService } from '../../../shared/services/toast.service';
+import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
 import { first } from 'rxjs/operators';
 
 interface Solicitud {
@@ -28,6 +29,7 @@ export class AdminSolicitudesComponent implements OnInit {
   private adminService = inject(AdminOferentesService);
   private toastService = inject(ToastService);
   private router = inject(Router);
+  private confirmModal = inject(ConfirmModalService);
 
   solicitudes: Solicitud[] = [];
   loading = false;
@@ -38,7 +40,7 @@ export class AdminSolicitudesComponent implements OnInit {
     // Detectar si viene de gastronomía o alojamiento
     this.detectarTipoDesdeRuta();
     this.cargarSolicitudes();
-    
+
     // Escuchar cambios de navegación
     this.router.events.pipe(
       first(event => event instanceof NavigationEnd)
@@ -49,11 +51,11 @@ export class AdminSolicitudesComponent implements OnInit {
 
   private detectarTipoDesdeRuta(): void {
     const url = this.router.url;
-    
+
     // Si la URL contiene 'gastronomia', filtrar por gastronomía
     if (url.includes('/gastronomia')) {
       this.tipoFiltro = 2; // Gastronomía
-    } 
+    }
     // Si la URL es de admin pero no contiene gastronomia, es alojamiento
     else if (url.includes('/admin/solicitudes')) {
       this.tipoFiltro = 1; // Alojamiento
@@ -69,14 +71,14 @@ export class AdminSolicitudesComponent implements OnInit {
     this.adminService.listSolicitudes().pipe(first()).subscribe({
       next: (data) => {
         let solicitudesFiltradas = data || [];
-        
+
         // Filtrar por tipo si está definido
         if (this.tipoFiltro !== null) {
-          solicitudesFiltradas = solicitudesFiltradas.filter(s => 
+          solicitudesFiltradas = solicitudesFiltradas.filter(s =>
             s.tipoSolicitado === this.tipoFiltro || s.tipoSolicitado === 3 // 3 = Ambos
           );
         }
-        
+
         this.solicitudes = solicitudesFiltradas.map(s => ({
           id: s.id,
           nombre: s.nombreSolicitante,
@@ -100,8 +102,8 @@ export class AdminSolicitudesComponent implements OnInit {
   get filteredSolicitudes(): Solicitud[] {
     const term = this.searchTerm.trim().toLowerCase();
     if (!term) return this.solicitudes;
-    return this.solicitudes.filter(s => 
-      s.nombre.toLowerCase().includes(term) || 
+    return this.solicitudes.filter(s =>
+      s.nombre.toLowerCase().includes(term) ||
       s.telefono.includes(term) ||
       s.tipoTexto.toLowerCase().includes(term)
     );
@@ -122,8 +124,9 @@ export class AdminSolicitudesComponent implements OnInit {
     return '';
   }
 
-  aprobar(solicitud: Solicitud) {
-    if (!confirm(`¿Aprobar solicitud de ${solicitud.nombre}?`)) return;
+  async aprobar(solicitud: Solicitud) {
+    const ok = await this.confirmModal.confirm({ title: 'Aprobar solicitud', message: `¿Aprobar solicitud de ${solicitud.nombre}?`, confirmText: 'Aprobar', cancelText: 'Cancelar' });
+    if (!ok) return;
 
     this.adminService.aprobarSolicitud(solicitud.id, solicitud.tipoNegocio).pipe(first()).subscribe({
       next: () => {
@@ -139,8 +142,9 @@ export class AdminSolicitudesComponent implements OnInit {
     });
   }
 
-  rechazar(solicitud: Solicitud) {
-    if (!confirm(`¿Rechazar solicitud de ${solicitud.nombre}?`)) return;
+  async rechazar(solicitud: Solicitud) {
+    const ok = await this.confirmModal.confirm({ title: 'Rechazar solicitud', message: `¿Rechazar solicitud de ${solicitud.nombre}?`, confirmText: 'Rechazar', cancelText: 'Cancelar', isDangerous: true });
+    if (!ok) return;
 
     this.adminService.rechazarSolicitud(solicitud.id).pipe(first()).subscribe({
       next: () => {

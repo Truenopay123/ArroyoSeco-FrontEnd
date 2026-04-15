@@ -25,10 +25,11 @@ export class FaceLoginComponent implements OnInit, OnDestroy {
   @ViewChild('videoEl') videoRef!: ElementRef<HTMLVideoElement>;
 
   // Estado del componente
-  estado: 'cargando' | 'listo' | 'comparando' | 'exito' | 'error' = 'cargando';
+  estado: 'cargando' | 'listo' | 'verificando_vida' | 'comparando' | 'exito' | 'error' = 'cargando';
   mensaje = 'Cargando modelos de reconocimiento facial…';
   intentos = 0;
   readonly maxIntentos = 5;
+  progreso = 0;
 
   private tempToken = '';
   private storedDescriptor: Float32Array | null = null;
@@ -113,17 +114,49 @@ export class FaceLoginComponent implements OnInit, OnDestroy {
     this.stream = null;
   }
 
-  /** Captura el rostro y lo compara con el descriptor almacenado */
+  /** Captura el rostro, verifica que sea persona real, y compara con el descriptor almacenado */
   async verificar() {
     if (!this.videoRef?.nativeElement || !this.storedDescriptor) return;
 
-    this.estado = 'comparando';
-    this.mensaje = 'Analizando rostro…';
     this.intentos++;
+    this.progreso = 0;
+
+    // ── Paso 1: Detección de vida ──
+    this.estado = 'verificando_vida';
+    this.mensaje = 'Parpadea de forma natural mirando a la cámara…';
+
+    const liveness = await this.faceAuth.detectLiveness(
+      this.videoRef.nativeElement,
+      (pct, msg) => {
+        this.progreso = pct;
+        this.mensaje = msg;
+      }
+    );
+
+    if (!liveness.isLive) {
+      console.warn('[FaceLogin] Liveness FALLÓ:', liveness.reason);
+      if (this.intentos >= this.maxIntentos) {
+        this.estado = 'error';
+        this.mensaje = 'Se agotaron los intentos. Redirigiendo al login…';
+        this.detenerCamara();
+        setTimeout(() => this.router.navigate(['/login']), 2000);
+        return;
+      }
+      this.estado = 'listo';
+      this.mensaje = `${liveness.reason} Intento ${this.intentos}/${this.maxIntentos}.`;
+      this.toast.show(liveness.reason ?? 'No se pudo verificar que sea una persona real.', 'error');
+      return;
+    }
+
+    // ── Paso 2: Comparación facial ──
+    console.log('[FaceLogin] Liveness OK, capturando descriptor...');
+    this.estado = 'comparando';
+    this.mensaje = 'Persona real confirmada. Comparando rostro…';
 
     const descriptor = await this.faceAuth.getDescriptor(this.videoRef.nativeElement);
 
     if (!descriptor) {
+      console.warn('[FaceLogin] No se detectó rostro en paso de comparación');
       if (this.intentos >= this.maxIntentos) {
         this.estado = 'error';
         this.mensaje = 'Se agotaron los intentos. Redirigiendo al login…';

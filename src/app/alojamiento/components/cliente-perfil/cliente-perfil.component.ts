@@ -48,6 +48,7 @@ export class ClientePerfilComponent implements OnInit {
   passwordNueva = '';
   passwordConfirmacion = '';
   submittingPassword = false;
+  errorTelefono = '';
 
   ngOnInit() {
     this.authService.me().subscribe({
@@ -88,7 +89,31 @@ export class ClientePerfilComponent implements OnInit {
     }
   }
 
+  validarTelefono(): boolean {
+    this.errorTelefono = '';
+    const tel = (this.perfil().telefono || '').trim();
+    if (!tel) {
+      this.errorTelefono = 'El teléfono es obligatorio';
+      return false;
+    }
+    const soloDigitos = tel.replace(/[\s\-\(\)\+]/g, '');
+    if (!/^\d+$/.test(soloDigitos)) {
+      this.errorTelefono = 'El teléfono solo debe contener números';
+      return false;
+    }
+    if (soloDigitos.startsWith('52') && soloDigitos.length === 12) return true;
+    if (soloDigitos.length !== 10) {
+      this.errorTelefono = 'El teléfono debe tener exactamente 10 dígitos';
+      return false;
+    }
+    return true;
+  }
+
   guardarPerfil() {
+    if (!this.validarTelefono()) {
+      this.toastService.error(this.errorTelefono);
+      return;
+    }
     const { nombre, email, telefono, sexo } = this.perfil();
     this.usuarioService.updatePerfil({ nombre, email, telefono }).subscribe({
       next: () => {

@@ -1,10 +1,12 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { ConfirmModalService } from '../../../shared/services/confirm-modal.service';
+import { FaceAuthService } from '../../../core/services/face-auth.service';
+import { first } from 'rxjs/operators';
 
 interface Perfil {
   nombre: string;
@@ -55,7 +57,10 @@ interface Perfil {
           <div class="field">
             <label for="cfg-tel">Teléfono de contacto</label>
             <input id="cfg-tel" type="tel" name="telefono" [(ngModel)]="perfil.telefono"
-                   placeholder="Ej: +52 442 123 4567" autocomplete="tel" />
+                   placeholder="Ej: 442 123 4567" autocomplete="tel" maxlength="15"
+                   (blur)="validarTelefono()" />
+            <span class="field-hint">10 dígitos sin código de país. Ej: 442 123 4567</span>
+            <span class="field-error" *ngIf="errorTelefono">{{ errorTelefono }}</span>
           </div>
 
           <div class="card-footer">
@@ -82,6 +87,72 @@ interface Perfil {
         </div>
       </section>
 
+      <!-- Card: Gestión de rostro -->
+      <section class="config-card">
+        <div class="card-header">
+          <span class="card-icon">🔐</span>
+          <div>
+            <h3>Verificación Facial</h3>
+            <p class="card-desc">Administra tu rostro registrado para la verificación de identidad al iniciar sesión.</p>
+          </div>
+        </div>
+
+        <!-- Estado de carga -->
+        <div class="face-status-row" *ngIf="faceLoading">
+          <span class="face-status-icon loading">⏳</span>
+          <span class="face-status-text">Consultando estado facial…</span>
+        </div>
+
+        <!-- Rostro registrado -->
+        <div *ngIf="!faceLoading && faceEnrolled && faceEstado === 'idle'">
+          <div class="face-status-row enrolled">
+            <span class="face-status-icon ok">✅</span>
+            <span class="face-status-text">Rostro registrado correctamente.</span>
+          </div>
+          <div class="face-actions">
+            <button class="btn secondary" (click)="iniciarCambioRostro()" [disabled]="faceProcessing">
+              🔄 Cambiar rostro
+            </button>
+            <button class="btn danger-outline" (click)="eliminarRostro()" [disabled]="faceProcessing">
+              🗑️ Eliminar rostro
+            </button>
+          </div>
+        </div>
+
+        <!-- Sin rostro registrado -->
+        <div *ngIf="!faceLoading && !faceEnrolled && faceEstado === 'idle'">
+          <div class="face-status-row not-enrolled">
+            <span class="face-status-icon warn">⚠️</span>
+            <span class="face-status-text">No tienes un rostro registrado.</span>
+          </div>
+          <div class="face-actions">
+            <button class="btn primary" (click)="iniciarCambioRostro()" [disabled]="faceProcessing">
+              📷 Registrar rostro
+            </button>
+          </div>
+        </div>
+
+        <!-- Cámara activa para captura -->
+        <div *ngIf="faceEstado === 'camara' || faceEstado === 'capturando'" class="face-capture-area">
+          <p class="face-instruccion">Coloca tu rostro frente a la cámara y presiona "Capturar".</p>
+          <div class="face-video-wrapper">
+            <video #faceVideo autoplay playsinline muted class="face-webcam-video"></video>
+            <div class="face-video-overlay" *ngIf="faceEstado === 'capturando'">
+              <span class="face-spinner"></span>
+              <span>Analizando rostro…</span>
+            </div>
+          </div>
+          <div class="face-actions">
+            <button class="btn primary" (click)="capturarNuevoRostro()" [disabled]="faceEstado === 'capturando'">
+              📸 Capturar
+            </button>
+            <button class="btn secondary" (click)="cancelarCaptura()" [disabled]="faceEstado === 'capturando'">
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </section>
+
     </div>
   `,
   styles: [`
@@ -90,6 +161,7 @@ interface Perfil {
       flex-direction: column;
       gap: 1.5rem;
       max-width: 720px;
+      margin: 0 auto;
     }
 
     /* Page header */
@@ -209,6 +281,17 @@ interface Perfil {
       font-size: 0.76rem;
       color: #9ca3af;
     }
+    .field-error {
+      display: block;
+      font-size: 0.8rem;
+      color: #dc2626;
+      font-weight: 500;
+      margin-top: 0.2rem;
+      padding: 0.25rem 0.5rem;
+      background: #fef2f2;
+      border-left: 3px solid #dc2626;
+      border-radius: 4px;
+    }
     .card-footer { grid-column: span 2; }
 
     /* Buttons */
@@ -251,15 +334,107 @@ interface Perfil {
       .fields-grid { grid-template-columns: 1fr; }
       .card-footer { grid-column: auto; }
     }
+
+    /* Face management */
+    .face-status-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+    }
+    .face-status-row.enrolled { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+    .face-status-row.not-enrolled { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+    .face-status-icon { font-size: 1.2rem; flex-shrink: 0; }
+    .face-status-text { font-weight: 500; }
+    .face-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+    .btn.secondary {
+      background: #f3f4f6;
+      color: #374151;
+      border: 1.5px solid #e5e7eb;
+      &:hover:not(:disabled) { background: #e5e7eb; }
+      &:disabled { opacity: 0.6; cursor: not-allowed; }
+    }
+    .btn.danger-outline {
+      background: transparent;
+      color: #dc2626;
+      border: 1.5px solid #fca5a5;
+      &:hover:not(:disabled) { background: #fef2f2; }
+      &:disabled { opacity: 0.6; cursor: not-allowed; }
+    }
+    .face-capture-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    .face-instruccion {
+      font-size: 0.88rem;
+      color: #6b7280;
+      text-align: center;
+      margin: 0;
+    }
+    .face-video-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 320px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid #d1fae5;
+    }
+    .face-webcam-video {
+      width: 100%;
+      display: block;
+      border-radius: 12px;
+      background: #000;
+    }
+    .face-video-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      font-size: 0.85rem;
+    }
+    .face-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   `]
 })
-export class OferenteConfiguracionComponent implements OnInit {
+export class OferenteConfiguracionComponent implements OnInit, OnDestroy {
+  @ViewChild('faceVideo') faceVideoRef!: ElementRef<HTMLVideoElement>;
+
   private toastService = inject(ToastService);
   private authService = inject(AuthService);
   private usuarioService = inject(UsuarioService);
   private modalService = inject(ConfirmModalService);
+  private faceAuth = inject(FaceAuthService);
 
   guardando = false;
+  errorTelefono = '';
+
+  // Face management state
+  faceLoading = true;
+  faceEnrolled = false;
+  faceEstado: 'idle' | 'camara' | 'capturando' = 'idle';
+  faceProcessing = false;
+  private faceStream: MediaStream | null = null;
 
   perfil: Perfil = {
     nombre: '',
@@ -287,10 +462,36 @@ export class OferenteConfiguracionComponent implements OnInit {
         console.error('Error al decodificar token:', e);
       }
     }
+    this.cargarEstadoFacial();
+  }
+
+  ngOnDestroy() {
+    this.detenerCamaraFace();
+  }
+
+  validarTelefono(): boolean {
+    this.errorTelefono = '';
+    const tel = (this.perfil.telefono || '').trim();
+    if (!tel) return true; // teléfono es opcional aquí
+    const soloDigitos = tel.replace(/[\s\-\(\)\+]/g, '');
+    if (!/^\d+$/.test(soloDigitos)) {
+      this.errorTelefono = 'El teléfono solo debe contener números';
+      return false;
+    }
+    if (soloDigitos.startsWith('52') && soloDigitos.length === 12) return true;
+    if (soloDigitos.length !== 10) {
+      this.errorTelefono = 'El teléfono debe tener exactamente 10 dígitos';
+      return false;
+    }
+    return true;
   }
 
   guardar(form: NgForm) {
     if (form.invalid) return;
+    if (this.perfil.telefono?.trim() && !this.validarTelefono()) {
+      this.toastService.error(this.errorTelefono);
+      return;
+    }
     this.guardando = true;
     const { nombre, correo, telefono } = this.perfil;
     this.usuarioService.updatePerfil({ nombre, email: correo, telefono }).subscribe({
@@ -304,5 +505,116 @@ export class OferenteConfiguracionComponent implements OnInit {
         this.toastService.error('No fue posible guardar los cambios');
       }
     });
+  }
+
+  // ── Face management ──────────────────────────────────────────────────
+
+  private cargarEstadoFacial() {
+    this.faceLoading = true;
+    this.faceAuth.getStatus().pipe(first()).subscribe({
+      next: (res) => {
+        this.faceEnrolled = res.hasFaceEnrolled;
+        this.faceLoading = false;
+      },
+      error: () => {
+        this.faceLoading = false;
+      }
+    });
+  }
+
+  async iniciarCambioRostro() {
+    this.faceProcessing = true;
+
+    // Si ya tiene rostro, primero desenrollar
+    if (this.faceEnrolled) {
+      try {
+        await this.faceAuth.unenroll().pipe(first()).toPromise();
+        this.faceEnrolled = false;
+      } catch {
+        this.toastService.error('No se pudo eliminar el rostro anterior.');
+        this.faceProcessing = false;
+        return;
+      }
+    }
+
+    // Cargar modelos
+    try {
+      await this.faceAuth.loadModels();
+    } catch {
+      this.toastService.error('No se pudieron cargar los modelos faciales.');
+      this.faceProcessing = false;
+      return;
+    }
+
+    // Abrir cámara
+    try {
+      this.faceStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: 480, height: 360 }
+      });
+      this.faceEstado = 'camara';
+      this.faceProcessing = false;
+      setTimeout(() => {
+        if (this.faceVideoRef?.nativeElement) {
+          this.faceVideoRef.nativeElement.srcObject = this.faceStream;
+        }
+      }, 100);
+    } catch {
+      this.toastService.error('No se pudo acceder a la cámara.');
+      this.faceProcessing = false;
+    }
+  }
+
+  async capturarNuevoRostro() {
+    if (!this.faceVideoRef?.nativeElement) return;
+
+    this.faceEstado = 'capturando';
+    const descriptor = await this.faceAuth.getDescriptor(this.faceVideoRef.nativeElement);
+
+    if (!descriptor) {
+      this.faceEstado = 'camara';
+      this.toastService.error('No se detectó un rostro. Asegúrate de tener buena iluminación.');
+      return;
+    }
+
+    const descriptorArray = Array.from(descriptor);
+    this.faceAuth.enroll(descriptorArray).pipe(first()).subscribe({
+      next: () => {
+        this.faceEnrolled = true;
+        this.faceEstado = 'idle';
+        this.detenerCamaraFace();
+        this.toastService.success('Rostro registrado exitosamente.');
+      },
+      error: (err) => {
+        this.faceEstado = 'camara';
+        const msg = err?.error?.message || 'Error al registrar el rostro.';
+        this.toastService.error(msg);
+      }
+    });
+  }
+
+  eliminarRostro() {
+    this.faceProcessing = true;
+    this.faceAuth.unenroll().pipe(first()).subscribe({
+      next: () => {
+        this.faceEnrolled = false;
+        this.faceProcessing = false;
+        this.toastService.success('Rostro eliminado correctamente.');
+      },
+      error: () => {
+        this.faceProcessing = false;
+        this.toastService.error('No se pudo eliminar el rostro.');
+      }
+    });
+  }
+
+  cancelarCaptura() {
+    this.detenerCamaraFace();
+    this.faceEstado = 'idle';
+    this.cargarEstadoFacial();
+  }
+
+  private detenerCamaraFace() {
+    this.faceStream?.getTracks().forEach(t => t.stop());
+    this.faceStream = null;
   }
 }

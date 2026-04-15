@@ -1,8 +1,16 @@
 import { inject, Injectable } from '@angular/core';
 import { ApiService } from '../../core/services/api.service';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 // ===== Interfaces =====
+export interface FotoEstablecimientoDto {
+  id?: number;
+  establecimientoId?: number;
+  url: string;
+  orden: number;
+}
+
 export interface EstablecimientoDto {
   id?: number;
   oferenteId?: string;
@@ -10,6 +18,8 @@ export interface EstablecimientoDto {
   ubicacion: string;
   descripcion: string;
   fotoPrincipal?: string;
+  fotosUrls?: string[];
+  fotos?: FotoEstablecimientoDto[];
   estado?: string;
   direccion?: string;
   latitud?: number | null;
@@ -69,16 +79,40 @@ export interface DisponibilidadDto {
 export class GastronomiaService {
   private readonly api = inject(ApiService);
 
+  private normalize(item: EstablecimientoDto): EstablecimientoDto {
+    const anyItem = item as any;
+    const fotosFromCollection = Array.isArray(anyItem?.fotos)
+      ? anyItem.fotos
+          .map((f: any) => this.api.toPublicUrl(f?.url) || f?.url)
+          .filter((u: string | undefined) => !!u)
+      : [];
+
+    const fotosUrls = [
+      ...(item.fotosUrls || []).map(url => this.api.toPublicUrl(url) || url),
+      ...fotosFromCollection
+    ].filter((u, idx, arr) => !!u && arr.indexOf(u) === idx);
+
+    return {
+      ...item,
+      fotoPrincipal: this.api.toPublicUrl(item.fotoPrincipal),
+      fotosUrls,
+    };
+  }
+
   // ===== Públicos (sin autenticación) =====
-  
+
   /** Listar todos los establecimientos */
   listAll(): Observable<EstablecimientoDto[]> {
-    return this.api.get<EstablecimientoDto[]>('/Gastronomias');
+    return this.api.get<EstablecimientoDto[]>('/Gastronomias').pipe(
+      map(items => (items || []).map(item => this.normalize(item)))
+    );
   }
 
   /** Detalle de un establecimiento */
   getById(id: number): Observable<EstablecimientoDto> {
-    return this.api.get<EstablecimientoDto>(`/Gastronomias/${id}`);
+    return this.api.get<EstablecimientoDto>(`/Gastronomias/${id}`).pipe(
+      map(item => this.normalize(item))
+    );
   }
 
   /** Listar menús de un establecimiento */
@@ -130,7 +164,9 @@ export class GastronomiaService {
 
   /** Listar establecimientos propios del oferente */
   listMine(): Observable<EstablecimientoDto[]> {
-    return this.api.get<EstablecimientoDto[]>('/Gastronomias/mios');
+    return this.api.get<EstablecimientoDto[]>('/Gastronomias/mios').pipe(
+      map(items => (items || []).map(item => this.normalize(item)))
+    );
   }
 
   /** Actualizar establecimiento */
@@ -141,6 +177,32 @@ export class GastronomiaService {
   /** Eliminar establecimiento */
   delete(id: number): Observable<any> {
     return this.api.delete(`/Gastronomias/${id}`);
+  }
+
+  // ===== Fotos =====
+
+  /** Agregar fotos a un establecimiento */
+  agregarFotos(id: number, urls: string[]): Observable<any> {
+    return this.api.post(`/Gastronomias/${id}/fotos`, { urls });
+  }
+
+  /** Eliminar una foto */
+  eliminarFoto(id: number, fotoId: number): Observable<any> {
+    return this.api.delete(`/Gastronomias/${id}/fotos/${fotoId}`);
+  }
+
+  /** Reordenar fotos */
+  reordenarFotos(id: number, fotoIds: number[]): Observable<any> {
+    return this.api.put(`/Gastronomias/${id}/fotos/reordenar`, { fotoIds });
+  }
+
+  /** Subir imagen */
+  uploadImage(file: File): Observable<{ url: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.api.postFormData<{ url: string }>('/storage/upload?folder=gastronomia', formData).pipe(
+      map(res => ({ url: this.api.toPublicUrl(res?.url) || '' }))
+    );
   }
 
   // ===== Cliente (autenticado) =====
