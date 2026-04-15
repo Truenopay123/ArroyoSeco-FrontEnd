@@ -1,6 +1,7 @@
 import { Component, HostListener, OnInit, OnDestroy, ElementRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-hero-landing',
@@ -24,6 +25,7 @@ export class HeroLandingComponent implements OnInit, OnDestroy {
   };
 
   private observer!: IntersectionObserver;
+  private routerSub?: Subscription;
 
   readonly featuredCabanas = [
     {
@@ -95,11 +97,17 @@ export class HeroLandingComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.isGastronomia = this.router.url.includes('/gastronomia');
+    this.routerSub = this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd)
+    ).subscribe(e => {
+      this.isGastronomia = e.urlAfterRedirects.includes('/gastronomia');
+    });
     this.setupIntersectionObserver();
   }
 
   ngOnDestroy(): void {
     this.observer?.disconnect();
+    this.routerSub?.unsubscribe();
   }
 
   @HostListener('document:mousemove', ['$event'])
