@@ -250,20 +250,20 @@ export class GestionReservasComponent implements OnInit {
     // Intentar obtener la URL del comprobante desde el sistema de pagos
     this.pagoService.getComprobanteReserva(reserva.id).pipe(first()).subscribe({
       next: (data: any) => {
-        if (data?.comprobanteUrl) {
-          this.previewType = /\.pdf(\?|#|$)/i.test(data.comprobanteUrl) ? 'pdf' : 'image';
-          this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(data.comprobanteUrl);
-        } else if (reserva.comprobanteUrl) {
-          this.previewType = /\.pdf(\?|#|$)/i.test(reserva.comprobanteUrl) ? 'pdf' : 'image';
-          this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(reserva.comprobanteUrl);
+        const rawUrl = data?.comprobanteUrl || reserva.comprobanteUrl;
+        if (rawUrl) {
+          const fullUrl = this.normalizarComprobanteUrl(rawUrl);
+          this.previewType = /\.pdf(\?|#|$)/i.test(fullUrl) ? 'pdf' : 'image';
+          this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(fullUrl);
         } else {
           this.previewError = 'Sin comprobante disponible';
         }
       },
       error: () => {
         if (reserva.comprobanteUrl) {
-          this.previewType = /\.pdf(\?|#|$)/i.test(reserva.comprobanteUrl) ? 'pdf' : 'image';
-          this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(reserva.comprobanteUrl);
+          const fullUrl = this.normalizarComprobanteUrl(reserva.comprobanteUrl);
+          this.previewType = /\.pdf(\?|#|$)/i.test(fullUrl) ? 'pdf' : 'image';
+          this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(fullUrl);
         } else {
           this.previewError = 'Sin comprobante disponible';
         }

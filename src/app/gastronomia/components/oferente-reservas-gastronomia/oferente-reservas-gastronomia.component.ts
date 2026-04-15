@@ -118,8 +118,9 @@ export class OferenteReservasGastronomiaComponent implements OnInit {
     this.pagosService.getComprobanteReserva(reserva.id).pipe(first()).subscribe({
       next: (data: any) => {
         if (data?.comprobanteUrl) {
-          this.previewType = /\.pdf(\?|#|$)/i.test(data.comprobanteUrl) ? 'pdf' : 'image';
-          this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(data.comprobanteUrl);
+          const fullUrl = this.normalizarComprobanteUrl(data.comprobanteUrl);
+          this.previewType = /\.pdf(\?|#|$)/i.test(fullUrl) ? 'pdf' : 'image';
+          this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(fullUrl);
         } else {
           this.previewError = 'Sin comprobante disponible';
         }
@@ -127,8 +128,9 @@ export class OferenteReservasGastronomiaComponent implements OnInit {
       error: (err: any) => {
         // Fallback: intentar con la URL guardada en la reserva
         if (reserva.comprobanteUrl) {
-          this.previewType = /\.pdf(\?|#|$)/i.test(reserva.comprobanteUrl) ? 'pdf' : 'image';
-          this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(reserva.comprobanteUrl);
+          const fullUrl = this.normalizarComprobanteUrl(reserva.comprobanteUrl);
+          this.previewType = /\.pdf(\?|#|$)/i.test(fullUrl) ? 'pdf' : 'image';
+          this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(fullUrl);
         } else {
           this.previewError = err?.status === 404 ? 'Sin comprobante disponible' : 'No se pudo cargar el comprobante';
         }
@@ -136,12 +138,20 @@ export class OferenteReservasGastronomiaComponent implements OnInit {
     });
   }
 
+  private normalizarComprobanteUrl(url: string): string {
+    if (!url) return '';
+    if (/^https?:\/\//i.test(url)) return url;
+    const normalizedPath = url.startsWith('/') ? url : `/${url}`;
+    const apiRoot = this.api.baseUrl.replace(/\/api$/i, '');
+    return `${apiRoot}${normalizedPath}`;
+  }
+
   descargarComprobante(reserva: ReservaGastronomiaDto) {
     if (!reserva.id) return;
     this.pagosService.getComprobanteReserva(reserva.id).pipe(first()).subscribe({
       next: (data: any) => {
         if (data?.comprobanteUrl) {
-          window.open(data.comprobanteUrl, '_blank');
+          window.open(this.normalizarComprobanteUrl(data.comprobanteUrl), '_blank');
         } else {
           this.toast.info('Esta reserva no tiene comprobante disponible');
         }
