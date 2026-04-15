@@ -126,6 +126,15 @@
         background: #fecaca;
       }
     }
+
+    .btn-detail {
+      background: #e0e7ff;
+      color: #3730a3;
+
+      &:hover {
+        background: #c7d2fe;
+      }
+    }
   }
 }
 
@@ -133,4 +142,179 @@
   .reservas-grid {
     grid-template-columns: 1fr;
   }
+}
+
+// ── Modal de detalle ──
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+
+  .modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+
+    h3 {
+      margin: 0;
+      font-size: 1.15rem;
+      color: #1f2937;
+    }
+
+    .close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #6b7280;
+      line-height: 1;
+
+      &:hover {
+        color: #1f2937;
+      }
+    }
+  }
+
+  .modal__body {
+    padding: 1.5rem;
+  }
+
+  .modal__footer {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e5e7eb;
+
+    button {
+      padding: 0.5rem 1.25rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-confirm {
+      background: #d1fae5;
+      color: #065f46;
+
+      &:hover {
+        background: #a7f3d0;
+      }
+    }
+
+    .btn-cancel {
+      background: #fee2e2;
+      color: #dc2626;
+
+      &:hover {
+        background: #fecaca;
+      }
+    }
+
+    .btn-close {
+      background: #f3f4f6;
+      color: #374151;
+
+      &:hover {
+        background: #e5e7eb;
+      }
+    }
+  }
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+
+  > div {
+    color: #4b5563;
+
+    strong {
+      color: #1f2937;
+    }
+  }
+}
+
+.comprobante {
+  margin-top: 1.25rem;
+
+  strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #1f2937;
+  }
+
+  .comp-preview {
+    margin: 0.5rem 0;
+    min-height: 60px;
+  }
+
+  .comprobante-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+  }
+
+  .comprobante-pdf {
+    width: 100%;
+    height: 300px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+  }
+
+  .text-muted {
+    color: #9ca3af;
+    font-style: italic;
+  }
+
+  .comp-actions {
+    margin-top: 0.5rem;
+
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      background: #e0e7ff;
+      color: #3730a3;
+
+      &:hover {
+        background: #c7d2fe;
+      }
+    }
+  }
+}
+
+.offline-banner {
+  background: #fef3c7;
+  color: #92400e;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: 500;
 }

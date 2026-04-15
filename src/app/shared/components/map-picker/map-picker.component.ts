@@ -27,6 +27,9 @@ interface LocationData {
         <p *ngIf="buscandoDireccion || geocodificando" class="loading">
           🔍 {{ geocodificando ? 'Buscando ubicación en el mapa...' : 'Buscando dirección...' }}
         </p>
+        <p *ngIf="errorGeocodificacion" class="error-geo">
+          ⚠️ {{ errorGeocodificacion }}
+        </p>
       </div>
       <div id="map" style="height: 400px; width: 100%; border-radius: 8px;"></div>
     </div>
@@ -64,6 +67,13 @@ interface LocationData {
       padding: 0.75rem;
       border-radius: 8px;
     }
+    .error-geo {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-top: 0.5rem;
+    }
   `]
 })
 export class MapPickerComponent implements AfterViewInit, OnChanges {
@@ -80,6 +90,7 @@ export class MapPickerComponent implements AfterViewInit, OnChanges {
   direccionCapturada = '';
   buscandoDireccion = false;
   geocodificando = false;
+  errorGeocodificacion = '';
 
   ngAfterViewInit(): void {
     this.initMap();
@@ -183,6 +194,7 @@ export class MapPickerComponent implements AfterViewInit, OnChanges {
   /** Geocodificación hacia adelante: dirección de texto → coordenadas en el mapa */
   private async geocodeAddress(address: string): Promise<void> {
     this.geocodificando = true;
+    this.errorGeocodificacion = '';
     try {
       const query = `${address}, Arroyo Seco, Querétaro, México`;
       const response = await fetch(
@@ -219,6 +231,9 @@ export class MapPickerComponent implements AfterViewInit, OnChanges {
       }
     } catch (error) {
       console.error('Error al geocodificar dirección:', error);
+      this.errorGeocodificacion = !navigator.onLine
+        ? 'Sin conexión a internet. Puedes marcar la ubicación manualmente en el mapa.'
+        : 'No se pudo buscar la dirección. Intenta marcar la ubicación en el mapa.';
     } finally {
       this.geocodificando = false;
     }

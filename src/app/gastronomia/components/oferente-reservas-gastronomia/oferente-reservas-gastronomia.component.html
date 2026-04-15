@@ -25,7 +25,7 @@
     <div class="header">
       <h3>{{ res.clienteNombre || 'Cliente' }}</h3>
       <span class="estado" [ngClass]="getEstadoClass(res.estado)">
-        {{ res.estado }}
+        {{ res.estado === 'PendienteConfirmacion' ? 'Pago en revisión' : res.estado }}
       </span>
     </div>
     <div class="body">
@@ -33,10 +33,57 @@
       <p><strong>Fecha:</strong> {{ res.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
       <p><strong>Personas:</strong> {{ res.numeroPersonas }}</p>
       <p *ngIf="res.mesaNumero"><strong>Mesa:</strong> {{ res.mesaNumero }}</p>
+      <p *ngIf="res.total"><strong>Total:</strong> ${{ res.total }} MXN</p>
     </div>
-    <div class="actions" *ngIf="res.estado === 'Pendiente'">
-      <button class="btn-confirm" (click)="confirmar(res.id)">Confirmar</button>
-      <button class="btn-cancel" (click)="cancelar(res.id)">Rechazar</button>
+    <div class="actions">
+      <button class="btn-detail" (click)="abrirDetalle(res)">Ver detalle</button>
+      <button class="btn-confirm" *ngIf="res.estado === 'Pendiente' || res.estado === 'PendienteConfirmacion'" (click)="confirmar(res.id)">Confirmar</button>
+      <button class="btn-cancel" *ngIf="res.estado === 'Pendiente' || res.estado === 'PendienteConfirmacion'" (click)="cancelar(res.id)">Rechazar</button>
     </div>
+  </div>
+</div>
+
+<!-- Modal de detalle -->
+<div class="modal-backdrop" *ngIf="detalleAbierto" (click)="cerrarDetalle()"></div>
+<div class="modal" *ngIf="detalleAbierto">
+  <div class="modal__header">
+    <h3>Detalle de la reserva</h3>
+    <button class="close" (click)="cerrarDetalle()">×</button>
+  </div>
+  <div class="modal__body" *ngIf="reservaSeleccionada as r">
+    <div class="detail-grid">
+      <div *ngIf="r.folio"><strong>Folio:</strong> {{ r.folio }}</div>
+      <div><strong>Establecimiento:</strong> {{ r.establecimientoNombre }}</div>
+      <div><strong>Cliente:</strong> {{ r.clienteNombre || 'Sin nombre' }}</div>
+      <div><strong>Fecha:</strong> {{ r.fecha | date:'dd/MM/yyyy HH:mm' }}</div>
+      <div><strong>Personas:</strong> {{ r.numeroPersonas }}</div>
+      <div *ngIf="r.mesaNumero"><strong>Mesa:</strong> {{ r.mesaNumero }}</div>
+      <div *ngIf="r.total"><strong>Total:</strong> ${{ r.total }} MXN</div>
+      <div><strong>Estado:</strong> {{ r.estado === 'PendienteConfirmacion' ? 'Pago en revisión' : r.estado }}</div>
+    </div>
+    <div class="comprobante">
+      <strong>Comprobante:</strong>
+      <div class="comp-preview">
+        <ng-container *ngIf="!previewError; else compError">
+          <ng-container *ngIf="previewType === 'image' && previewUrl">
+            <img [src]="previewUrl" alt="Comprobante" class="comprobante-img" />
+          </ng-container>
+          <ng-container *ngIf="previewType === 'pdf' && previewUrl">
+            <iframe class="comprobante-pdf" title="Comprobante PDF" [src]="previewUrl"></iframe>
+          </ng-container>
+        </ng-container>
+        <ng-template #compError>
+          <div class="text-muted">{{ previewError }}</div>
+        </ng-template>
+      </div>
+      <div class="comp-actions">
+        <button type="button" class="btn-detail" (click)="descargarComprobante(r)">Descargar comprobante</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal__footer">
+    <button class="btn-confirm" *ngIf="reservaSeleccionada?.estado === 'Pendiente' || reservaSeleccionada?.estado === 'PendienteConfirmacion'" (click)="confirmar(reservaSeleccionada?.id)">✓ Confirmar</button>
+    <button class="btn-cancel" *ngIf="reservaSeleccionada?.estado === 'Pendiente' || reservaSeleccionada?.estado === 'PendienteConfirmacion'" (click)="cancelar(reservaSeleccionada?.id)">✕ Rechazar</button>
+    <button class="btn-close" (click)="cerrarDetalle()">Cerrar</button>
   </div>
 </div>

@@ -11,12 +11,18 @@ import { throwError, of } from 'rxjs';
 /** Métodos HTTP que pueden encolarse offline */
 const WRITE_METHODS = ['POST', 'PUT', 'PATCH', 'DELETE'];
 
-/** Patrones de URL que NO deben encolarse (auth, login, pagos externos) */
+/** Patrones de URL que NO deben encolarse (auth, subida de archivos) */
 const SKIP_QUEUE_PATTERNS = [
   /\/Auth\//i,
-  /\/pagos\//i,
+  /\/enviar-comprobante/i,
   /\/storage\/upload/i,
   /\/auth\/face\//i
+];
+
+/** Patrones que requieren conexión y muestran aviso amigable al usuario */
+const NEEDS_ONLINE_PATTERNS = [
+  /\/enviar-comprobante/i,
+  /\/storage\/upload/i
 ];
 
 function shouldQueueOffline(method: string, url: string): boolean {
@@ -42,6 +48,17 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const reqToSend = !isAuthEndpoint && token
     ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
     : req;
+
+  // Si estamos offline y es una petición de escritura que necesita conexión, avisar al usuario
+  if (!navigator.onLine && WRITE_METHODS.includes(req.method) && NEEDS_ONLINE_PATTERNS.some(p => p.test(req.url))) {
+    toast.warning('Esta acción requiere conexión a internet. Por favor, intenta de nuevo cuando tengas señal.');
+    return throwError(() => new HttpErrorResponse({
+      status: 0,
+      statusText: 'Offline',
+      url: req.url,
+      error: { message: 'Se requiere conexión para subir archivos.' }
+    }));
+  }
 
   // Si estamos offline y es una petición de escritura encolable, guardarla
   if (!navigator.onLine && shouldQueueOffline(req.method, req.url)) {
@@ -75,7 +92,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
       if (!skipLog) {
         console.error('HTTP Error:', error.status, error.url, error.error);
       }
-      
+
       // If unauthorized on a protected call, clear token and redirect to appropriate login
       // BUT: No hacer logout en POST de creación de reservas (podría ser error del backend, no de auth)
       if (error.status === 401 && !isAuthEndpoint && token) {
@@ -83,7 +100,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
         const isReservationCreate = /\/(reservas|reservasGastronomia)/i.test(req.url) && req.method === 'POST';
         // Excepción adicional: descarga de comprobante (GET) no debe cerrar sesión automáticamente
         const isComprobanteDownload = /\/(reservas|reservasGastronomia)\/.+\/comprobante$/i.test(req.url);
-        
+
         // Si NO es un endpoint de reserva, hacer logout
         if (!isReservationCreate && !isComprobanteDownload) {
           console.warn('Logout automático por 401 en:', req.url);

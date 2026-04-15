@@ -230,16 +230,43 @@ export class GestionReservasComponent implements OnInit {
 
     this.api.getBlob(`/reservas/${reserva.id}/comprobante`).pipe(first()).subscribe({
       next: (blob: Blob) => {
-        if (!blob || blob.size === 0) { this.previewError = 'Sin comprobante'; return; }
+        if (!blob || blob.size === 0) {
+          this.cargarComprobanteDesdePagos(reserva);
+          return;
+        }
         const obj = URL.createObjectURL(blob);
         this.previewObjectUrl = obj;
         this.previewType = (blob.type || '').toLowerCase().includes('pdf') ? 'pdf' : 'image';
         this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(obj);
       },
-      error: (err) => {
-        if (err?.status === 404) this.previewError = 'Sin comprobante disponible';
-        else if (err?.status === 401) this.previewError = 'Sin permisos para ver el comprobante';
-        else this.previewError = 'No se pudo cargar el comprobante';
+      error: () => {
+        // Fallback: obtener URL del comprobante desde endpoint de pagos
+        this.cargarComprobanteDesdePagos(reserva);
+      }
+    });
+  }
+
+  private cargarComprobanteDesdePagos(reserva: ReservaUI) {
+    // Intentar obtener la URL del comprobante desde el sistema de pagos
+    this.pagoService.getComprobanteReserva(reserva.id).pipe(first()).subscribe({
+      next: (data: any) => {
+        if (data?.comprobanteUrl) {
+          this.previewType = /\.pdf(\?|#|$)/i.test(data.comprobanteUrl) ? 'pdf' : 'image';
+          this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(data.comprobanteUrl);
+        } else if (reserva.comprobanteUrl) {
+          this.previewType = /\.pdf(\?|#|$)/i.test(reserva.comprobanteUrl) ? 'pdf' : 'image';
+          this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(reserva.comprobanteUrl);
+        } else {
+          this.previewError = 'Sin comprobante disponible';
+        }
+      },
+      error: () => {
+        if (reserva.comprobanteUrl) {
+          this.previewType = /\.pdf(\?|#|$)/i.test(reserva.comprobanteUrl) ? 'pdf' : 'image';
+          this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(reserva.comprobanteUrl);
+        } else {
+          this.previewError = 'Sin comprobante disponible';
+        }
       }
     });
   }
@@ -247,29 +274,44 @@ export class GestionReservasComponent implements OnInit {
   descargarComprobante(reserva: ReservaUI) {
     this.api.getBlob(`/reservas/${reserva.id}/comprobante`).pipe(first()).subscribe({
       next: (blob) => {
-        const url = URL.createObjectURL(blob);
-        // Intentar abrir en nueva pestaña; si el navegador bloquea, forzar descarga
-        const a = document.createElement('a');
-        a.href = url;
-        a.target = '_blank';
-        // Nombre sugerido
-        const nombre = `comprobante-reserva-${reserva.folio || reserva.id}`;
-        a.download = nombre;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-      },
-      error: (err) => {
-        const status = err?.status;
-        if (status === 404) {
-          this.toastService.info('Esta reserva no tiene comprobante disponible');
-        } else if (status === 401) {
-          this.toastService.error('Tu sesión expiró o no tienes permisos para ver el comprobante');
+        if (blob && blob.size > 0) {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.target = '_blank';
+          const nombre = `comprobante-reserva-${reserva.folio || reserva.id}`;
+          a.download = nombre;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
         } else {
-          this.toastService.error('No se pudo descargar el comprobante');
+          this.descargarComprobanteViaUrl(reserva);
         }
-        console.error('Error al descargar comprobante:', err);
+      },
+      error: () => {
+        this.descargarComprobanteViaUrl(reserva);
+      }
+    });
+  }
+
+  private descargarComprobanteViaUrl(reserva: ReservaUI) {
+    this.pagoService.getComprobanteReserva(reserva.id).pipe(first()).subscribe({
+      next: (data: any) => {
+        if (data?.comprobanteUrl) {
+          window.open(data.comprobanteUrl, '_blank');
+        } else if (reserva.comprobanteUrl) {
+          window.open(reserva.comprobanteUrl, '_blank');
+        } else {
+          this.toastService.info('Esta reserva no tiene comprobante disponible');
+        }
+      },
+      error: () => {
+        if (reserva.comprobanteUrl) {
+          window.open(reserva.comprobanteUrl, '_blank');
+        } else {
+          this.toastService.info('Esta reserva no tiene comprobante disponible');
+        }
       }
     });
   }
